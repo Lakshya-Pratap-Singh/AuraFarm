@@ -6,14 +6,38 @@ import Objectives from "../pages/Objectives";
 import Intelligence from "../pages/Intelligence";
 import Settings from "../pages/Settings";
 
-function AppRoutes() {
+function AppRoutes({ missions, setMissions }) {
   return (
     <Routes>
-      <Route path="/" element={<Dashboard />} />
-      <Route path="/missions" element={<Missions />} />
-      <Route path="/objectives" element={<Objectives />} />
-      <Route path="/intelligence" element={<Intelligence />} />
-      <Route path="/settings" element={<Settings />} />
+      <Route
+        path="/"
+        element={<Dashboard missions={missions} />}
+      />
+
+      <Route
+        path="/missions"
+        element={
+          <Missions
+            missions={missions}
+            setMissions={setMissions}
+          />
+        }
+      />
+
+      <Route
+        path="/objectives"
+        element={<Objectives />}
+      />
+
+      <Route
+        path="/intelligence"
+        element={<Intelligence />}
+      />
+
+      <Route
+        path="/settings"
+        element={<Settings />}
+      />
     </Routes>
   );
 }

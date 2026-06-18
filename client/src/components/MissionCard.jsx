@@ -1,21 +1,35 @@
-function MissionCard({ title, status, streak }) {
-  // Map status to badge styling
-  const statusClass =
-    status === 'Completed'
-      ? 'mission-card__badge--completed'
-      : 'mission-card__badge--progress';
-
+function MissionCard({
+  mission,
+  onComplete,
+  onDelete,
+}) {
   return (
-    <article className="mission-card">
-      <div className="mission-card__header">
-        <h3 className="mission-card__title">{title}</h3>
-        <span className={`mission-card__badge ${statusClass}`}>{status}</span>
+    <div className="mission-card">
+      <h3>
+        {mission.completed ? "✅" : "⭕"}{" "}
+        {mission.title}
+      </h3>
+
+      <div>
+        <button
+          onClick={() =>
+            onComplete(mission.id)
+          }
+        >
+          {mission.completed
+            ? "Mark Pending"
+            : "Complete"}
+        </button>
+
+        <button
+          onClick={() =>
+            onDelete(mission.id)
+          }
+        >
+          Delete
+        </button>
       </div>
-      <p className="mission-card__streak">
-        <span className="mission-card__streak-label">Streak</span>
-        <span className="mission-card__streak-value">{streak}</span>
-      </p>
-    </article>
+    </div>
   );
 }
 
