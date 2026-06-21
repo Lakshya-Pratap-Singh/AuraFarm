@@ -1,0 +1,430 @@
+/* ============================================================
+   DAILYWISE — activity-grid.css
+   Tactical Activity Grid · Batman / Ghost HUD theme
+   Local tokens defined here so this file is self-contained
+   (same pattern as missions.css).
+   ============================================================ */
+
+:root {
+  --ag-bg:          #0B0F14;
+  --ag-card:        #121821;
+  --ag-surface:     #1A2230;
+  --ag-border:      #1E2D40;
+  --ag-border-glow: rgba(0, 229, 255, 0.18);
+
+  --ag-cyan:        #00E5FF;
+  --ag-cyan-dim:    rgba(0, 229, 255, 0.12);
+  --ag-cyan-glow:   rgba(0, 229, 255, 0.35);
+  --ag-green:       #00FF88;
+  --ag-green-dim:   rgba(0, 255, 136, 0.12);
+  --ag-green-glow:  rgba(0, 255, 136, 0.35);
+  --ag-yellow:      #FFB800;
+  --ag-yellow-dim:  rgba(255, 184, 0, 0.12);
+  --ag-orange:      #FF8A3D;
+  --ag-orange-dim:  rgba(255, 138, 61, 0.14);
+  --ag-orange-glow: rgba(255, 138, 61, 0.35);
+  --ag-red:         #FF4D6D;
+  --ag-red-dim:     rgba(255, 77, 109, 0.12);
+  --ag-purple:      #BF5FFF;
+  --ag-purple-dim:  rgba(191, 95, 255, 0.12);
+
+  --ag-text:        #EAF2FF;
+  --ag-text-muted:  #94A3B8;
+  --ag-text-faint:  #4A5568;
+
+  --ag-font-display: 'Orbitron', sans-serif;
+  --ag-font-body:    'Inter', sans-serif;
+  --ag-font-mono:    'JetBrains Mono', monospace;
+
+  --ag-radius:    16px;
+  --ag-radius-sm: 8px;
+  --ag-radius-pill: 999px;
+
+  --ag-cell-size: 13px;
+  --ag-cell-gap:  3px;
+}
+
+/* ── Page wrapper ────────────────────────────────────────── */
+.intel-page {
+  background: var(--ag-bg);
+  min-height: 100vh;
+  padding: 36px 40px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  font-family: var(--ag-font-body);
+  color: var(--ag-text);
+}
+
+/* ── Page header ─────────────────────────────────────────── */
+.intel-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.intel-header-eyebrow {
+  font-family: var(--ag-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ag-text-faint);
+}
+
+.intel-heading {
+  font-family: var(--ag-font-display);
+  font-size: clamp(22px, 4vw, 34px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--ag-text);
+  text-shadow: 0 0 32px rgba(0, 229, 255, 0.22);
+}
+
+.intel-header-desc {
+  font-size: 13.5px;
+  color: var(--ag-text-muted);
+  max-width: 560px;
+}
+
+/* ── Analytics stat cards ────────────────────────────────── */
+.intel-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.intel-stat-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--ag-card);
+  border: 1px solid var(--ag-border);
+  border-radius: var(--ag-radius);
+  padding: 20px 22px;
+  overflow: hidden;
+  transition: border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.intel-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+.intel-stat-icon {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--ag-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.intel-stat-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.intel-stat-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.intel-stat-value {
+  font-family: var(--ag-font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ag-text);
+  line-height: 1;
+}
+
+.intel-stat-label {
+  font-family: var(--ag-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: var(--ag-text-faint);
+}
+
+/* Tone variants — icon chip color + hover border glow */
+.intel-stat-card--cyan .intel-stat-icon   { background: var(--ag-cyan-dim);   color: var(--ag-cyan); }
+.intel-stat-card--cyan:hover              { border-color: rgba(0, 229, 255, 0.4); }
+
+.intel-stat-card--green .intel-stat-icon  { background: var(--ag-green-dim);  color: var(--ag-green); }
+.intel-stat-card--green:hover             { border-color: rgba(0, 255, 136, 0.4); }
+
+.intel-stat-card--yellow .intel-stat-icon { background: var(--ag-yellow-dim); color: var(--ag-yellow); }
+.intel-stat-card--yellow:hover            { border-color: rgba(255, 184, 0, 0.4); }
+
+.intel-stat-card--purple .intel-stat-icon { background: var(--ag-purple-dim); color: var(--ag-purple); }
+.intel-stat-card--purple:hover            { border-color: rgba(191, 95, 255, 0.4); }
+
+/* ── Activity Grid card ──────────────────────────────────── */
+.activity-grid-card {
+  background: var(--ag-card);
+  border: 1px solid var(--ag-border);
+  border-radius: var(--ag-radius);
+  padding: 24px 26px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: inset 0 1px 0 rgba(0, 229, 255, 0.08);
+}
+
+.ag-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ag-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--ag-font-display);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: var(--ag-text-muted);
+}
+
+.ag-title-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--ag-cyan);
+  flex-shrink: 0;
+}
+
+.ag-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--ag-font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--ag-green);
+  background: var(--ag-green-dim);
+  border: 1px solid rgba(0, 255, 136, 0.25);
+  padding: 6px 12px;
+  border-radius: var(--ag-radius-pill);
+}
+
+.ag-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ag-green);
+  box-shadow: 0 0 8px var(--ag-green);
+  animation: ag-pulse-green 2s ease-in-out infinite;
+}
+
+.ag-subtitle {
+  font-family: var(--ag-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--ag-text-faint);
+  margin-top: -6px;
+}
+
+/* ── Grid body layout ────────────────────────────────────── */
+.ag-scroll {
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.ag-scroll::-webkit-scrollbar { height: 6px; }
+.ag-scroll::-webkit-scrollbar-thumb {
+  background: var(--ag-border);
+  border-radius: 4px;
+}
+
+.ag-grid-body {
+  display: flex;
+  gap: 8px;
+  min-width: max-content;
+}
+
+.ag-weekday-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ag-cell-gap);
+  padding-top: 18px; /* aligns under month-label row */
+}
+
+.ag-weekday-label {
+  height: var(--ag-cell-size);
+  display: flex;
+  align-items: center;
+  font-family: var(--ag-font-mono);
+  font-size: 8px;
+  letter-spacing: 0.06em;
+  color: var(--ag-text-faint);
+}
+
+.ag-weeks-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ag-months-row {
+  display: flex;
+  gap: var(--ag-cell-gap);
+}
+
+.ag-month-label {
+  width: var(--ag-cell-size);
+  font-family: var(--ag-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  color: var(--ag-text-faint);
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.ag-weeks {
+  display: flex;
+  gap: var(--ag-cell-gap);
+}
+
+.ag-week-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ag-cell-gap);
+}
+
+/* ── Heatmap cell ────────────────────────────────────────── */
+.ag-cell {
+  position: relative;
+  width: var(--ag-cell-size);
+  height: var(--ag-cell-size);
+  border-radius: 3px;
+  border: 1px solid var(--ag-border);
+  cursor: default;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.ag-cell--empty {
+  border-color: transparent;
+  background: transparent;
+  cursor: default;
+}
+
+.ag-cell:not(.ag-cell--empty):hover {
+  transform: scale(1.35);
+  z-index: 2;
+}
+
+/* Tier fills — 0%: dark · 1-25%: blue · 26-50%: yellow · 51-75%: orange · 76-100%: green */
+.ag-tier-0 {
+  background: var(--ag-surface);
+  border-color: var(--ag-border);
+}
+.ag-tier-1 {
+  background: var(--ag-cyan-dim);
+  border-color: rgba(0, 229, 255, 0.35);
+}
+.ag-tier-2 {
+  background: rgba(255, 184, 0, 0.35);
+  border-color: rgba(255, 184, 0, 0.5);
+}
+.ag-tier-3 {
+  background: rgba(255, 138, 61, 0.55);
+  border-color: rgba(255, 138, 61, 0.7);
+}
+.ag-tier-4 {
+  background: var(--ag-green);
+  border-color: var(--ag-green);
+  box-shadow: 0 0 8px var(--ag-green-glow);
+}
+
+/* ── Tooltip (pure CSS, no JS) ───────────────────────────── */
+.ag-cell[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ag-surface);
+  border: 1px solid var(--ag-border-glow);
+  color: var(--ag-text);
+  font-family: var(--ag-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  padding: 6px 10px;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.ag-cell[data-tooltip]:hover::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 3px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--ag-border-glow);
+  z-index: 10;
+}
+
+/* ── Legend ──────────────────────────────────────────────── */
+.ag-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-end;
+}
+
+.ag-legend .ag-cell {
+  cursor: default;
+}
+.ag-legend .ag-cell:hover {
+  transform: none;
+}
+
+.ag-legend-label {
+  font-family: var(--ag-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--ag-text-faint);
+  margin: 0 2px;
+}
+
+/* ── Animations ──────────────────────────────────────────── */
+@keyframes ag-pulse-green {
+  0%, 100% { box-shadow: 0 0 5px var(--ag-green); opacity: 1; }
+  50%       { box-shadow: 0 0 12px var(--ag-green); opacity: 0.6; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ag-badge-dot { animation: none; }
+  .ag-cell      { transition: none; }
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .intel-page {
+    padding: 28px 24px 48px;
+  }
+  .intel-stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .activity-grid-card {
+    padding: 20px 18px 18px;
+  }
+}
+
+@media (max-width: 560px) {
+  .intel-page {
+    padding: 20px 16px 100px; /* clears mobile bottom nav bar */
+  }
+  .intel-stats-row {
+    grid-template-columns: 1fr;
+  }
+  .intel-stat-card {
+    padding: 16px 18px;
+  }
+}

@@ -1,0 +1,780 @@
+/* ============================================================
+   DAILYWISE — missions.css
+   Tactical Operations Dashboard · Batcomputer / Ghosts HUD
+   Strict monochrome black/charcoal — single gold accent only.
+   No color-coding: hierarchy reads through intensity, not hue.
+   Local design tokens defined here so this file is self-contained.
+   ============================================================ */
+
+/* ── Local design tokens ─────────────────────────────────── */
+:root {
+  --m-bg:            #0A0A0C;
+  --m-card:          #14151A;
+  --m-surface:       #1C1D24;
+  --m-border:        #2A2C35;
+  --m-border-strong: #3A3D4A;
+
+  --m-gold:        #C19A3F;
+  --m-gold-bright: #E0B85A;
+  --m-gold-dim:    rgba(193, 154, 63, 0.12);
+  --m-gold-glow:   rgba(193, 154, 63, 0.35);
+
+  --m-text:       #ECEAE4;
+  --m-text-muted: #9A9CA6;
+  --m-text-faint: #55585F;
+
+  --m-font-display: 'Space Grotesk', sans-serif;
+  --m-font-body:    'Inter', sans-serif;
+  --m-font-mono:    'JetBrains Mono', monospace;
+
+  --m-radius:      16px;
+  --m-radius-sm:   8px;
+  --m-radius-pill: 999px;
+}
+
+/* ── Page wrapper ────────────────────────────────────────── */
+.missions-page {
+  background: var(--m-bg);
+  min-height: 100vh;
+  padding: 36px 40px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  font-family: var(--m-font-body);
+  color: var(--m-text);
+}
+
+/* ── Page header ─────────────────────────────────────────── */
+.missions-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.missions-header-eyebrow {
+  display: block;
+  font-family: var(--m-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--m-text-faint);
+  margin-bottom: 6px;
+}
+
+.missions-heading {
+  font-family: var(--m-font-display);
+  font-size: clamp(22px, 4vw, 34px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--m-text);
+  /* Restrained gold glow — the page's single accent moment */
+  text-shadow: 0 0 28px rgba(193, 154, 63, 0.18);
+}
+
+.missions-header-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--m-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--m-gold);
+  background: var(--m-gold-dim);
+  border: 1px solid rgba(193, 154, 63, 0.25);
+  padding: 7px 14px;
+  border-radius: var(--m-radius-pill);
+}
+
+.header-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--m-gold);
+  box-shadow: 0 0 8px var(--m-gold);
+  animation: pulse-gold 2s ease-in-out infinite;
+}
+
+/* ── Tactical overview bar ───────────────────────────────── */
+.overview-bar {
+  display: flex;
+  align-items: center;
+  background: var(--m-card);
+  border: 1px solid var(--m-border);
+  border-radius: var(--m-radius);
+  padding: 0 28px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(193, 154, 63, 0.06);
+}
+
+.stat-tile {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 16px;
+  gap: 5px;
+}
+
+.stat-tile--accent .stat-tile-value {
+  color: var(--m-gold);
+  text-shadow: 0 0 14px var(--m-gold-glow);
+}
+
+.stat-tile-value {
+  font-family: var(--m-font-mono);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--m-text);
+}
+
+.stat-tile-label {
+  font-family: var(--m-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  color: var(--m-text-faint);
+}
+
+.overview-divider {
+  width: 1px;
+  height: 36px;
+  background: var(--m-border);
+  flex-shrink: 0;
+}
+
+/* ── Creation panel ──────────────────────────────────────── */
+.creation-panel {
+  background: var(--m-card);
+  border: 1px solid var(--m-border);
+  border-radius: var(--m-radius);
+  padding: 24px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: border-color 0.3s ease;
+}
+.creation-panel:focus-within {
+  border-color: rgba(193, 154, 63, 0.4);
+  box-shadow: 0 0 0 1px rgba(193, 154, 63, 0.08);
+}
+
+.creation-panel-header {
+  display: flex;
+  align-items: center;
+}
+
+.creation-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--m-font-display);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--m-text-muted);
+}
+
+.panel-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--m-gold);
+  flex-shrink: 0;
+}
+
+/* Creation form fields in a responsive grid */
+.creation-fields {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 1fr 1fr;
+  gap: 14px;
+  align-items: end;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field-label {
+  font-family: var(--m-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  color: var(--m-text-faint);
+}
+
+.field-input,
+.field-select {
+  background: var(--m-surface);
+  border: 1px solid var(--m-border);
+  border-radius: var(--m-radius-sm);
+  color: var(--m-text);
+  font-family: var(--m-font-body);
+  font-size: 13.5px;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.field-input::placeholder {
+  color: var(--m-text-faint);
+}
+
+.field-input:focus,
+.field-select:focus {
+  border-color: rgba(193, 154, 63, 0.5);
+  box-shadow: 0 0 0 3px rgba(193, 154, 63, 0.08);
+}
+
+/* Custom dropdown arrow */
+.field-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 7' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239A9CA6' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 10px;
+  padding-right: 32px;
+  cursor: pointer;
+}
+
+.field-select option {
+  background: var(--m-surface);
+  color: var(--m-text);
+}
+
+/* Deploy button — the page's solid-gold moment */
+.btn-deploy {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  align-self: flex-start;
+  background: var(--m-gold);
+  color: #0A0A0C;
+  font-family: var(--m-font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 12px 24px;
+  border-radius: var(--m-radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.15s ease, opacity 0.2s;
+}
+.btn-deploy svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+.btn-deploy:hover:not(:disabled) {
+  box-shadow: 0 0 18px var(--m-gold-glow);
+  transform: translateY(-2px);
+}
+.btn-deploy:active:not(:disabled) {
+  transform: translateY(0);
+}
+.btn-deploy:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ── Mission list section ─────────────────────────────────── */
+.mission-list-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mission-list-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.mission-list-title {
+  font-family: var(--m-font-display);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--m-text-muted);
+}
+
+.mission-list-count {
+  font-family: var(--m-font-mono);
+  font-size: 10px;
+  color: var(--m-text-faint);
+  letter-spacing: 0.08em;
+}
+
+/* ── Empty state ─────────────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 64px 32px;
+  border: 1px dashed var(--m-border);
+  border-radius: var(--m-radius);
+  text-align: center;
+}
+
+.empty-state-icon {
+  width: 64px;
+  height: 64px;
+  color: var(--m-text-faint);
+  opacity: 0.5;
+}
+
+.empty-state-primary {
+  font-family: var(--m-font-display);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  color: var(--m-text-muted);
+}
+
+.empty-state-secondary {
+  font-size: 13px;
+  color: var(--m-text-faint);
+}
+
+/* ── Mission grid ────────────────────────────────────────── */
+.mission-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+/* ── Mission card ────────────────────────────────────────── */
+.mission-card-tactial {
+  position: relative;
+  background: var(--m-card);
+  border: 1px solid var(--m-border);
+  border-radius: var(--m-radius);
+  padding: 20px 20px 20px 24px; /* extra left pad for accent bar */
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: hidden;
+  transition: border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+/* Single accent rule: hover glow is always gold, active or completed.
+   Completed cards settle — no glow, slightly recessed. */
+.mission-card-tactial--active:hover {
+  border-color: rgba(193, 154, 63, 0.4);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5),
+              0 0 0 1px rgba(193, 154, 63, 0.08);
+  transform: translateY(-3px);
+}
+
+.mission-card-tactial--completed {
+  opacity: 0.72;
+}
+.mission-card-tactial--completed:hover {
+  opacity: 0.9;
+  border-color: var(--m-border-strong);
+  transform: translateY(-2px);
+}
+
+/* ── Single-accent edge bar ──────────────────────────────── */
+.card-accent-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 3px 0 0 3px;
+  background: var(--m-gold);
+}
+
+.mission-card-tactial--active .card-accent-bar {
+  box-shadow: 0 0 10px var(--m-gold-glow);
+  animation: bar-pulse-gold 2.4s ease-in-out infinite;
+}
+
+.mission-card-tactial--completed .card-accent-bar {
+  opacity: 0.4;
+  box-shadow: none;
+  /* Settled — no animation once locked in */
+}
+
+/* ── Card header ─────────────────────────────────────────── */
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.card-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+}
+
+.card-sword {
+  width: 16px;
+  height: 16px;
+  color: var(--m-gold);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.mission-card-tactial--completed .card-sword {
+  color: var(--m-text-faint);
+}
+
+.card-title {
+  font-family: var(--m-font-display);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--m-text);
+  line-height: 1.35;
+}
+
+.mission-card-tactial--completed .card-title {
+  color: var(--m-text-muted);
+  text-decoration: line-through;
+  text-decoration-color: rgba(154, 156, 166, 0.4);
+}
+
+/* ── Status indicator ────────────────────────────────────── */
+.status-indicator {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-indicator-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid;
+}
+.status-indicator--active .status-indicator-ring {
+  border-color: var(--m-gold);
+  animation: ring-pulse 2.4s ease-in-out infinite;
+}
+.status-indicator--complete .status-indicator-ring {
+  border-color: var(--m-text-faint);
+}
+
+.status-indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.status-indicator--active .status-indicator-dot {
+  background: var(--m-gold);
+  box-shadow: 0 0 6px var(--m-gold-glow);
+  animation: dot-pulse 2.4s ease-in-out infinite;
+}
+.status-indicator--complete .status-indicator-dot {
+  background: var(--m-gold);
+  opacity: 0.55;
+  box-shadow: none;
+}
+
+/* ── Card meta row ───────────────────────────────────────── */
+.card-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.card-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--m-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--m-text-muted);
+}
+
+.card-meta-icon {
+  width: 12px;
+  height: 12px;
+  color: var(--m-gold);
+  flex-shrink: 0;
+}
+
+.card-status-pill {
+  font-family: var(--m-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  padding: 3px 9px;
+  border-radius: var(--m-radius-pill);
+  border: 1px solid;
+}
+.pill-active {
+  color: var(--m-gold);
+  border-color: rgba(193, 154, 63, 0.3);
+  background: var(--m-gold-dim);
+}
+.pill-complete {
+  color: var(--m-text-muted);
+  border-color: var(--m-border-strong);
+  background: var(--m-surface);
+}
+
+/* ── HUD metrics row — signal bars + tier dots (monochrome) ─ */
+.card-metrics {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 4px;
+}
+
+.metric-block {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.metric-label {
+  font-family: var(--m-font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  color: var(--m-text-faint);
+}
+
+.metric-value {
+  font-family: var(--m-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--m-text-muted);
+}
+
+.metric-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--m-border);
+  flex-shrink: 0;
+}
+
+/* Signal bars — priority meter, ascending bar heights */
+.signal-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2.5px;
+  height: 19px;
+}
+
+.signal-bar {
+  width: 4px;
+  border-radius: 1px;
+  background: var(--m-surface);
+  border: 1px solid var(--m-border-strong);
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.signal-bar--lit {
+  background: var(--m-gold);
+  border-color: var(--m-gold);
+  box-shadow: 0 0 5px var(--m-gold-glow);
+}
+
+.mission-card-tactial--completed .signal-bar--lit {
+  background: var(--m-text-faint);
+  border-color: var(--m-text-faint);
+  box-shadow: none;
+}
+
+/* Tier dots — difficulty readout */
+.tier-dots {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tier-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--m-surface);
+  border: 1px solid var(--m-border-strong);
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tier-dot--lit {
+  background: var(--m-gold);
+  border-color: var(--m-gold);
+  box-shadow: 0 0 5px var(--m-gold-glow);
+}
+
+.mission-card-tactial--completed .tier-dot--lit {
+  background: var(--m-text-faint);
+  border-color: var(--m-text-faint);
+  box-shadow: none;
+}
+
+/* ── Card actions ────────────────────────────────────────── */
+.card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 6px;
+  border-top: 1px solid var(--m-border);
+  margin-top: 2px;
+}
+
+.card-btn-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--m-font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.15s ease, background 0.2s, color 0.2s;
+}
+.btn-card svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+/* Complete / Reopen — single gold accent, no green */
+.btn-card--complete,
+.btn-card--reopen {
+  background: var(--m-gold-dim);
+  color: var(--m-gold);
+  border-color: rgba(193, 154, 63, 0.3);
+}
+.btn-card--complete:hover,
+.btn-card--reopen:hover {
+  background: var(--m-gold);
+  color: #0A0A0C;
+  box-shadow: 0 0 12px var(--m-gold-glow);
+  transform: translateY(-1px);
+}
+
+/* Delete — kept neutral/monochrome rather than alarm-red, per the
+   single-accent rule. Discipline over drama. */
+.btn-card--delete {
+  background: var(--m-surface);
+  color: var(--m-text-muted);
+  border-color: var(--m-border-strong);
+}
+.btn-card--delete:hover {
+  background: var(--m-text);
+  color: #0A0A0C;
+  border-color: var(--m-text);
+  box-shadow: 0 0 12px rgba(236, 234, 228, 0.15);
+  transform: translateY(-1px);
+}
+
+/* ── Keyframe animations ─────────────────────────────────── */
+@keyframes bar-pulse-gold {
+  0%, 100% { box-shadow: 0 0 6px var(--m-gold-glow);  opacity: 1; }
+  50%       { box-shadow: 0 0 16px var(--m-gold-glow); opacity: 0.75; }
+}
+
+@keyframes ring-pulse {
+  0%, 100% { opacity: 1;   transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(1.1); }
+}
+
+@keyframes dot-pulse {
+  0%, 100% { box-shadow: 0 0 4px var(--m-gold-glow); }
+  50%       { box-shadow: 0 0 10px var(--m-gold-glow); }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 5px var(--m-gold); opacity: 1; }
+  50%       { box-shadow: 0 0 12px var(--m-gold); opacity: 0.6; }
+}
+
+/* ── Reduced motion: respect user preference ─────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .card-accent-bar,
+  .status-indicator-ring,
+  .status-indicator-dot,
+  .header-badge-dot {
+    animation: none;
+  }
+}
+
+/* ── Responsive layout ───────────────────────────────────── */
+
+/* Tablet */
+@media (max-width: 900px) {
+  .missions-page {
+    padding: 28px 24px 48px;
+  }
+  .creation-fields {
+    grid-template-columns: 1fr 1fr;
+  }
+  .field-group--wide {
+    grid-column: 1 / -1;
+  }
+  .overview-bar {
+    padding: 0 16px;
+    overflow-x: auto;
+  }
+  .stat-tile {
+    padding: 16px 12px;
+    min-width: 90px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 560px) {
+  .missions-page {
+    padding: 20px 16px 40px;
+  }
+  .creation-fields {
+    grid-template-columns: 1fr;
+  }
+  .field-group--wide {
+    grid-column: auto;
+  }
+  .btn-deploy {
+    width: 100%;
+    justify-content: center;
+  }
+  .mission-grid {
+    grid-template-columns: 1fr;
+  }
+  .card-metrics {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .card-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .card-btn-group {
+    width: 100%;
+  }
+  .btn-card {
+    flex: 1;
+    justify-content: center;
+  }
+  .overview-bar {
+    gap: 0;
+  }
+  .stat-tile-value {
+    font-size: 17px;
+  }
+  .stat-tile-label {
+    font-size: 8.5px;
+  }
+}
