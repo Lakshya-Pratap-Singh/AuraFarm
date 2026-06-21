@@ -1,111 +1,176 @@
+/* ============================================================
+   DAILYWISE — Global Styles & Design Tokens
+   Batcave-inspired tactical command center theme
+   ============================================================
+   NOTE: this file previously contained unrelated starter-template
+   boilerplate (light theme, #root width:1126px centering, blog
+   typography). That's been removed — it was the actual cause of
+   the sidebar/content misalignment, since the fixed-position
+   sidebar is viewport-relative while a centered, width-capped
+   #root made main-content's margin-left math diverge from it.
+   ============================================================ */
+
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  /* --- Color tokens --- */
+  --color-bg: #0a0a0c;
+  --color-surface: #14151a;
+  --color-surface-alt: #1c1d24;
+  --color-border: #2a2c35;
+  --color-border-strong: #3a3d4a;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  --color-gold: #c9a227;
+  --color-gold-bright: #f0c419;
+  --color-gold-soft: rgba(201, 162, 39, 0.14);
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --color-text: #e8e6e1;
+  --color-text-muted: #8b8d96;
+  --color-text-faint: #5b5d66;
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  /* --- Typography --- */
+  --font-display: 'Rajdhani', sans-serif; /* headings / HUD labels */
+  --font-body: 'Inter', sans-serif;       /* body copy */
+  --font-mono: 'JetBrains Mono', monospace; /* stats / data readouts */
+
+  /* --- Layout --- */
+  /* Sidebar is a floating pill: offset = width + gap from edge */
+  --sidebar-width: 240px;            /* expanded — must match sidebar.css --sb-expanded */
+  --sidebar-collapsed-width: 72px;   /* must match sidebar.css --sb-collapsed */
+  --sidebar-gap: 16px;               /* gap from window edge — must match sidebar.css --sb-gap */
+  --radius-md: 10px;
+  --radius-lg: 16px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-body {
+* {
   margin: 0;
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
+  padding: 0;
   box-sizing: border-box;
 }
 
+html,
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  scroll-behavior: smooth;
+}
+
+/* #root is intentionally NOT width-capped or centered — this app is a
+   full-viewport dashboard, not a centered article/blog layout. The
+   fixed-position sidebar needs #root to span the full viewport so its
+   own coordinate frame matches what main-content's margin math expects. */
+#root {
+  min-height: 100vh;
+  width: 100%;
+}
+
 h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
+/* --- App shell: sidebar + main content --- */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Subtle tactical scanline texture — signature HUD detail, very low opacity */
+.app-shell::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(201, 162, 39, 0.025) 0px,
+    rgba(201, 162, 39, 0.025) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: overlay;
+}
+
+.main-content {
+  flex: 1;
+  /* sidebar width + the gap it floats from the left edge + a little breathing room */
+  margin-left: calc(var(--sidebar-width) + var(--sidebar-gap) + 16px);
+  padding: 40px 48px;
+  position: relative;
+  z-index: 2;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 0; /* prevents flex overflow pushing layout wider than viewport */
+}
+
+/* When sidebar is collapsed, content expands to reclaim the space */
+.app-shell--collapsed .main-content {
+  margin-left: calc(var(--sidebar-collapsed-width) + var(--sidebar-gap) + 16px);
+}
+
+@media (max-width: 767px) {
+  .main-content {
+    margin-left: 0;
+    padding: 24px 16px 100px; /* bottom pad for the mobile bottom bar */
+  }
+  .app-shell--collapsed .main-content {
+    margin-left: 0;
+  }
+}
+
+/* Shared HUD corner-bracket decoration, reused on stat & mission cards */
+.corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--color-gold);
+  opacity: 0.55;
+  transition: opacity 0.25s ease;
+}
+.corner-tl {
+  top: -1px;
+  left: -1px;
+  border-right: none;
+  border-bottom: none;
+}
+.corner-br {
+  bottom: -1px;
+  right: -1px;
+  border-left: none;
+  border-top: none;
+}
+
+/* Shared status indicator dot (used in sidebar footer + dashboard header) */
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-gold-bright);
+  box-shadow: 0 0 8px var(--color-gold-bright);
+  margin-right: 8px;
+}
+
+/* --- Scrollbar theming --- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
   border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
 }

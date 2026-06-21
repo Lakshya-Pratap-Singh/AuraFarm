@@ -3,10 +3,16 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 
 import App from "./App";
+import { AuthProvider } from "./context/AuthContext.jsx";
+import { XPProvider } from "./context/XPContext.jsx";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-    <App />
+    <AuthProvider>
+      <XPProvider>
+        <App />
+      </XPProvider>
+    </AuthProvider>
   </BrowserRouter>
 );

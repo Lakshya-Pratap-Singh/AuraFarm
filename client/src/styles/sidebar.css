@@ -1,185 +1,446 @@
-/* ─── Sidebar Container ────────────────────────────────────────────────── */
+/* ============================================================
+   DAILYWISE — Sidebar
+   Floating pill design · Black/Gold · Collapsible
+   ============================================================ */
 
+/* ── Layout tokens ─────────────────────────────────────────── */
+:root {
+  --sb-expanded:  240px;
+  --sb-collapsed: 72px;
+  --sb-gap:       16px;   /* gap from window edge */
+  --sb-radius:    24px;
+
+  /* Gold palette */
+  --sb-gold:        #d4af37;
+  --sb-gold-bright: #f4d03f;
+  --sb-gold-soft:   rgba(212, 175, 55, 0.12);
+  --sb-gold-border: rgba(212, 175, 55, 0.22);
+
+  /* Surfaces */
+  --sb-bg:          #0e0e10;
+  --sb-surface:     #161618;
+  --sb-border:      rgba(255, 255, 255, 0.07);
+  --sb-text:        #e8e6e1;
+  --sb-muted:       #6b6e78;
+  --sb-faint:       #3a3c44;
+}
+
+/* ── Container ─────────────────────────────────────────────── */
 .sidebar {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 260px;
-  height: 100vh;
-  background-color: #111111;
-  border-right: 1px solid #262626;
-  display: flex;
-  flex-direction: column;
+  top:    var(--sb-gap);
+  left:   var(--sb-gap);
+  bottom: var(--sb-gap);
+  width:  var(--sb-expanded);
   z-index: 100;
-  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
-}
 
-/* ─── Brand / Logo ─────────────────────────────────────────────────────── */
+  background: var(--sb-bg);
+  border-radius: var(--sb-radius);
+  border: 1px solid var(--sb-border);
+  box-shadow:
+    0 0 0 1px var(--sb-gold-border),
+    0 8px 40px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 
-.sidebar-brand {
-  padding: 28px 24px 24px;
-  border-bottom: 1px solid #262626;
-}
-
-.sidebar-logo {
-  display: block;
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  color: #d4af37;
-  text-transform: uppercase;
-}
-
-.sidebar-tagline {
-  display: block;
-  margin-top: 4px;
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #9ca3af;
-}
-
-/* ─── Navigation ───────────────────────────────────────────────────────── */
-
-.sidebar-nav {
-  flex: 1;
-  padding: 20px 12px;
-  overflow-y: auto;
-}
-
-.sidebar-nav-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  padding: 20px 14px 20px;
+  gap: 6px;
+  overflow: hidden;
+
+  /* Smooth width transition */
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s ease;
 }
 
-.sidebar-nav-item {
+/* Subtle ambient lift on hover — feels alive without being loud */
+.sidebar:hover {
+  box-shadow:
+    0 0 0 1px var(--sb-gold-border),
+    0 10px 48px rgba(0, 0, 0, 0.7),
+    0 0 32px rgba(212, 175, 55, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Collapsed state — icon-only width */
+.sidebar--collapsed {
+  width: var(--sb-collapsed);
+}
+
+/* ── Subtle inner top glow line */
+.sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--sb-gold-border), transparent);
+  border-radius: 1px;
+  pointer-events: none;
+}
+
+/* ── Brand block ───────────────────────────────────────────── */
+.sb-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  padding: 6px 6px 14px;
+  border-bottom: 1px solid var(--sb-border);
+  margin-bottom: 4px;
+  min-width: 0;  /* allow children to shrink */
+  overflow: hidden;
+}
+
+.sb-bat {
+  width: 28px;
+  height: 15px;
+  color: var(--sb-gold);
+  flex-shrink: 0;
+  transition: filter 0.3s ease;
+}
+.sb-bat svg {
   width: 100%;
-  padding: 12px 16px;
-  border-radius: 10px;
-  color: #9ca3af;
-  font-size: 0.9rem;
+  height: 100%;
+}
+.sb-brand:hover .sb-bat {
+  filter: drop-shadow(0 0 6px rgba(244, 208, 63, 0.45));
+}
+
+.sb-brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  /* Slides out when collapsed */
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.2s ease 0.05s, max-width 0.3s ease;
+  max-width: 180px;
+  white-space: nowrap;
+}
+
+.sidebar--collapsed .sb-brand-text {
+  opacity: 0;
+  max-width: 0;
+  transition: opacity 0.1s ease, max-width 0.3s ease;
+}
+
+.sb-logo {
+  font-family: var(--font-display, 'Rajdhani', sans-serif);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--sb-text);
+}
+.sb-gold {
+  color: var(--sb-gold);
+}
+
+.sb-tagline {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 8.5px;
+  letter-spacing: 0.14em;
+  color: var(--sb-muted);
+  text-transform: uppercase;
+}
+
+/* ── Collapse toggle button ────────────────────────────────── */
+.sb-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--sb-surface);
+  border: 1px solid var(--sb-border);
+  color: var(--sb-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-right: 2px;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+              transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+.sb-toggle svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.2s ease;
+}
+.sb-toggle:hover {
+  background: var(--sb-gold-soft);
+  color: var(--sb-gold-bright);
+  border-color: var(--sb-gold-border);
+  box-shadow: 0 0 14px rgba(212, 175, 55, 0.18);
+  transform: scale(1.12);
+}
+.sb-toggle:active {
+  transform: scale(0.94);
+}
+.sb-toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--sb-gold-border), 0 0 14px rgba(212, 175, 55, 0.18);
+}
+
+/* When collapsed, center the toggle within the narrow sidebar */
+.sidebar--collapsed .sb-toggle {
+  align-self: center;
+  margin-right: 0;
+}
+
+/* ── Navigation ────────────────────────────────────────────── */
+.sb-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* Hide scrollbar — content should always fit */
+  scrollbar-width: none;
+}
+.sb-nav::-webkit-scrollbar { display: none; }
+
+.sb-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 14px;
+  color: var(--sb-muted);
+  font-size: 13.5px;
   font-weight: 500;
   text-align: left;
-  transition: all 0.25s ease;
+  white-space: nowrap;
+  overflow: hidden;
   border: 1px solid transparent;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
 }
 
-.sidebar-nav-item:hover {
-  background-color: #171717;
-  color: #f5f5f5;
-  border-color: #262626;
-  transform: translateX(4px);
+/* Collapsed: center the icon */
+.sidebar--collapsed .sb-item {
+  padding: 10px;
+  justify-content: center;
 }
 
-/* Active navigation item — gold highlight */
-.sidebar-nav-item--active {
-  background-color: rgba(212, 175, 55, 0.1);
-  color: #f4d03f;
-  border-color: rgba(212, 175, 55, 0.3);
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.08);
-}
-
-.sidebar-nav-item--active:hover {
-  color: #f4d03f;
-  transform: translateX(4px);
-}
-
-.sidebar-nav-indicator {
-  font-size: 0.65rem;
-  color: inherit;
+.sb-item-icon {
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
-}
-
-.sidebar-nav-item--active .sidebar-nav-indicator {
-  color: #d4af37;
-}
-
-.sidebar-nav-label {
-  flex: 1;
-}
-
-/* ─── Footer Status ────────────────────────────────────────────────────── */
-
-.sidebar-footer {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 16px 24px;
-  border-top: 1px solid #262626;
-  font-size: 0.75rem;
-  color: #9ca3af;
-  letter-spacing: 0.05em;
+  justify-content: center;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease;
+}
+.sb-item-icon svg {
+  width: 100%;
+  height: 100%;
 }
 
-.sidebar-status-dot {
-  width: 8px;
-  height: 8px;
+.sb-item-label {
+  flex: 1;
+  overflow: hidden;
+  /* Fades out when collapsing */
+  opacity: 1;
+  max-width: 160px;
+  transition: opacity 0.15s ease, max-width 0.3s ease;
+}
+.sidebar--collapsed .sb-item-label {
+  opacity: 0;
+  max-width: 0;
+}
+
+/* Hover state — gentle lift + icon nudge, not just a color swap */
+.sb-item:hover {
+  background: var(--sb-surface);
+  color: var(--sb-text);
+  border-color: var(--sb-border);
+  transform: translateX(2px);
+}
+.sb-item:hover .sb-item-icon {
+  transform: scale(1.08);
+}
+.sidebar--collapsed .sb-item:hover {
+  transform: translateX(0) scale(1.05);
+}
+
+.sb-item:active {
+  transform: translateX(2px) scale(0.98);
+}
+
+.sb-item:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--sb-gold-border);
+}
+
+/* Active state — gold pill highlight + left indicator bar */
+.sb-item--active {
+  background: var(--sb-gold-soft);
+  color: var(--sb-gold-bright);
+  border-color: var(--sb-gold-border);
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.1);
+}
+.sb-item--active:hover {
+  background: var(--sb-gold-soft);
+  color: var(--sb-gold-bright);
+  transform: translateX(2px);
+}
+
+/* Slim gold marker on the active item — reads even before color registers */
+.sb-item--active::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 18px;
+  border-radius: 0 3px 3px 0;
+  background: var(--sb-gold-bright);
+  box-shadow: 0 0 8px rgba(244, 208, 63, 0.6);
+}
+
+.sb-item--active .sb-item-icon {
+  color: var(--sb-gold-bright);
+  filter: drop-shadow(0 0 4px rgba(244, 208, 63, 0.5));
+}
+
+/* ── Footer ────────────────────────────────────────────────── */
+.sb-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 8px 6px;
+  border-top: 1px solid var(--sb-border);
+  overflow: hidden;
+  min-width: 0;
+}
+
+.sb-status-dot {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background-color: #22c55e;
-  box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
-  animation: pulse 2s ease-in-out infinite;
+  background: var(--sb-gold-bright);
+  box-shadow: 0 0 7px rgba(244, 208, 63, 0.7);
+  flex-shrink: 0;
+  animation: sb-dot-pulse 2.5s ease-in-out infinite;
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
+.sb-footer-text {
+  min-width: 0;
+  overflow: hidden;
+  opacity: 1;
+  max-width: 180px;
+  white-space: nowrap;
+  transition: opacity 0.15s ease, max-width 0.3s ease;
+}
+.sidebar--collapsed .sb-footer-text {
+  opacity: 0;
+  max-width: 0;
 }
 
-/* ─── Responsive Sidebar ───────────────────────────────────────────────── */
+.sb-footer-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sb-text);
+}
+.sb-footer-sub {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 9.5px;
+  color: var(--sb-faint);
+  margin-top: 2px;
+}
 
+/* ── Animations ─────────────────────────────────────────────── */
+@keyframes sb-dot-pulse {
+  0%, 100% { opacity: 1;   box-shadow: 0 0 6px rgba(244, 208, 63, 0.6); }
+  50%       { opacity: 0.5; box-shadow: 0 0 12px rgba(244, 208, 63, 0.3); }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sb-brand-text,
+  .sb-item-label,
+  .sb-footer-text,
+  .sb-item,
+  .sb-toggle { transition: none; }
+  .sb-status-dot  { animation: none; }
+}
+
+/* ── Mobile — horizontal bar at bottom ─────────────────────── */
 @media (max-width: 767px) {
   .sidebar {
-    width: 100%;
-    height: auto;
+    top: auto;
+    left:   var(--sb-gap);
+    right:  var(--sb-gap);
+    bottom: var(--sb-gap);
+    width: auto !important;      /* override inline-collapsed width */
+    height: 64px;
     flex-direction: row;
     align-items: center;
     padding: 0 16px;
-    border-right: none;
-    border-bottom: 1px solid #262626;
+    border-radius: 18px;
+    gap: 0;
   }
 
-  .sidebar-brand {
-    padding: 12px 0;
-    border-bottom: none;
-    flex-shrink: 0;
-  }
+  .sb-brand   { display: none; }
+  .sb-toggle  { display: none; }
+  .sb-footer  { display: none; }
 
-  .sidebar-tagline {
-    display: none;
-  }
-
-  .sidebar-nav {
-    flex: 1;
-    padding: 8px 0;
-    overflow-x: auto;
-  }
-
-  .sidebar-nav-list {
+  .sb-nav {
     flex-direction: row;
-    gap: 8px;
+    flex: 1;
+    justify-content: space-around;
+    overflow: visible;
+    gap: 0;
   }
 
-  .sidebar-nav-item {
-    padding: 8px 12px;
-    white-space: nowrap;
-    font-size: 0.8rem;
+  .sb-item {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 10px;
+    font-size: 10px;
+    border-radius: 12px;
+  }
+  .sidebar--collapsed .sb-item {
+    justify-content: center;
+    padding: 8px 10px;
+  }
+  .sb-item:hover,
+  .sb-item:active {
+    transform: none; /* no horizontal nudge in the bottom bar layout */
+  }
+  .sb-item--active::before {
+    /* Reposition the marker above the icon instead of to the left */
+    left: 50%;
+    top: -2px;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 3px;
+    border-radius: 0 0 3px 3px;
   }
 
-  .sidebar-nav-item:hover {
-    transform: none;
+  .sb-item-label,
+  .sidebar--collapsed .sb-item-label {
+    opacity: 1;
+    max-width: none;
+    font-size: 9px;
   }
 
-  .sidebar-footer {
-    display: none;
+  .sb-item-icon {
+    width: 20px;
+    height: 20px;
   }
 }
