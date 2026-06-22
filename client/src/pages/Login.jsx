@@ -23,7 +23,14 @@ function Login() {
     setIsSubmitting(true);
 
     try {
-      await login(form);
+      const formData = new FormData(event.currentTarget);
+      const payload = {
+        email: String(formData.get("email") || "").trim(),
+        password: String(formData.get("password") || ""),
+        rememberMe: formData.get("rememberMe") === "on",
+      };
+
+      await login(payload);
       navigate("/");
     } catch (err) {
       setError(err.message || "Unable to sign in");
