@@ -101,7 +101,7 @@ function DashboardWidgets({
           title="Current Streak"
           value={currentStreak}
           suffix="d"
-          detail="Consecutive success"
+          detail="Consecutive days active"
         />
         <MetricCard
           title="Level"
@@ -194,8 +194,8 @@ function DashboardWidgets({
           <span className="dashboard-panel__meta">Last 7 days</span>
         </div>
         <div className="dashboard-chart" role="img" aria-label="Weekly completion chart">
-          {weeklyData.map((day) => (
-            <div key={day.label} className="dashboard-chart__column">
+          {weeklyData.map((day, i) => (
+            <div key={`${day.label}-${i}`} className="dashboard-chart__column">
               <div
                 className="dashboard-chart__bar"
                 style={{ height: `${(day.value / chartMax) * 100}%` }}
@@ -211,16 +211,20 @@ function DashboardWidgets({
           <p className="dashboard-panel__eyebrow">RECENT ACTIVITY</p>
         </div>
         <div className="dashboard-feed">
-          {recentActivity.map((item) => (
-            <article key={item.id} className="dashboard-feed__item">
-              <div className="dashboard-feed__dot" />
-              <div>
-                <p className="dashboard-feed__title">{item.title}</p>
-                <p className="dashboard-feed__meta">{item.detail}</p>
-              </div>
-              <span className="dashboard-feed__time">{item.time}</span>
-            </article>
-          ))}
+          {recentActivity.length === 0 ? (
+            <p className="widget-card__detail">No activity logged yet.</p>
+          ) : (
+            recentActivity.map((item) => (
+              <article key={item.id} className="dashboard-feed__item">
+                <div className={`dashboard-feed__dot dashboard-feed__dot--${item.type}`} />
+                <div>
+                  <p className="dashboard-feed__title">{item.title}</p>
+                  <p className="dashboard-feed__meta">{item.detail}</p>
+                </div>
+                <span className="dashboard-feed__time">{item.time}</span>
+              </article>
+            ))
+          )}
         </div>
       </section>
     </div>
