@@ -1,11 +1,17 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext.jsx";
+import "../styles/login.css";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div style={{ padding: "2rem" }}>Loading session...</div>;
+    return (
+      <div className="auth-loading-screen">
+        <span className="auth-loading-dot" />
+        VERIFYING CREDENTIALS…
+      </div>
+    );
   }
 
   if (!user) {

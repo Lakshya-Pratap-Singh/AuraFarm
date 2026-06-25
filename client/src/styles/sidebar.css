@@ -335,6 +335,62 @@
   animation: sb-dot-pulse 2.5s ease-in-out infinite;
 }
 
+/* Real profile photo, shown instead of the status dot once a user is
+   authenticated */
+.sb-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  object-fit: cover;
+  border: 1.5px solid var(--sb-gold-border);
+}
+
+/* Logout button — same circular-icon-button language as .sb-toggle */
+.sb-logout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--sb-surface);
+  border: 1px solid var(--sb-border);
+  color: var(--sb-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: auto;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+              transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.sb-logout svg {
+  width: 13px;
+  height: 13px;
+}
+.sb-logout:hover {
+  background: rgba(255, 77, 77, 0.1);
+  color: #ff6b6b;
+  border-color: rgba(255, 77, 77, 0.3);
+  transform: scale(1.1);
+}
+.sb-logout:active {
+  transform: scale(0.94);
+}
+.sb-logout:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.4);
+}
+
+/* Collapsed: footer becomes avatar/dot + logout button stacked, text hidden */
+.sidebar--collapsed .sb-footer {
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 0 4px;
+}
+.sidebar--collapsed .sb-logout {
+  margin-left: 0;
+}
+
 .sb-footer-text {
   min-width: 0;
   overflow: hidden;

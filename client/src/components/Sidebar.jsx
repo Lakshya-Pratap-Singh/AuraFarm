@@ -1,5 +1,5 @@
 import '../styles/sidebar.css'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/AuthContext.jsx'
 
 // ─── Icon set ──────────────────────────────────────────────────────────────
 const icons = {
@@ -53,6 +53,15 @@ const ChevronRight = () => (
   </svg>
 )
 
+// Logout icon for the footer button
+const LogoutIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+    <path d="M16 17l5-5-5-5" />
+    <path d="M21 12H9" />
+  </svg>
+)
+
 const NAV_ITEMS = [
   { label: 'Command Center', icon: 'grid'   },
   { label: 'Missions',       icon: 'target' },
@@ -63,10 +72,6 @@ const NAV_ITEMS = [
 
 function Sidebar({ activeNav, onNavChange, isCollapsed, onToggle }) {
   const { user, logout } = useAuth()
-
-  const handleLogout = async () => {
-    await logout()
-  }
 
   return (
     <aside className={`sidebar ${isCollapsed ? 'sidebar--collapsed' : ''}`}>
@@ -116,20 +121,33 @@ function Sidebar({ activeNav, onNavChange, isCollapsed, onToggle }) {
         })}
       </nav>
 
-      {/* ── Footer status ─────────────────────────────────────────── */}
+      {/* ── Footer — authenticated operative identity + logout ───── */}
       <div className="sb-footer">
-        <span className="sb-status-dot" />
-        <div className="sb-footer-text">
-          <p className="sb-footer-title">{user?.username || 'Operative'}</p>
-          <p className="sb-footer-sub">{user ? 'Authenticated' : 'Guest Access'}</p>
-        </div>
-      </div>
+        {user?.photoURL ? (
+          <img
+            className="sb-avatar"
+            src={user.photoURL}
+            alt={user.displayName || 'Operative'}
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          <span className="sb-status-dot" />
+        )}
 
-      {user && (
-        <button className="sb-logout" onClick={handleLogout}>
-          Logout
+        <div className="sb-footer-text">
+          <p className="sb-footer-title">{user?.displayName || 'Operative'}</p>
+          <p className="sb-footer-sub">{user?.email || 'Gotham · Sector 07'}</p>
+        </div>
+
+        <button
+          className="sb-logout"
+          onClick={logout}
+          aria-label="Log out"
+          title="Log out"
+        >
+          <LogoutIcon />
         </button>
-      )}
+      </div>
 
     </aside>
   )

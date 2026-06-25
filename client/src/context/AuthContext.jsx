@@ -1,101 +1,91 @@
+// AuthContext — Firebase Google Authentication.
+//
+// Replaces the previous backend session API (fetch + cookies against
+// dailywise.onrender.com) entirely. onAuthStateChanged is what makes
+// login survive a page refresh — Firebase persists the session in
+// IndexedDB/localStorage on its own once setPersistence is set to
+// browserLocalPersistence, so there's no manual token storage here.
+
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import {
+  onAuthStateChanged,
+  signInWithPopup,
+  signOut,
+  setPersistence,
+  browserLocalPersistence,
+} from "firebase/auth";
+import { auth, googleProvider } from "../firebase.js";
 
 const AuthContext = createContext(null);
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+// Narrows Firebase's User object down to just what this app displays —
+// keeps the rest of the app decoupled from the Firebase SDK's shape.
+function mapFirebaseUser(firebaseUser) {
+  if (!firebaseUser) return null;
+  return {
+    uid: firebaseUser.uid,
+    displayName: firebaseUser.displayName,
+    email: firebaseUser.email,
+    photoURL: firebaseUser.photoURL,
+  };
+}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState(null);
 
-  const fetchUser = async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/v1/users/me`, {
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        setUser(null);
-        return;
-      }
-
-      const data = await response.json();
-      setUser(data.user || null);
-    } catch (error) {
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Fires once on mount with whatever session Firebase already has
+  // persisted locally, and again on every sign-in/sign-out — this single
+  // listener is the source of truth for `user` and `loading`.
   useEffect(() => {
-    fetchUser();
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(mapFirebaseUser(firebaseUser));
+      setLoading(false);
+    });
+    return unsubscribe;
   }, []);
 
-  const login = async ({ email, password, rememberMe }) => {
-    const response = await fetch(`${API_BASE}/api/v1/users/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({ email, password, rememberMe }),
-    });
-
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || "Login failed");
+  const signInWithGoogle = async () => {
+    setAuthError(null);
+    try {
+      await setPersistence(auth, browserLocalPersistence);
+      const result = await signInWithPopup(auth, googleProvider);
+      setUser(mapFirebaseUser(result.user));
+      return result.user;
+    } catch (error) {
+      // The user closing the popup isn't a real failure — don't surface it
+      if (error?.code !== "auth/popup-closed-by-user") {
+        setAuthError(error?.message || "Google sign-in failed");
+      }
+      throw error;
     }
-
-    setUser(data.user);
-    return data;
-  };
-
-  const register = async ({ email, username, password, rememberMe }) => {
-    const response = await fetch(`${API_BASE}/api/v1/users/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({ email, username, password, rememberMe }),
-    });
-
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || "Registration failed");
-    }
-
-    setUser(data.user);
-    return data;
   };
 
   const logout = async () => {
-    try {
-      await fetch(`${API_BASE}/api/v1/users/logout`, {
-        method: "POST",
-        credentials: "include",
-      });
-    } finally {
-      setUser(null);
-    }
+    await signOut(auth);
+    setUser(null);
   };
 
   const value = useMemo(
     () => ({
       user,
       loading,
-      login,
-      register,
+      authError,
+      signInWithGoogle,
       logout,
       isAuthenticated: Boolean(user),
     }),
-    [user, loading]
+    [user, loading, authError]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return ctx;
 }
