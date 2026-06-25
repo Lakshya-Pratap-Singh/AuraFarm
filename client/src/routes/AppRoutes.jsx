@@ -6,7 +6,7 @@ import Objectives from "../pages/Objectives";
 import Intelligence from "../pages/Intelligence";
 import Settings from "../pages/Settings";
 import Login from "../pages/Login.jsx";
-import ProtectedRoute from "..components/ProtectedRoute.jsx";
+import ProtectedRoute from "../components/ProtectedRoute.jsx";
 
 function AppRoutes({
   missions,
