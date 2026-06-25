@@ -248,4 +248,10 @@ function ActivityGrid({ missions = [], onAnalytics }) {
   );
 }
 
+export {
+  recordSnapshot,
+  getLast90Days,
+  computeStreaks,
+};
+
 export default ActivityGrid;
