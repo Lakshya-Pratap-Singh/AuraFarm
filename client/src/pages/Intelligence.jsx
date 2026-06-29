@@ -2,10 +2,26 @@
 // Hosts the Tactical Activity Grid (90-day consistency heatmap) plus
 // derived streak/average stat cards. All analytics math lives inside
 // ActivityGrid; this page just renders the numbers it reports back.
+//
+// REWORKED: page chrome moved to the gold Batcomputer theme (matching
+// missions.css/objectives.css) via the new intelligence.css — this page
+// no longer borrows activity-grid.css's cyan tones for anything except
+// the heatmap itself, which keeps its own native coloring on purpose
+// (see intelligence.css header comment for why).
+//
+// Category/difficulty breakdown now renders as glowing gold donut
+// charts (DonutChart) instead of the earlier bar-list BreakdownChart.
+// Counts are computed here from real mission fields (mission.category,
+// mission.difficulty) — unchanged from before.
+//
+// IMPORT ORDER MATTERS: ActivityGrid is imported before intelligence.css
+// so activity-grid.css loads first and intelligence.css's overlapping
+// selectors (.intel-page, .intel-stat-card, etc.) win the cascade.
 
 import { useState } from "react";
 import ActivityGrid from "../components/ActivityGrid.jsx";
-import "../styles/activity-grid.css";
+import DonutChart from "../components/DonutChart.jsx";
+import "../styles/intelligence.css";
 
 // ── Small inline icons (kept local — single-use on this page) ───────────
 const FlameIcon = () => (
@@ -34,10 +50,11 @@ const CheckIcon = () => (
   </svg>
 );
 
-// ── Reusable analytics card ───────────────────────────────────────────────
-function IntelStatCard({ icon, label, value, tone }) {
+// ── Reusable analytics card — single gold accent, "accent" flag only
+// controls glow intensity (hierarchy through intensity, not hue) ────────
+function IntelStatCard({ icon, label, value, accent }) {
   return (
-    <div className={`intel-stat-card intel-stat-card--${tone}`}>
+    <div className={`intel-stat-card ${accent ? "intel-stat-card--accent" : ""}`}>
       <div className="intel-stat-icon">{icon}</div>
       <div className="intel-stat-text">
         <span className="intel-stat-value">{value}</span>
@@ -55,6 +72,19 @@ function Intelligence({ missions = [] }) {
   });
 
   const totalCompleted = missions.filter((m) => m.completed).length;
+
+  // ── Category / difficulty distributions — real fields, no derivation ──
+  const categoryCounts = missions.reduce((acc, mission) => {
+    const category = mission.category || "Uncategorized";
+    acc[category] = (acc[category] || 0) + 1;
+    return acc;
+  }, {});
+
+  const difficultyCounts = missions.reduce((acc, mission) => {
+    const difficulty = mission.difficulty || "Normal";
+    acc[difficulty] = (acc[difficulty] || 0) + 1;
+    return acc;
+  }, {});
 
   return (
     <div className="intel-page">
@@ -75,31 +105,34 @@ function Intelligence({ missions = [] }) {
           icon={<FlameIcon />}
           label="CURRENT STREAK"
           value={`${analytics.currentStreak}D`}
-          tone="cyan"
+          accent
         />
         <IntelStatCard
           icon={<TrophyIcon />}
           label="BEST STREAK"
           value={`${analytics.bestStreak}D`}
-          tone="green"
         />
         <IntelStatCard
           icon={<TargetIcon />}
           label="AVG COMPLETION RATE"
           value={`${analytics.averageRate}%`}
-          tone="yellow"
         />
         <IntelStatCard
           icon={<CheckIcon />}
           label="TOTAL MISSIONS COMPLETED"
           value={totalCompleted}
-          tone="purple"
         />
       </section>
 
-      {/* ── Activity heatmap ─────────────────────────────────────────── */}
+      {/* ── Activity heatmap — kept in its native cyan tier coloring ──── */}
       <section className="intel-grid-section" aria-label="90 day activity grid">
         <ActivityGrid missions={missions} onAnalytics={setAnalytics} />
+      </section>
+
+      {/* ── Category / Difficulty breakdown — now donut charts ───────── */}
+      <section className="intel-breakdown-row" aria-label="Category and difficulty breakdown">
+        <DonutChart title="CATEGORY BREAKDOWN" data={categoryCounts} />
+        <DonutChart title="DIFFICULTY BREAKDOWN" data={difficultyCounts} />
       </section>
     </div>
   );

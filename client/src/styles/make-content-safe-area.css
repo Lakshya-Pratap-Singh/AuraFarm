@@ -1,0 +1,21 @@
+/* main-content-safe-area.css
+   Additive patch on index.css's .main-content — load AFTER index.css.
+
+   The original 100px flat guess was reserved for BottomNav before it
+   was actually wired in. Real math now that it is:
+     BottomNav: bottom: 16px (fixed gap) + height: 64px = 80px occupied
+     + a little breathing room above it
+     + env(safe-area-inset-bottom) for the iPhone home-indicator strip,
+       which the flat 100px never accounted for at all — on a device
+       with a ~34px inset, 100px alone would let the last bit of page
+       content sit behind/under the nav bar.
+
+   Only padding-bottom is touched; top/left/right padding from the
+   original rule is untouched.
+*/
+
+@media (max-width: 767px) {
+  .main-content {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  }
+}

@@ -4,7 +4,24 @@ import {
   CATEGORY_CONFIG,
 } from "../pages/Missions.jsx";
 import { MISSION_XP_TABLE } from "../context/XPContext.jsx";
+import useSwipeGesture from "../hooks/useSwipeGesture.js";
+import { useEffect, useState } from "react";
 import "../styles/missions.css";
+import "../styles/mission-swipe.css";
+
+// CHANGED: whole card is now the drag surface (Samsung call-log style),
+// not just a slider living inside .card-actions. Works identically for
+// touch and mouse via pointer events — no isMobile branching needed, so
+// useBreakpoint is no longer imported here.
+//
+// The COMPLETE/REOPEN button stays visible on every breakpoint now (it
+// used to be desktop-only, with SwipeToComplete taking over on mobile).
+// Swipe is an added fast-path, not a replacement — keeps keyboard/no-drag
+// completion working everywhere. SwipeToComplete.jsx itself is untouched
+// and still exported/available if you want it back for any other view.
+
+const PROGRESS_THRESHOLD = 0.5;   // orange glow starts here
+const COMPLETE_THRESHOLD = 0.85;  // green glow + actual completion fires here on release
 
 const SwordIcon = () => (
   <svg className="card-sword" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
@@ -21,6 +38,12 @@ const StatusIndicator = ({ completed }) => (
   </div>
 );
 
+const SwipeHintIcon = () => (
+  <svg className="mc-swipe-hint-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M6 17l5-5-5-5M13 17l5-5-5-5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
 function MissionCard({ mission, linkedObjectiveName, onComplete, onDelete }) {
   const priorityCfg = PRIORITY_CONFIG[mission.priority] || PRIORITY_CONFIG.Medium;
   const difficultyCfg =
@@ -29,16 +52,64 @@ function MissionCard({ mission, linkedObjectiveName, onComplete, onDelete }) {
     CATEGORY_CONFIG[mission.category] || CATEGORY_CONFIG.Learning;
   const xpReward = MISSION_XP_TABLE[mission.difficulty] || MISSION_XP_TABLE.Normal;
 
+  // Transient post-completion celebration — watches the completed prop
+  // transition false→true (driven by Missions.jsx's state, same pattern
+  // XPWidget uses for its own toast) and self-clears, so no parent wiring
+  // is needed beyond the existing onComplete callback.
+  const [justCompleted, setJustCompleted] = useState(false);
+  useEffect(() => {
+    if (mission.completed) {
+      setJustCompleted(true);
+      const timer = setTimeout(() => setJustCompleted(false), 900);
+      return () => clearTimeout(timer);
+    }
+  }, [mission.completed]);
+
+  const { trackRef, dragX, trackWidth, isDragging, handlers } = useSwipeGesture({
+    disabled: mission.completed, // completed cards aren't draggable — reopen is button-only (see file header note)
+    ignoreSelector: ".btn-card", // pointerdown on Complete/Reopen/Delete buttons is never hijacked into a drag
+    onRelease: (finalX, finalWidth) => {
+      const percent = finalWidth > 0 ? finalX / finalWidth : 0;
+      if (percent >= COMPLETE_THRESHOLD) {
+        onComplete(mission.id);
+      }
+    },
+  });
+
+  const swipePercent = trackWidth > 0 ? Math.min(dragX / trackWidth, 1) : 0;
+  const swipeStage =
+    swipePercent >= COMPLETE_THRESHOLD ? "ready" : swipePercent >= PROGRESS_THRESHOLD ? "progress" : "idle";
+
   const cardClass = [
     "mission-card-tactial",
-    mission.completed
-      ? "mission-card-tactial--completed"
-      : "mission-card-tactial--active",
-  ].join(" ");
+    mission.completed ? "mission-card-tactial--completed" : "mission-card-tactial--active",
+    isDragging ? "mission-card-tactial--dragging" : "",
+    isDragging ? `mc-swipe-stage--${swipeStage}` : "",
+    justCompleted ? "mc-celebrate" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <article className={cardClass}>
+    <article
+      ref={trackRef}
+      className={cardClass}
+      style={isDragging ? { transform: `translateX(${dragX}px)` } : undefined}
+      {...handlers}
+    >
       <div className="card-accent-bar" />
+
+      {/* Swipe affordance — fades in only while actively dragging past the
+          start threshold, gives a visual "you're swiping" confirmation
+          without adding any always-visible chrome to the resting card */}
+      {isDragging && (
+        <div className="mc-swipe-overlay" aria-hidden="true">
+          <SwipeHintIcon />
+          <span className="mc-swipe-overlay-text">
+            {swipeStage === "ready" ? "RELEASE TO COMPLETE" : "KEEP SWIPING"}
+          </span>
+        </div>
+      )}
 
       <div className="card-header">
         <div className="card-title-row">

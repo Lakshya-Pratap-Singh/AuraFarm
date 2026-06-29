@@ -1,0 +1,21 @@
+/* objectives-touch-targets.css
+   Additive patch on objectives.css — same audit finding as missions.css:
+   .obj-btn (DELETE) and .obj-btn-deploy were under the 44px thumb-target
+   minimum, .obj-field-input (title + date) was ~36px. Load AFTER
+   objectives.css so these win.
+*/
+
+.obj-btn {
+  min-height: 44px;
+  padding: 11px 14px;
+}
+
+.obj-btn-deploy {
+  min-height: 44px;
+  padding: 13px 24px;
+}
+
+.obj-field-input {
+  min-height: 44px;
+  padding: 12px 14px;
+}

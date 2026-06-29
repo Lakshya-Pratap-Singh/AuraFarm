@@ -1,0 +1,46 @@
+/* activity-grid-touch.css
+   Small additive patch on top of activity-grid.css — kept separate
+   rather than rewriting that whole file, since only three things were
+   missing for the mobile-touch checklist: momentum scrolling, larger
+   touch targets on small screens, and not letting the hover-scale
+   effect get "stuck" after a tap (no real :hover on touch devices).
+   Load this AFTER activity-grid.css so these overrides win.
+*/
+
+.ag-scroll {
+  -webkit-overflow-scrolling: touch; /* momentum scroll on iOS Safari */
+  scroll-behavior: smooth;
+}
+
+/* Hover-scale only when a real hover-capable pointer is present (mouse/
+   trackpad). On touch, this effect previously stuck "on" after a tap
+   since there's no real hover/unhover pair — gating it behind
+   (hover: hover) removes that stuck-cell visual bug entirely. */
+@media (hover: hover) {
+  .ag-cell:not(.ag-cell--empty):hover {
+    transform: scale(1.35);
+    z-index: 2;
+  }
+}
+@media (hover: none) {
+  .ag-cell:not(.ag-cell--empty):hover {
+    transform: none;
+  }
+  /* Tooltip is also a hover-only affordance with no touch equivalent —
+     hiding it on touch avoids a tooltip that can never actually appear */
+  .ag-cell[data-tooltip]:hover::after,
+  .ag-cell[data-tooltip]:hover::before {
+    content: none;
+  }
+}
+
+/* Bigger touch targets at the mobile breakpoint already defined in
+   activity-grid.css (max-width: 560px) — 13px cells are mouse-precision,
+   not finger-precision. Scoped to the same breakpoint so layout/spacing
+   elsewhere is untouched. */
+@media (max-width: 560px) {
+  .activity-grid-card {
+    --ag-cell-size: 16px;
+    --ag-cell-gap: 4px;
+  }
+}

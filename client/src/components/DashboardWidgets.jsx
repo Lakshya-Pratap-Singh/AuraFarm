@@ -83,6 +83,26 @@ function DashboardWidgets({
         <div>
           <p className="dashboard-panel__eyebrow">OPS STATUS</p>
           <h2 className="dashboard-panel__title">Mission Command Center</h2>
+
+          {/* NEW — current objective + daily completion %, using classes
+              that already existed in dashboard.css (hero-meta-*) but had
+              no markup rendering them yet. No new data/logic: both values
+              were already computed in Dashboard.jsx and passed down. */}
+          <div className="dashboard-panel__hero-meta">
+            <div className="dashboard-panel__hero-meta-item">
+              <span className="dashboard-panel__hero-meta-label">Current Objective</span>
+              <span className="dashboard-panel__hero-meta-value">
+                {topObjective?.title || "No active objective"}
+              </span>
+            </div>
+
+            <span className="dashboard-panel__hero-meta-divider" />
+
+            <div className="dashboard-panel__hero-meta-item">
+              <span className="dashboard-panel__hero-meta-label">Daily Completion</span>
+              <span className="dashboard-panel__hero-meta-value">{completionRate}%</span>
+            </div>
+          </div>
         </div>
         <div className="dashboard-panel__status-pill">
           <span className="dashboard-panel__status-dot" />

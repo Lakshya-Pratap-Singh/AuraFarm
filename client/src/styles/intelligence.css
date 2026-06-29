@@ -1,0 +1,204 @@
+/* ============================================================
+   DAILYWISE — intelligence.css
+   Page chrome for Intelligence — gold Batcomputer theme, matching
+   missions.css / objectives.css exactly (--c19a3f family), so this
+   page finally reads as the same app as Missions/Objectives.
+
+   Scope note: ActivityGrid.jsx keeps its own native cyan/blue/yellow/
+   orange/green tier coloring (activity-grid.css) — those colors encode
+   consistency levels, not brand decoration, so that heatmap is left as
+   its own themed "instrument" inside this gold page, same way a cockpit
+   gauge can have its own color language inside an otherwise unified
+   dashboard. Only the page shell (header, stat cards, breakdown
+   section) is retouched here.
+
+   Import order matters: in Intelligence.jsx, this file must be imported
+   AFTER the ActivityGrid import (so after activity-grid.css loads),
+   since both files define .intel-page/.intel-stat-card* and the later
+   one wins the cascade at equal specificity.
+   ============================================================ */
+
+:root {
+  --intel-bg: #0a0a0c;
+  --intel-card: #14151a;
+  --intel-surface: #1c1d24;
+  --intel-border: #2a2c35;
+  --intel-border-strong: #3a3d4a;
+
+  --intel-gold: #c19a3f;
+  --intel-gold-bright: #e0b85a;
+  --intel-gold-dim: rgba(193, 154, 63, 0.12);
+  --intel-gold-glow: rgba(193, 154, 63, 0.4);
+
+  --intel-text: #ecead4;
+  --intel-text-muted: #9a9ca6;
+  --intel-text-faint: #55585f;
+
+  --intel-font-display: "Space Grotesk", sans-serif;
+  --intel-font-body: "Inter", sans-serif;
+  --intel-font-mono: "JetBrains Mono", monospace;
+
+  --intel-radius: 16px;
+  --intel-radius-sm: 8px;
+}
+
+/* ── Page wrapper ────────────────────────────────────────── */
+.intel-page {
+  background: var(--intel-bg);
+  min-height: 100vh;
+  padding: 36px 40px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  font-family: var(--intel-font-body);
+  color: var(--intel-text);
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.intel-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.intel-header-eyebrow {
+  font-family: var(--intel-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--intel-text-faint);
+}
+
+.intel-heading {
+  font-family: var(--intel-font-display);
+  font-size: clamp(22px, 4vw, 34px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--intel-gold-bright);
+  /* The "glowing gold font" — same restrained-glow language as
+     missions-heading/objectives-heading, just a touch brighter since
+     this is the page's main title moment. */
+  text-shadow: 0 0 12px var(--intel-gold-glow), 0 0 32px rgba(193, 154, 63, 0.22);
+}
+
+.intel-header-desc {
+  font-size: 13.5px;
+  color: var(--intel-text-muted);
+  max-width: 560px;
+}
+
+/* ── Stat cards ──────────────────────────────────────────── */
+.intel-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.intel-stat-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--intel-card);
+  border: 1px solid var(--intel-border);
+  border-radius: var(--intel-radius);
+  padding: 20px 22px;
+  overflow: hidden;
+  transition: border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.intel-stat-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(193, 154, 63, 0.4);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+/* Single-accent hierarchy: the "headline" card (Current Streak) reads a
+   touch stronger via glow intensity, not a different hue — same trick
+   missions.css's .stat-tile--accent uses on its overview bar. */
+.intel-stat-card--accent {
+  border-color: rgba(193, 154, 63, 0.3);
+  box-shadow: inset 0 1px 0 rgba(193, 154, 63, 0.1);
+}
+.intel-stat-card--accent .intel-stat-icon {
+  box-shadow: 0 0 16px var(--intel-gold-glow);
+}
+
+.intel-stat-icon {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--intel-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--intel-gold-dim);
+  color: var(--intel-gold-bright);
+}
+.intel-stat-icon svg {
+  width: 19px;
+  height: 19px;
+  filter: drop-shadow(0 0 4px var(--intel-gold-glow));
+}
+
+.intel-stat-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.intel-stat-value {
+  font-family: var(--intel-font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--intel-gold-bright);
+  text-shadow: 0 0 12px var(--intel-gold-glow);
+  line-height: 1;
+}
+
+.intel-stat-label {
+  font-family: var(--intel-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: var(--intel-text-faint);
+}
+
+/* ── Section wrappers ────────────────────────────────────── */
+.intel-grid-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.intel-breakdown-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .intel-page {
+    padding: 28px 24px 48px;
+  }
+  .intel-stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .intel-breakdown-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  /* Bottom clearance for the mobile bottom nav now lives correctly in
+     .main-content (main-content-safe-area.css) — no need to duplicate
+     a second guess-padding here like the old file did. */
+  .intel-page {
+    padding: 20px 16px 40px;
+  }
+  .intel-stats-row {
+    grid-template-columns: 1fr;
+  }
+  .intel-stat-card {
+    padding: 16px 18px;
+  }
+}
