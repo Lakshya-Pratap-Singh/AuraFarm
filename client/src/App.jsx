@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import AppRoutes from "./routes/AppRoutes";
+import RankUpOverlay from "./components/RankUpOverlay";
+import PageTransition from "./components/PageTransition";
 
 import "./styles/sidebar.css";
 import "./styles/dashboard.css";
@@ -165,13 +167,21 @@ function App() {
       />
 
       <main className="main-content">
-        <AppRoutes
-          missions={missions}
-          setMissions={setMissions}
-          objectives={objectives}
-          setObjectives={setObjectives}
-        />
+        <PageTransition>
+          <AppRoutes
+            missions={missions}
+            setMissions={setMissions}
+            objectives={objectives}
+            setObjectives={setObjectives}
+          />
+        </PageTransition>
       </main>
+
+      {/* Full-screen overlay — mounted at the app-shell root rather than
+          inside <main>, so it can't get clipped by any overflow:hidden
+          further down the tree. Reads level-up state from XPContext
+          itself; needs no props from here. */}
+      <RankUpOverlay />
     </div>
   );
 }

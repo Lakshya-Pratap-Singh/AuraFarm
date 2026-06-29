@@ -1,0 +1,55 @@
+/* glass-card.css — --gc- prefix
+   Theme switch is a data/class toggle, not a separate component.
+   Fallback values match the existing cyan HUD + gold Batcomputer palettes;
+   if your global token names differ, update the var() fallbacks below
+   (or better, the var() *names* once you confirm them) rather than the
+   structural rules.
+*/
+
+.gc-root {
+  position: relative;
+  border-radius: 16px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--gc-border, rgba(255, 255, 255, 0.08));
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  will-change: auto;
+}
+
+/* Cyan tactical HUD theme (Dashboard / Objectives / Intelligence) */
+.gc-theme-cyan {
+  background: linear-gradient(
+    160deg,
+    rgba(11, 15, 20, 0.72),
+    rgba(0, 229, 255, 0.04)
+  );
+  border-color: rgba(0, 229, 255, 0.16);
+  box-shadow: 0 0 24px rgba(0, 229, 255, 0.06);
+  color: var(--db-text, #e8f6ff);
+}
+
+/* Gold Batcomputer theme (Missions) */
+.gc-theme-gold {
+  background: linear-gradient(
+    160deg,
+    rgba(10, 10, 10, 0.78),
+    rgba(193, 154, 63, 0.05)
+  );
+  border-color: rgba(193, 154, 63, 0.18);
+  box-shadow: 0 0 24px rgba(193, 154, 63, 0.05);
+  color: var(--m-text, #f1e9d8);
+}
+
+/* Active/pressed feedback shared across themes — transform/opacity only */
+.gc-root:active {
+  transform: scale(0.985);
+}
+
+@media (hover: hover) {
+  .gc-root:hover {
+    box-shadow: 0 0 32px rgba(0, 229, 255, 0.1);
+  }
+  .gc-theme-gold:hover {
+    box-shadow: 0 0 32px rgba(193, 154, 63, 0.09);
+  }
+}

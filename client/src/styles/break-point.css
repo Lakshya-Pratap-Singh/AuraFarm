@@ -1,0 +1,21 @@
+/* tokens/breakpoints.css
+   Shared breakpoint values — keep in sync with hooks/useBreakpoint.js.
+   Import this in any component CSS that needs mobile-first media queries.
+*/
+
+:root {
+  --bp-xs: 360px;     /* small phones */
+  --bp-sm: 390px;     /* standard phones */
+  --bp-md: 430px;     /* large phones */
+  --bp-tablet: 768px;
+  --bp-desktop: 1024px;
+}
+
+/* Usage reference: CSS custom properties can't be used directly inside
+   @media conditions, so hardcode px values in queries, paired here for
+   readability —
+
+   @media (min-width: 390px)  { ... }   matches --bp-sm
+   @media (min-width: 768px)  { ... }   matches --bp-tablet
+   @media (min-width: 1024px) { ... }   matches --bp-desktop
+*/

@@ -1,0 +1,40 @@
+/* badge.css — badge- prefix (unscoped to a single theme since badges
+   appear on both cyan and gold surfaces; tone carries the meaning, not
+   the parent card's theme) */
+
+.badge-root {
+  display: inline-flex;
+  align-items: center;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 6px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.badge-tone-difficulty {
+  background: rgba(249, 115, 22, 0.12);
+  color: #f97316;
+  border: 1px solid rgba(249, 115, 22, 0.28);
+}
+
+.badge-tone-priority {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.28);
+}
+
+.badge-tone-category {
+  background: rgba(0, 229, 255, 0.1);
+  color: #00e5ff;
+  border: 1px solid rgba(0, 229, 255, 0.24);
+}
+
+.badge-tone-xp {
+  background: rgba(193, 154, 63, 0.14);
+  color: #c19a3f;
+  border: 1px solid rgba(193, 154, 63, 0.3);
+}

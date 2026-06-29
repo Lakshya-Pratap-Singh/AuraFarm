@@ -1,0 +1,41 @@
+/* circular-progress.css — cp- prefix */
+
+.cp-root {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cp-track {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.cp-fill {
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cp-theme-cyan .cp-fill {
+  stroke: #00e5ff;
+  filter: drop-shadow(0 0 4px rgba(0, 229, 255, 0.5));
+}
+
+.cp-theme-gold .cp-fill {
+  stroke: #c19a3f;
+  filter: drop-shadow(0 0 4px rgba(193, 154, 63, 0.45));
+}
+
+.cp-label {
+  position: absolute;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: 0.78rem;
+}
+
+.cp-theme-cyan .cp-label {
+  color: #00e5ff;
+}
+
+.cp-theme-gold .cp-label {
+  color: #c19a3f;
+}

@@ -1,0 +1,664 @@
+/* ============================================================
+   DAILYWISE — objectives.css
+   Strategic Ops / Objective Matrix · Batcomputer gold theme
+   Self-contained local tokens (--obj- prefix), matching the same
+   convention missions.css uses — and matching CircularProgress's
+   gold theme value (#c19a3f) exactly, so the ring and the card
+   chrome around it are visually one piece.
+   ============================================================ */
+
+:root {
+  --obj-bg: #0a0a0c;
+  --obj-card: #14151a;
+  --obj-surface: #1c1d24;
+  --obj-border: #2a2c35;
+  --obj-border-strong: #3a3d4a;
+
+  --obj-gold: #c19a3f;
+  --obj-gold-bright: #e0b85a;
+  --obj-gold-dim: rgba(193, 154, 63, 0.12);
+  --obj-gold-glow: rgba(193, 154, 63, 0.35);
+
+  --obj-text: #ecead4;
+  --obj-text-muted: #9a9ca6;
+  --obj-text-faint: #55585f;
+
+  --obj-font-display: "Space Grotesk", sans-serif;
+  --obj-font-body: "Inter", sans-serif;
+  --obj-font-mono: "JetBrains Mono", monospace;
+
+  --obj-radius: 16px;
+  --obj-radius-sm: 8px;
+  --obj-radius-pill: 999px;
+}
+
+/* ── Page wrapper ────────────────────────────────────────── */
+.objectives-page {
+  background: var(--obj-bg);
+  min-height: 100vh;
+  padding: 36px 40px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  font-family: var(--obj-font-body);
+  color: var(--obj-text);
+}
+
+/* ── Page header ─────────────────────────────────────────── */
+.objectives-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.objectives-header-eyebrow {
+  display: block;
+  font-family: var(--obj-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--obj-text-faint);
+  margin-bottom: 6px;
+}
+
+.objectives-heading {
+  font-family: var(--obj-font-display);
+  font-size: clamp(22px, 4vw, 34px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--obj-text);
+  text-shadow: 0 0 28px rgba(193, 154, 63, 0.18);
+}
+
+.objectives-header-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--obj-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--obj-gold);
+  background: var(--obj-gold-dim);
+  border: 1px solid rgba(193, 154, 63, 0.25);
+  padding: 7px 14px;
+  border-radius: var(--obj-radius-pill);
+}
+
+.objectives-header-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--obj-gold);
+  box-shadow: 0 0 8px var(--obj-gold);
+  animation: obj-pulse-gold 2s ease-in-out infinite;
+}
+
+/* ── Overview bar ────────────────────────────────────────── */
+.obj-overview-bar {
+  display: flex;
+  align-items: center;
+  background: var(--obj-card);
+  border: 1px solid var(--obj-border);
+  border-radius: var(--obj-radius);
+  padding: 0 28px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(193, 154, 63, 0.06);
+}
+
+.obj-stat-tile {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 16px;
+  gap: 5px;
+}
+
+.obj-stat-tile--accent .obj-stat-tile-value {
+  color: var(--obj-gold);
+  text-shadow: 0 0 14px var(--obj-gold-glow);
+}
+
+.obj-stat-tile-value {
+  font-family: var(--obj-font-mono);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--obj-text);
+}
+
+.obj-stat-tile-label {
+  font-family: var(--obj-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  color: var(--obj-text-faint);
+}
+
+.obj-overview-divider {
+  width: 1px;
+  height: 36px;
+  background: var(--obj-border);
+  flex-shrink: 0;
+}
+
+/* ── Creation panel ──────────────────────────────────────── */
+.obj-creation-panel {
+  background: var(--obj-card);
+  border: 1px solid var(--obj-border);
+  border-radius: var(--obj-radius);
+  padding: 24px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: border-color 0.3s ease;
+}
+.obj-creation-panel:focus-within {
+  border-color: rgba(193, 154, 63, 0.4);
+  box-shadow: 0 0 0 1px rgba(193, 154, 63, 0.08);
+}
+
+.obj-creation-panel-header {
+  display: flex;
+  align-items: center;
+}
+
+.obj-creation-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--obj-font-display);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--obj-text-muted);
+}
+
+.obj-panel-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--obj-gold);
+  flex-shrink: 0;
+}
+
+.obj-creation-fields {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 14px;
+  align-items: end;
+}
+
+.obj-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.obj-field-label {
+  font-family: var(--obj-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  color: var(--obj-text-faint);
+}
+
+.obj-field-input {
+  background: var(--obj-surface);
+  border: 1px solid var(--obj-border);
+  border-radius: var(--obj-radius-sm);
+  color: var(--obj-text);
+  font-family: var(--obj-font-body);
+  font-size: 13.5px;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+}
+
+.obj-field-input::placeholder {
+  color: var(--obj-text-faint);
+}
+
+.obj-field-input:focus {
+  border-color: rgba(193, 154, 63, 0.5);
+  box-shadow: 0 0 0 3px rgba(193, 154, 63, 0.08);
+}
+
+/* Native date-picker popup follows the dark theme instead of rendering
+   as a glaring white box, in browsers that support color-scheme. */
+input[type="date"].obj-field-input {
+  color-scheme: dark;
+}
+
+.obj-btn-deploy {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  align-self: flex-start;
+  background: var(--obj-gold);
+  color: #0a0a0c;
+  font-family: var(--obj-font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 12px 24px;
+  border-radius: var(--obj-radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.15s ease, opacity 0.2s;
+}
+.obj-btn-deploy svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+.obj-btn-deploy:hover:not(:disabled) {
+  box-shadow: 0 0 18px var(--obj-gold-glow);
+  transform: translateY(-2px);
+}
+.obj-btn-deploy:active:not(:disabled) {
+  transform: translateY(0);
+}
+.obj-btn-deploy:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ── List section ────────────────────────────────────────── */
+.obj-list-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.obj-list-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.obj-list-title {
+  font-family: var(--obj-font-display);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--obj-text-muted);
+}
+
+.obj-list-count {
+  font-family: var(--obj-font-mono);
+  font-size: 10px;
+  color: var(--obj-text-faint);
+  letter-spacing: 0.08em;
+}
+
+/* ── Empty state ─────────────────────────────────────────── */
+.obj-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 64px 32px;
+  border: 1px dashed var(--obj-border);
+  border-radius: var(--obj-radius);
+  text-align: center;
+}
+
+.obj-empty-state-icon {
+  width: 64px;
+  height: 64px;
+  color: var(--obj-text-faint);
+  opacity: 0.5;
+}
+
+.obj-empty-state-primary {
+  font-family: var(--obj-font-display);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  color: var(--obj-text-muted);
+}
+
+.obj-empty-state-secondary {
+  font-size: 13px;
+  color: var(--obj-text-faint);
+}
+
+/* ── Objective grid ──────────────────────────────────────── */
+.obj-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+/* ── Objective card ──────────────────────────────────────── */
+.objective-card-tactical {
+  position: relative;
+  background: var(--obj-card);
+  border: 1px solid var(--obj-border);
+  border-radius: var(--obj-radius);
+  padding: 20px 20px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+  transition: border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.objective-card-tactical--active:hover {
+  border-color: rgba(193, 154, 63, 0.4);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(193, 154, 63, 0.08);
+  transform: translateY(-3px);
+}
+
+.objective-card-tactical--complete {
+  opacity: 0.85;
+}
+.objective-card-tactical--complete:hover {
+  opacity: 1;
+  border-color: var(--obj-border-strong);
+  transform: translateY(-2px);
+}
+
+.obj-card-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 3px 0 0 3px;
+  background: var(--obj-gold);
+}
+
+.objective-card-tactical--active .obj-card-accent {
+  box-shadow: 0 0 10px var(--obj-gold-glow);
+  animation: obj-bar-pulse 2.4s ease-in-out infinite;
+}
+
+.objective-card-tactical--complete .obj-card-accent {
+  opacity: 0.4;
+  box-shadow: none;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.obj-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.obj-card-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  min-width: 0;
+}
+
+.obj-card-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--obj-gold);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.obj-card-title {
+  font-family: var(--obj-font-display);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--obj-text);
+  line-height: 1.35;
+}
+
+.objective-card-tactical--complete .obj-card-title {
+  color: var(--obj-text-muted);
+}
+
+.obj-status-pill {
+  font-family: var(--obj-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  padding: 3px 9px;
+  border-radius: var(--obj-radius-pill);
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+.obj-status-pill--complete {
+  color: var(--obj-gold);
+  border-color: rgba(193, 154, 63, 0.3);
+  background: var(--obj-gold-dim);
+}
+.obj-status-pill--upcoming {
+  color: var(--obj-text-muted);
+  border-color: var(--obj-border-strong);
+  background: var(--obj-surface);
+}
+.obj-status-pill--today {
+  color: var(--obj-gold-bright);
+  border-color: rgba(224, 184, 90, 0.35);
+  background: rgba(224, 184, 90, 0.1);
+}
+.obj-status-pill--overdue {
+  color: var(--obj-text);
+  border-color: var(--obj-border-strong);
+  background: var(--obj-surface);
+}
+.obj-status-pill--unassigned {
+  color: var(--obj-text-faint);
+  border-color: var(--obj-border);
+  background: transparent;
+}
+
+/* ── Body: ring + stats ──────────────────────────────────── */
+.obj-card-body {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.obj-card-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.obj-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.obj-stat-value {
+  font-family: var(--obj-font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--obj-text);
+}
+
+.obj-stat-value--with-icon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.obj-meta-icon {
+  width: 13px;
+  height: 13px;
+  color: var(--obj-gold);
+  flex-shrink: 0;
+}
+
+.obj-stat-label {
+  font-family: var(--obj-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--obj-text-faint);
+}
+
+/* ── Linked missions ─────────────────────────────────────── */
+.obj-card-missions {
+  border-top: 1px solid var(--obj-border);
+  padding-top: 14px;
+}
+
+.obj-card-missions-title {
+  font-family: var(--obj-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  color: var(--obj-text-faint);
+  margin-bottom: 10px;
+}
+
+.obj-card-empty {
+  font-size: 12.5px;
+  color: var(--obj-text-faint);
+}
+
+.obj-mission-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+}
+
+.obj-mission-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12.5px;
+  color: var(--obj-text-muted);
+}
+
+.obj-mission-item--done {
+  color: var(--obj-text-faint);
+  text-decoration: line-through;
+  text-decoration-color: rgba(154, 156, 166, 0.4);
+}
+
+.obj-mission-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--obj-surface);
+  border: 1px solid var(--obj-border-strong);
+  flex-shrink: 0;
+}
+
+.obj-mission-item--done .obj-mission-dot {
+  background: var(--obj-gold);
+  border-color: var(--obj-gold);
+  box-shadow: 0 0 5px var(--obj-gold-glow);
+}
+
+/* ── Actions ─────────────────────────────────────────────── */
+.obj-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 4px;
+  border-top: 1px solid var(--obj-border);
+}
+
+.obj-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--obj-font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.15s ease, background 0.2s, color 0.2s;
+}
+.obj-btn svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.obj-btn--delete {
+  background: var(--obj-surface);
+  color: var(--obj-text-muted);
+  border-color: var(--obj-border-strong);
+}
+.obj-btn--delete:hover {
+  background: var(--obj-text);
+  color: #0a0a0c;
+  border-color: var(--obj-text);
+  box-shadow: 0 0 12px rgba(236, 234, 228, 0.15);
+  transform: translateY(-1px);
+}
+
+/* ── Keyframes ───────────────────────────────────────────── */
+@keyframes obj-bar-pulse {
+  0%, 100% { box-shadow: 0 0 6px var(--obj-gold-glow); opacity: 1; }
+  50%       { box-shadow: 0 0 16px var(--obj-gold-glow); opacity: 0.75; }
+}
+
+@keyframes obj-pulse-gold {
+  0%, 100% { box-shadow: 0 0 5px var(--obj-gold); opacity: 1; }
+  50%       { box-shadow: 0 0 12px var(--obj-gold); opacity: 0.6; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .obj-card-accent,
+  .objectives-header-badge-dot {
+    animation: none;
+  }
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .objectives-page {
+    padding: 28px 24px 48px;
+  }
+  .obj-creation-fields {
+    grid-template-columns: 1fr 1fr;
+  }
+  .obj-field-group--wide {
+    grid-column: 1 / -1;
+  }
+  .obj-overview-bar {
+    padding: 0 16px;
+    overflow-x: auto;
+  }
+  .obj-stat-tile {
+    padding: 16px 12px;
+    min-width: 90px;
+  }
+}
+
+@media (max-width: 560px) {
+  .objectives-page {
+    padding: 20px 16px 40px;
+  }
+  .obj-creation-fields {
+    grid-template-columns: 1fr;
+  }
+  .obj-field-group--wide {
+    grid-column: auto;
+  }
+  .obj-btn-deploy {
+    width: 100%;
+    justify-content: center;
+  }
+  .obj-grid {
+    grid-template-columns: 1fr;
+  }
+  .obj-card-body {
+    flex-wrap: wrap;
+  }
+  .obj-overview-bar {
+    gap: 0;
+  }
+  .obj-stat-tile-value {
+    font-size: 17px;
+  }
+  .obj-stat-tile-label {
+    font-size: 8.5px;
+  }
+}

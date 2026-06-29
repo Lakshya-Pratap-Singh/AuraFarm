@@ -1,0 +1,129 @@
+/* mission-swipe.css
+   Whole-tile drag feedback for MissionCard. Loaded alongside missions.css
+   (same .mission-card-tactial selector base) — kept in its own file so
+   the swipe-specific rules don't get lost inside the larger stylesheet,
+   and so a future revert only means dropping one import.
+
+   Functional color exception: missions.css is deliberately monochrome
+   gold-only, but swipe *state* (in-progress vs ready-to-release) needs
+   to read instantly without relying on reading text, so this file uses
+   the orange/green from the original design-spec palette for these two
+   transient states only. Resting-state cards are untouched.
+*/
+
+:root {
+  --mc-progress: #f97316;
+  --mc-progress-glow: rgba(249, 115, 22, 0.45);
+  --mc-ready: #10b981;
+  --mc-ready-glow: rgba(16, 185, 129, 0.5);
+}
+
+/* Base draggable surface. touch-action: pan-y lets the page still scroll
+   vertically with a finger, while JS (pointer events) owns the horizontal
+   gesture — without this, mobile browsers fight the drag with their own
+   scroll/refresh gestures. */
+.mission-card-tactial {
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.mission-card-tactial--dragging {
+  transition: none; /* no easing lag while actively tracking the pointer */
+  cursor: grabbing;
+  will-change: transform;
+  z-index: 5;
+}
+
+/* ── Swipe stage glows — applied to the card itself while dragging ───── */
+.mc-swipe-stage--progress {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--mc-progress-glow),
+    0 0 24px var(--mc-progress-glow);
+  border-color: var(--mc-progress);
+}
+
+.mc-swipe-stage--ready {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--mc-ready-glow),
+    0 0 28px var(--mc-ready-glow);
+  border-color: var(--mc-ready);
+}
+
+.mc-swipe-stage--progress .card-accent-bar {
+  background: var(--mc-progress);
+  box-shadow: 0 0 10px var(--mc-progress-glow);
+  animation: none; /* override the resting gold pulse while dragging */
+}
+
+.mc-swipe-stage--ready .card-accent-bar {
+  background: var(--mc-ready);
+  box-shadow: 0 0 12px var(--mc-ready-glow);
+  animation: none;
+}
+
+/* ── Swipe overlay — "KEEP SWIPING" / "RELEASE TO COMPLETE" ──────────── */
+.mc-swipe-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(10, 10, 12, 0.55);
+  backdrop-filter: blur(2px);
+  border-radius: inherit;
+  pointer-events: none;
+  font-family: var(--m-font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--mc-progress);
+  opacity: 0;
+  animation: mc-overlay-in 0.12s ease forwards;
+}
+
+.mc-swipe-stage--ready .mc-swipe-overlay {
+  color: var(--mc-ready);
+}
+
+.mc-swipe-hint-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+@keyframes mc-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ── Post-completion celebration — brief pulse, transform/opacity only ── */
+.mc-celebrate {
+  animation: mc-celebrate-pulse 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes mc-celebrate-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--mc-ready-glow);
+  }
+  35% {
+    transform: scale(1.025);
+    box-shadow: 0 0 30px 4px var(--mc-ready-glow);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mission-card-tactial--dragging,
+  .mc-swipe-overlay,
+  .mc-celebrate {
+    animation: none;
+    transition: none;
+  }
+}

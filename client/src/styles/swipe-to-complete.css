@@ -1,0 +1,128 @@
+/* ============================================================
+   DAILYWISE — swipe-to-complete.css
+   Mobile replacement for the COMPLETE button on MissionCard.
+   Reuses missions.css's --m- tokens directly (same monochrome
+   black/gold system, no new hues) since this only ever renders
+   inside the Missions page's gold theme.
+   ============================================================ */
+
+.stc-track {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  height: 48px;
+  border-radius: var(--m-radius-pill);
+  background: var(--m-surface);
+  border: 1px solid var(--m-border-strong);
+  overflow: hidden;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Fill grows behind the thumb as the user drags — same gold-glow
+   language as the rest of the card, just as a gradient instead of a
+   box-shadow (cheaper to animate at high frequency during drag). */
+.stc-track::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: var(--stc-fill, 0%);
+  background: linear-gradient(
+    90deg,
+    rgba(193, 154, 63, 0.16),
+    rgba(193, 154, 63, 0.3)
+  );
+  pointer-events: none;
+}
+
+.stc-track-label {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  font-family: var(--m-font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  color: var(--m-text-faint);
+  pointer-events: none;
+}
+
+.stc-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 52px;
+  height: 42px;
+  border-radius: var(--m-radius-pill);
+  background: var(--m-gold);
+  color: #0a0a0c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  box-shadow: 0 0 10px var(--m-gold-glow);
+  transition: box-shadow 0.2s ease, transform 0.18s ease;
+  touch-action: none;
+}
+
+/* No transform transition while actively dragging — the thumb must
+   track the pointer 1:1, a transition here would make it lag. */
+.stc-track--dragging .stc-thumb {
+  cursor: grabbing;
+  box-shadow: 0 0 20px var(--m-gold-glow);
+  transition: box-shadow 0.2s ease;
+}
+
+.stc-thumb svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.stc-thumb:focus-visible {
+  outline: 2px solid var(--m-gold-bright);
+  outline-offset: 2px;
+}
+
+/* ── Completed state — static pill, tap to reopen ───────────── */
+.stc-track--completed {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--m-gold-dim);
+  border: 1px solid rgba(193, 154, 63, 0.25);
+  font-family: var(--m-font-mono);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.stc-track--completed:hover {
+  background: rgba(193, 154, 63, 0.18);
+}
+
+.stc-completed-icon {
+  display: flex;
+  align-items: center;
+  color: var(--m-gold);
+}
+.stc-completed-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.stc-completed-text {
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--m-gold);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stc-thumb {
+    transition: none;
+  }
+}
