@@ -40,6 +40,48 @@
   color: var(--m-text, #f1e9d8);
 }
 
+/* AuraFarm theme — dark fantasy neon purple. Spec calls for an exact
+   18px radius (overriding .gc-root's 16px default) and a hover state
+   with three simultaneous effects: border glow intensifies, the card
+   lifts, and "energy travels across edges" — the last one is a spinning
+   conic-gradient pseudo-element, mostly transparent except one bright
+   arc, paused by default and only spun up on hover for performance. */
+.gc-theme-aura {
+  border-radius: var(--aura-radius-card, 18px);
+  background: linear-gradient(
+    160deg,
+    rgba(13, 10, 18, 0.85),
+    rgba(91, 33, 182, 0.07)
+  );
+  border-color: rgba(168, 85, 247, 0.25);
+  box-shadow: 0 0 24px rgba(168, 85, 247, 0.08);
+  color: var(--aura-text, #f1ecfb);
+  overflow: hidden;
+}
+
+.gc-theme-aura::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    var(--aura-purple-bright, #a855f7) 8%,
+    transparent 18%
+  );
+  opacity: 0;
+  pointer-events: none;
+  animation: gc-aura-border-spin 3.5s linear infinite;
+  animation-play-state: paused;
+  transition: opacity 0.3s ease;
+}
+
+@keyframes gc-aura-border-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
 /* Active/pressed feedback shared across themes — transform/opacity only */
 .gc-root:active {
   transform: scale(0.985);
@@ -51,5 +93,20 @@
   }
   .gc-theme-gold:hover {
     box-shadow: 0 0 32px rgba(193, 154, 63, 0.09);
+  }
+  .gc-theme-aura:hover {
+    transform: translateY(-4px);
+    border-color: rgba(168, 85, 247, 0.55);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 30px rgba(168, 85, 247, 0.35);
+  }
+  .gc-theme-aura:hover::before {
+    opacity: 0.85;
+    animation-play-state: running;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gc-theme-aura::before {
+    animation: none;
   }
 }

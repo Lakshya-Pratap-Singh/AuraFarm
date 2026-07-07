@@ -1,0 +1,202 @@
+/* AURAFARM — settings-aura.css */
+@import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
+
+.settings-page {
+  background: #050505;
+  min-height: 100vh;
+  padding: 0 0 80px;
+  color: #f1ecfb;
+  font-family: 'Inter', sans-serif;
+}
+
+.settings-hero {
+  position: relative;
+  padding: 36px 32px 28px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0d0118 0%, #050505 100%);
+  border-bottom: 1px solid rgba(139,92,246,0.2);
+}
+.settings-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(91,33,182,0.2), transparent 70%);
+  pointer-events: none;
+}
+.settings-hero-heading {
+  font-family: 'Pirata One', serif;
+  font-size: clamp(2.4rem, 7vw, 4rem);
+  line-height: 1;
+  background: linear-gradient(to bottom, #ffffff, #c4b5fd, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 16px rgba(168,85,247,0.5));
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+.settings-hero-sub {
+  font-size: 13.5px;
+  color: #a89cc8;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Section groups ─────────────────────────────────────────── */
+.settings-body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 24px 0;
+}
+
+.settings-group-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  color: #5e5571;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.settings-group {
+  background: #120d1a;
+  border: 1px solid rgba(139,92,246,0.18);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* ── Row items ──────────────────────────────────────────────── */
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(139,92,246,0.1);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.settings-row:last-child { border-bottom: none; }
+.settings-row:hover { background: rgba(139,92,246,0.06); }
+.settings-row--danger:hover { background: rgba(239,68,68,0.06); }
+
+.settings-row-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(139,92,246,0.1);
+  border: 1px solid rgba(139,92,246,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a855f7;
+}
+.settings-row-icon svg { width: 16px; height: 16px; }
+.settings-row--danger .settings-row-icon {
+  background: rgba(239,68,68,0.1);
+  border-color: rgba(239,68,68,0.18);
+  color: #ef4444;
+}
+
+.settings-row-content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.settings-row-title { font-size: 14px; font-weight: 500; color: #f1ecfb; }
+.settings-row-sub { font-size: 12px; color: #5e5571; }
+.settings-row--danger .settings-row-title { color: #ef4444; }
+
+.settings-row-right { flex-shrink: 0; color: #5e5571; }
+.settings-row-right svg { width: 14px; height: 14px; }
+
+/* ── Toggle switch ──────────────────────────────────────────── */
+.settings-toggle {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  flex-shrink: 0;
+}
+.settings-toggle input { opacity: 0; width: 0; height: 0; }
+.settings-toggle-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: #2a2040;
+  border: 1px solid rgba(139,92,246,0.2);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.settings-toggle input:checked + .settings-toggle-track {
+  background: linear-gradient(90deg, #5b21b6, #a855f7);
+  border-color: #a855f7;
+  box-shadow: 0 0 10px rgba(168,85,247,0.35);
+}
+.settings-toggle-track::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: #5e5571;
+  transition: transform 0.2s, background 0.2s;
+}
+.settings-toggle input:checked + .settings-toggle-track::after {
+  transform: translateX(18px);
+  background: #fff;
+}
+
+/* ── Aura profile card at top ────────────────────────────────── */
+.settings-profile-card {
+  margin: 20px 24px;
+  background: linear-gradient(135deg, rgba(91,33,182,0.15), rgba(139,92,246,0.06));
+  border: 1px solid rgba(139,92,246,0.25);
+  border-radius: 18px;
+  padding: 22px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.settings-avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  border: 2px solid rgba(168,85,247,0.5);
+  background: rgba(139,92,246,0.12);
+  display: flex; align-items: center; justify-content: center;
+  color: #a855f7;
+  flex-shrink: 0;
+  box-shadow: 0 0 16px rgba(168,85,247,0.25);
+  overflow: hidden;
+}
+.settings-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.settings-avatar svg { width: 26px; height: 26px; }
+.settings-profile-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.settings-profile-name { font-size: 16px; font-weight: 600; color: #f1ecfb; }
+.settings-profile-email { font-size: 12px; color: #5e5571; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.settings-profile-level {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #a855f7;
+  background: rgba(139,92,246,0.12);
+  border: 1px solid rgba(168,85,247,0.2);
+  padding: 3px 8px;
+  border-radius: 999px;
+  width: fit-content;
+}
+
+/* ── Version footer ──────────────────────────────────────────── */
+.settings-version {
+  text-align: center;
+  padding: 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #2d2640;
+  letter-spacing: 0.1em;
+}
+
+@media (max-width: 560px) {
+  .settings-hero { padding: 24px 16px 20px; }
+  .settings-body { padding: 16px 16px 0; }
+  .settings-profile-card { margin: 16px; }
+}

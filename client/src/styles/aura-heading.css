@@ -1,0 +1,187 @@
+/* aura-heading.css
+   Implements the heading spec exactly:
+     - H1 gradient/shadow values are the literal CSS you provided.
+     - Flames/embers are purple/violet/magenta ONLY (no orange/red).
+     - Hover intensifies flames (desktop only, gated behind hover:hover
+       so touch devices don't get a "stuck" glow after a tap).
+*/
+
+.aura-heading-wrap {
+  position: relative;
+  display: inline-block;
+  isolation: isolate; /* keeps flame blend-mode contained, doesn't bleed onto siblings */
+}
+
+.aura-heading {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  letter-spacing: 0.06em; /* "slightly increased" per spec, on top of each variant's own tighter/wider value below */
+}
+
+/* ── H1 — hero, exact spec gradient/glow ──────────────────────────── */
+.aura-heading--hero {
+  font-family: var(--aura-font-display, "Cinzel", serif);
+  font-size: clamp(2.6rem, 9vw, 5.5rem);
+  font-weight: 900;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  background: linear-gradient(to bottom, #ffffff, #c4b5fd, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow:
+    0 0 10px rgba(168, 85, 247, 0.7),
+    0 0 20px rgba(168, 85, 247, 0.6),
+    0 0 40px rgba(168, 85, 247, 0.5),
+    0 0 80px rgba(168, 85, 247, 0.3);
+  animation: aura-pulse-breathe 4.5s ease-in-out infinite;
+}
+
+/* ── H2 — section, metallic silver-purple gradient, calmer glow ─────── */
+.aura-heading--section {
+  font-family: var(--aura-font-display, "Cinzel", serif);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: linear-gradient(to bottom, #e8e6ef, #c4b5fd, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 8px rgba(168, 85, 247, 0.45), 0 0 22px rgba(168, 85, 247, 0.25);
+  animation: aura-pulse-breathe 5.5s ease-in-out infinite;
+}
+
+/* ── H3 — sharp, the one place the sci-fi sans stays, per spec's
+   "sharp angular futuristic" call-out — energy sweep instead of flame */
+.aura-heading--sharp {
+  font-family: var(--aura-font-sharp, "Orbitron", sans-serif);
+  font-size: clamp(1rem, 2.4vw, 1.3rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: linear-gradient(
+    100deg,
+    var(--aura-text, #f1ecfb) 0%,
+    var(--aura-purple-bright, #a855f7) 35%,
+    var(--aura-text, #f1ecfb) 60%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: aura-sweep 6s linear infinite;
+}
+
+@keyframes aura-sweep {
+  0%   { background-position: 0% 0; }
+  100% { background-position: -220% 0; }
+}
+
+@keyframes aura-pulse-breathe {
+  0%, 100% { filter: brightness(1); }
+  50%       { filter: brightness(1.18); }
+}
+
+/* Hover intensifies — desktop only */
+@media (hover: hover) {
+  .aura-heading-wrap--hero:hover .aura-heading--hero,
+  .aura-heading-wrap--section:hover .aura-heading--section {
+    filter: brightness(1.25);
+  }
+  .aura-heading-wrap:hover .aura-flame {
+    opacity: 0.85;
+    filter: blur(18px) brightness(1.3);
+  }
+}
+
+/* ── Flame layers — purple/violet/magenta only ───────────────────────
+   2-3 blurred radial-gradient shapes rising behind the text, mix-blend
+   screen so overlaps brighten rather than muddy. Capped at 3 elements
+   total even on the hero variant — enough to read as "living flame"
+   without taxing mobile GPUs. */
+.aura-flames {
+  position: absolute;
+  inset: -40% -10% -10% -10%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.aura-flame {
+  position: absolute;
+  bottom: 0;
+  width: 38%;
+  height: 100%;
+  border-radius: 50% 50% 40% 40%;
+  filter: blur(14px);
+  opacity: 0.55;
+  mix-blend-mode: screen;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+.aura-flame--a {
+  left: 6%;
+  background: radial-gradient(circle at 50% 100%, var(--aura-purple-bright, #a855f7), transparent 70%);
+  animation: aura-flame-rise 3.6s ease-in-out infinite;
+}
+.aura-flame--b {
+  left: 32%;
+  width: 44%;
+  background: radial-gradient(circle at 50% 100%, var(--aura-violet, #5b21b6), transparent 72%);
+  animation: aura-flame-rise 4.4s ease-in-out infinite 0.4s;
+}
+.aura-flame--c {
+  left: 58%;
+  width: 36%;
+  background: radial-gradient(circle at 50% 100%, var(--aura-magenta, #c026d3), transparent 70%);
+  animation: aura-flame-rise 3.9s ease-in-out infinite 0.9s;
+}
+
+@keyframes aura-flame-rise {
+  0%, 100% { transform: translateY(0) scaleY(1); opacity: 0.45; }
+  50%       { transform: translateY(-14%) scaleY(1.18); opacity: 0.7; }
+}
+
+/* ── Embers — small rising glowing dots, purple only ─────────────────── */
+.aura-embers {
+  position: absolute;
+  inset: -20% 0 0 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.aura-ember {
+  position: absolute;
+  bottom: 10%;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--aura-purple-bright, #a855f7);
+  box-shadow: 0 0 6px var(--aura-purple-glow, rgba(168, 85, 247, 0.6));
+  opacity: 0;
+  animation: aura-ember-float 4s ease-in infinite;
+}
+
+@keyframes aura-ember-float {
+  0%   { opacity: 0; transform: translate(0, 0); }
+  15%  { opacity: 0.9; }
+  100% { opacity: 0; transform: translate(6px, -60px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aura-heading--hero,
+  .aura-heading--section,
+  .aura-heading--sharp,
+  .aura-flame,
+  .aura-ember {
+    animation: none;
+  }
+}
+
+/* Cheaper blur radius on mobile GPUs */
+@media (max-width: 560px) {
+  .aura-flame {
+    filter: blur(10px);
+  }
+}

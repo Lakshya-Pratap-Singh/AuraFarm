@@ -25,6 +25,12 @@
   filter: drop-shadow(0 0 4px rgba(193, 154, 63, 0.45));
 }
 
+.cp-theme-aura .cp-fill {
+  stroke: var(--aura-purple-bright, #a855f7);
+  filter: drop-shadow(0 0 6px var(--aura-purple-glow, rgba(168, 85, 247, 0.6)))
+    drop-shadow(0 0 14px rgba(168, 85, 247, 0.3));
+}
+
 .cp-label {
   position: absolute;
   font-family: "Space Grotesk", sans-serif;
@@ -38,4 +44,9 @@
 
 .cp-theme-gold .cp-label {
   color: #c19a3f;
+}
+
+.cp-theme-aura .cp-label {
+  color: var(--aura-purple-bright, #a855f7);
+  text-shadow: 0 0 8px var(--aura-purple-glow, rgba(168, 85, 247, 0.5));
 }

@@ -33,6 +33,7 @@ function AppRoutes({
           <ProtectedRoute>
             <Dashboard
               missions={missions}
+              setMissions={setMissions}
               objectives={objectives}
             />
           </ProtectedRoute>

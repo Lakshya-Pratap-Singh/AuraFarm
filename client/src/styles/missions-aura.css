@@ -1,0 +1,607 @@
+/* ============================================================
+   AURAFARM — missions-aura.css
+   Replaces missions.css gold theme with full purple AuraFarm rebrand.
+   Import this AFTER missions.css so it wins the cascade, OR swap the
+   import in Missions.jsx / MissionCard.jsx directly.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
+
+:root {
+  --af-bg:          #050505;
+  --af-surface:     #0d0a12;
+  --af-card:        #120d1a;
+  --af-card-hover:  #1a1225;
+  --af-border:      rgba(139, 92, 246, 0.2);
+  --af-border-glow: rgba(168, 85, 247, 0.45);
+
+  --af-purple:       #8b5cf6;
+  --af-purple-bright:#a855f7;
+  --af-violet:       #5b21b6;
+  --af-purple-dim:   rgba(139, 92, 246, 0.12);
+  --af-purple-glow:  rgba(168, 85, 247, 0.5);
+
+  --af-text:       #f1ecfb;
+  --af-text-muted: #a89cc8;
+  --af-text-faint: #5e5571;
+
+  --af-font-display: 'Pirata One', serif;
+  --af-font-body:    'Inter', sans-serif;
+  --af-font-mono:    'JetBrains Mono', monospace;
+}
+
+/* ── Page ───────────────────────────────────────────────────── */
+.missions-page {
+  background: var(--af-bg);
+  min-height: 100vh;
+  padding: 0 0 80px;
+  display: flex;
+  flex-direction: column;
+  color: var(--af-text);
+  font-family: var(--af-font-body);
+}
+
+/* ── Hero banner ─────────────────────────────────────────────── */
+.missions-hero {
+  position: relative;
+  padding: 36px 32px 28px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0d0118 0%, #050505 100%);
+  border-bottom: 1px solid var(--af-border);
+}
+
+.missions-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(91,33,182,0.25), transparent 70%);
+  pointer-events: none;
+}
+
+.missions-hero-heading {
+  font-family: var(--af-font-display);
+  font-size: clamp(2.8rem, 8vw, 5rem);
+  line-height: 1;
+  background: linear-gradient(to bottom, #ffffff, #c4b5fd, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 18px rgba(168,85,247,0.55));
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.missions-hero-sub {
+  font-size: 13.5px;
+  color: var(--af-text-muted);
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Stats bar ───────────────────────────────────────────────── */
+.missions-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-bottom: 1px solid var(--af-border);
+  background: var(--af-surface);
+}
+
+.missions-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 12px;
+  border-right: 1px solid var(--af-border);
+  gap: 4px;
+}
+.missions-stat:last-child { border-right: none; }
+
+.missions-stat-value {
+  font-family: var(--af-font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--af-purple-bright);
+  text-shadow: 0 0 10px var(--af-purple-glow);
+}
+
+.missions-stat-label {
+  font-family: var(--af-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--af-text-faint);
+  text-transform: uppercase;
+}
+
+/* ── Toolbar: add mission button ─────────────────────────────── */
+.missions-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.missions-section-title {
+  font-family: var(--af-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--af-text-faint);
+  text-transform: uppercase;
+}
+
+.missions-count-badge {
+  font-family: var(--af-font-mono);
+  font-size: 10px;
+  color: var(--af-text-faint);
+  letter-spacing: 0.08em;
+}
+
+/* ── Add Mission Button ──────────────────────────────────────── */
+.btn-add-mission {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  min-height: 44px;
+  border-radius: 10px;
+  background: var(--af-purple-dim);
+  border: 1px solid var(--af-purple-bright);
+  color: var(--af-purple-bright);
+  font-family: var(--af-font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+.btn-add-mission svg { width: 14px; height: 14px; }
+.btn-add-mission:hover {
+  background: rgba(168,85,247,0.2);
+  box-shadow: 0 0 18px rgba(168,85,247,0.35);
+  transform: translateY(-1px);
+}
+.btn-add-mission:active { transform: scale(0.97); }
+.btn-add-mission:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* ── Add Mission Panel ───────────────────────────────────────── */
+.missions-add-panel {
+  margin: 0 20px 16px;
+  background: var(--af-card);
+  border: 1px solid var(--af-border);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: af-slide-down 0.22s ease;
+}
+
+@keyframes af-slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.af-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.af-field-row--wide { grid-template-columns: 1fr; }
+
+.af-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.af-field-label {
+  font-family: var(--af-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  color: var(--af-text-faint);
+  text-transform: uppercase;
+}
+
+.af-field-input,
+.af-field-select {
+  background: rgba(13,10,18,0.9);
+  border: 1px solid var(--af-border);
+  border-radius: 8px;
+  color: var(--af-text);
+  font-family: var(--af-font-body);
+  font-size: 13.5px;
+  padding: 11px 14px;
+  outline: none;
+  min-height: 44px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.af-field-input::placeholder { color: var(--af-text-faint); }
+.af-field-input:focus, .af-field-select:focus {
+  border-color: rgba(168,85,247,0.5);
+  box-shadow: 0 0 0 3px rgba(168,85,247,0.1);
+}
+.af-field-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235e5571' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 10px;
+  padding-right: 32px;
+  cursor: pointer;
+}
+.af-field-select option { background: #120d1a; color: var(--af-text); }
+
+.btn-deploy-aura {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 24px;
+  min-height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--af-violet), var(--af-purple));
+  border: 1px solid var(--af-purple-bright);
+  color: #fff;
+  font-family: var(--af-font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(168,85,247,0.3);
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+.btn-deploy-aura svg { width: 14px; height: 14px; }
+.btn-deploy-aura:hover {
+  box-shadow: 0 0 30px rgba(168,85,247,0.55);
+  transform: translateY(-1px);
+}
+.btn-deploy-aura:active { transform: scale(0.97); }
+.btn-deploy-aura:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ── Mission list ────────────────────────────────────────────── */
+.mission-list-aura {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 20px;
+}
+
+/* ── Mission card — row layout matching mockup ───────────────── */
+.mc-aura {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--af-card);
+  border: 1px solid var(--af-border);
+  border-radius: 16px;
+  padding: 14px 16px;
+  overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.18s ease;
+}
+
+.mc-aura--active:hover {
+  border-color: rgba(168,85,247,0.38);
+  box-shadow: 0 0 20px rgba(168,85,247,0.15);
+}
+
+.mc-aura--completed {
+  opacity: 0.65;
+}
+
+.mc-aura--dragging {
+  transition: none;
+  cursor: grabbing;
+  will-change: transform;
+  z-index: 5;
+}
+
+/* Purple energy trail (replaces the old orange/green) */
+.mc-swipe-stage--progress {
+  border-color: rgba(168,85,247,0.6) !important;
+  box-shadow: 0 0 24px rgba(168,85,247,0.4) !important;
+}
+.mc-swipe-stage--ready {
+  border-color: rgba(168,85,247,0.9) !important;
+  box-shadow: 0 0 32px rgba(168,85,247,0.7) !important;
+}
+.mc-swipe-stage--progress .mc-aura-accent,
+.mc-swipe-stage--ready .mc-aura-accent {
+  background: var(--af-purple-bright);
+  box-shadow: 0 0 12px var(--af-purple-glow);
+  animation: none;
+}
+
+/* Left accent bar */
+.mc-aura-accent {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 3px;
+  border-radius: 3px 0 0 3px;
+  background: var(--af-purple);
+}
+.mc-aura--active .mc-aura-accent {
+  box-shadow: 0 0 8px var(--af-purple-glow);
+  animation: mc-accent-pulse 2.5s ease-in-out infinite;
+}
+.mc-aura--completed .mc-aura-accent {
+  opacity: 0.35;
+  animation: none;
+}
+@keyframes mc-accent-pulse {
+  0%,100% { box-shadow: 0 0 5px var(--af-purple-glow); }
+  50%      { box-shadow: 0 0 14px var(--af-purple-glow); }
+}
+
+/* Category icon circle */
+.mc-aura-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--af-purple-dim);
+  border: 1px solid var(--af-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--af-purple-bright);
+}
+.mc-aura-icon svg { width: 18px; height: 18px; }
+
+/* Card body */
+.mc-aura-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.mc-aura-title {
+  font-family: var(--af-font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--af-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mc-aura--completed .mc-aura-title {
+  color: var(--af-text-muted);
+  text-decoration: line-through;
+  text-decoration-color: rgba(168,85,247,0.35);
+}
+
+.mc-aura-badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Badge colors per mockup */
+.mc-badge {
+  font-family: var(--af-font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid;
+}
+.mc-badge--category { color: #a78bfa; border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.1); }
+.mc-badge--priority-high { color: #f97316; border-color: rgba(249,115,22,0.3); background: rgba(249,115,22,0.1); }
+.mc-badge--priority-medium { color: #eab308; border-color: rgba(234,179,8,0.3); background: rgba(234,179,8,0.1); }
+.mc-badge--priority-low { color: #22c55e; border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.1); }
+.mc-badge--difficulty-easy { color: #22c55e; border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.1); }
+.mc-badge--difficulty-normal { color: #38bdf8; border-color: rgba(56,189,248,0.3); background: rgba(56,189,248,0.1); }
+.mc-badge--difficulty-hard { color: #ef4444; border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.1); }
+.mc-badge--difficulty-legendary { color: #f59e0b; border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.1); }
+.mc-badge--xp { color: var(--af-purple-bright); border-color: var(--af-border); background: var(--af-purple-dim); }
+
+/* Swipe overlay */
+.mc-swipe-overlay-aura {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(5,5,5,0.6);
+  backdrop-filter: blur(2px);
+  border-radius: inherit;
+  pointer-events: none;
+  font-family: var(--af-font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--af-purple-bright);
+  text-shadow: 0 0 10px var(--af-purple-glow);
+  opacity: 0;
+  animation: mc-overlay-in 0.1s ease forwards;
+}
+.mc-swipe-stage--ready .mc-swipe-overlay-aura { color: #c4b5fd; }
+@keyframes mc-overlay-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* Right side: swipe action or completed state */
+.mc-aura-right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mc-swipe-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--af-purple);
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(168,85,247,0.4);
+  flex-shrink: 0;
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+.mc-swipe-btn:active { transform: scale(0.92); }
+.mc-swipe-btn svg { width: 14px; height: 14px; }
+
+.mc-aura-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.mc-aura-progress-pct {
+  font-family: var(--af-font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--af-purple-bright);
+}
+.mc-aura-progress-label {
+  font-family: var(--af-font-mono);
+  font-size: 9px;
+  color: var(--af-text-faint);
+  letter-spacing: 0.06em;
+}
+
+.mc-aura-completed-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--af-font-mono);
+  font-size: 10px;
+  color: var(--af-purple-bright);
+}
+.mc-aura-completed-badge svg { width: 14px; height: 14px; }
+
+.mc-aura-delete {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  background: transparent;
+  border: 1px solid rgba(239,68,68,0.2);
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s, background 0.2s;
+}
+.mc-aura-delete:hover { opacity: 1; background: rgba(239,68,68,0.1); }
+.mc-aura-delete svg { width: 13px; height: 13px; }
+
+/* Completion burst */
+.mc-celebrate {
+  animation: mc-burst 0.5s cubic-bezier(0.22,1,0.36,1);
+}
+@keyframes mc-burst {
+  0%   { box-shadow: 0 0 0 0 rgba(168,85,247,0.7); }
+  40%  { box-shadow: 0 0 30px 4px rgba(168,85,247,0.5); transform: scale(1.02); }
+  100% { box-shadow: 0 0 0 0 rgba(168,85,247,0); }
+}
+
+/* ── Bottom stats footer ─────────────────────────────────────── */
+.missions-footer-stats {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 0 20px;
+}
+
+.mf-stat {
+  background: var(--af-card);
+  border: 1px solid var(--af-border);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.mf-stat-label {
+  font-family: var(--af-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--af-text-faint);
+  text-transform: uppercase;
+}
+.mf-stat-value {
+  font-family: var(--af-font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--af-purple-bright);
+  text-shadow: 0 0 10px var(--af-purple-glow);
+}
+.mf-stat-sub {
+  font-size: 11px;
+  color: var(--af-text-muted);
+}
+.mf-stat-bar {
+  height: 3px;
+  background: rgba(168,85,247,0.15);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.mf-stat-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--af-violet), var(--af-purple-bright));
+  box-shadow: 0 0 8px var(--af-purple-glow);
+  transition: width 0.6s ease;
+}
+
+/* ── Empty state ─────────────────────────────────────────────── */
+.missions-empty-aura {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 60px 32px;
+  text-align: center;
+}
+.missions-empty-icon {
+  width: 64px;
+  height: 64px;
+  color: var(--af-purple);
+  opacity: 0.4;
+}
+.missions-empty-title {
+  font-family: var(--af-font-mono);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: var(--af-text-muted);
+}
+.missions-empty-sub {
+  font-size: 12px;
+  color: var(--af-text-faint);
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 560px) {
+  .missions-hero { padding: 24px 16px 20px; }
+  .missions-toolbar { padding: 12px 16px; }
+  .mission-list-aura { padding: 0 16px; }
+  .missions-add-panel { margin: 0 16px 14px; }
+  .missions-footer-stats { padding: 0 16px; }
+  .af-field-row { grid-template-columns: 1fr; }
+  .missions-stats-bar { display: grid; grid-template-columns: repeat(3,1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mc-aura-accent, .mc-aura, .mc-celebrate { animation: none; transition: none; }
+}

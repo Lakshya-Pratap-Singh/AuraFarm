@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
+import BottomNav from "./components/BottomNav";
 import AppRoutes from "./routes/AppRoutes";
 import RankUpOverlay from "./components/RankUpOverlay";
 import PageTransition from "./components/PageTransition";
+import useBreakpoint from "./hooks/useBreakpoint";
 
+import "./styles/aura-theme.css";
 import "./styles/sidebar.css";
+import "./styles/bottom-nav.css";
 import "./styles/dashboard.css";
 
 const DEFAULT_PRIORITY = "Medium";
@@ -63,24 +67,29 @@ function normalizeMissions(data) {
 // Sidebar speaks in nav LABELS, AppRoutes speaks in URL PATHS.
 // These maps translate between the two so neither file needs to know
 // about the other's convention.
+// Sidebar speaks in nav LABELS, AppRoutes speaks in URL PATHS.
+// Stats → same Intelligence page. Relics/Aura Shop/Profile not yet wired.
 const NAV_TO_PATH = {
-  "Command Center": "/",
-  Missions: "/missions",
-  Objectives: "/objectives",
-  Intelligence: "/intelligence",
-  Settings: "/settings",
+  "Dashboard":    "/",
+  "Missions":     "/missions",
+  "Objectives":   "/objectives",
+  "Intelligence": "/intelligence",
+  "Stats":        "/intelligence",
+  "Settings":     "/settings",
 };
 
-const PATH_TO_NAV = Object.fromEntries(
-  Object.entries(NAV_TO_PATH).map(([label, path]) => [path, label])
-);
+const PATH_TO_NAV = {
+  "/":             "Dashboard",
+  "/missions":     "Missions",
+  "/objectives":   "Objectives",
+  "/intelligence": "Intelligence",
+  "/settings":     "Settings",
+};
 
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
-
-  // Sidebar collapse/expand state lives here (Phase 3 architecture)
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const { isMobile } = useBreakpoint();
 
   // Missions State
   const [missions, setMissions] = useState(() => {
@@ -117,7 +126,7 @@ function App() {
       : [
           {
             id: 1,
-            title: "Build DailyWise",
+            title: "Build AuraFarm",
             progress: null,
             targetDate: "2026-12-31",
           },
@@ -146,25 +155,24 @@ function App() {
     );
   }, [objectives]);
 
-  // Active nav item is derived from the current URL, not stored separately —
-  // keeps it in sync with browser back/forward and direct link navigation.
-  const activeNav = PATH_TO_NAV[location.pathname] || "Command Center";
+  const activeNav = PATH_TO_NAV[location.pathname] || "Dashboard";
 
   const handleNavChange = (label) => {
     const path = NAV_TO_PATH[label];
     if (path) navigate(path);
+    // Relics / Aura Shop / Profile have no path yet — no-op until pages built
   };
 
-  const handleToggle = () => setIsCollapsed((prev) => !prev);
-
   return (
-    <div className={`app-shell ${isCollapsed ? "app-shell--collapsed" : ""}`}>
-      <Sidebar
-        activeNav={activeNav}
-        onNavChange={handleNavChange}
-        isCollapsed={isCollapsed}
-        onToggle={handleToggle}
-      />
+    <div className="app-shell">
+      {isMobile ? (
+        <BottomNav activeNav={activeNav} onNavChange={handleNavChange} />
+      ) : (
+        <Sidebar
+          activeNav={activeNav}
+          onNavChange={handleNavChange}
+        />
+      )}
 
       <main className="main-content">
         <PageTransition>

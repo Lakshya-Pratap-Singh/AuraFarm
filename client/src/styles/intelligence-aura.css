@@ -1,0 +1,217 @@
+/* AURAFARM — intelligence-aura.css */
+@import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
+
+.intel-page {
+  background: #050505;
+  min-height: 100vh;
+  padding: 0 0 80px;
+  color: #f1ecfb;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Hero ──────────────────────────────────────────────────── */
+.intel-hero {
+  position: relative;
+  padding: 36px 32px 28px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0d0118 0%, #050505 100%);
+  border-bottom: 1px solid rgba(139,92,246,0.2);
+}
+.intel-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(91,33,182,0.25), transparent 70%);
+  pointer-events: none;
+}
+.intel-hero-heading {
+  font-family: 'Pirata One', serif;
+  font-size: clamp(2.4rem, 7vw, 4.5rem);
+  line-height: 1;
+  background: linear-gradient(to bottom, #ffffff, #c4b5fd, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 18px rgba(168,85,247,0.55));
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+.intel-hero-sub {
+  font-size: 13.5px;
+  color: #a89cc8;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Stat cards ─────────────────────────────────────────────── */
+.intel-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 20px 24px;
+}
+
+.intel-stat-card {
+  background: #120d1a;
+  border: 1px solid rgba(139,92,246,0.2);
+  border-radius: 16px;
+  padding: 18px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
+}
+.intel-stat-card:hover {
+  border-color: rgba(168,85,247,0.4);
+  box-shadow: 0 0 20px rgba(168,85,247,0.14);
+  transform: translateY(-3px);
+}
+.intel-stat-card--accent {
+  border-color: rgba(168,85,247,0.35);
+  box-shadow: inset 0 0 0 1px rgba(168,85,247,0.08);
+}
+
+.intel-stat-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(139,92,246,0.12);
+  border: 1px solid rgba(168,85,247,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a855f7;
+  filter: drop-shadow(0 0 4px rgba(168,85,247,0.4));
+}
+.intel-stat-icon svg { width: 19px; height: 19px; }
+
+.intel-stat-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+
+.intel-stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  color: #a855f7;
+  text-shadow: 0 0 12px rgba(168,85,247,0.55);
+  line-height: 1;
+}
+
+.intel-stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: #5e5571;
+  text-transform: uppercase;
+}
+
+/* ── Section label ──────────────────────────────────────────── */
+.intel-section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: #5e5571;
+  text-transform: uppercase;
+  padding: 4px 24px 12px;
+}
+
+/* ── Activity grid wrapper ──────────────────────────────────── */
+.intel-grid-section {
+  padding: 0 24px;
+  margin-bottom: 24px;
+}
+
+/* Override the gold ActivityGrid card chrome to purple */
+.intel-grid-section .activity-grid-card {
+  background: #120d1a;
+  border-color: rgba(139,92,246,0.2);
+  box-shadow: inset 0 1px 0 rgba(168,85,247,0.06);
+}
+.intel-grid-section .ag-title { color: #a89cc8; }
+.intel-grid-section .ag-title-icon { color: #a855f7; }
+
+/* ── Donut chart section ─────────────────────────────────────── */
+.intel-breakdown-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 0 24px;
+}
+
+/* Override donut card to purple theme */
+.intel-breakdown-row .donut-card {
+  background: #120d1a;
+  border-color: rgba(139,92,246,0.2);
+}
+.intel-breakdown-row .donut-title { color: #a89cc8; }
+.intel-breakdown-row .donut-center-value {
+  color: #a855f7;
+  text-shadow: 0 0 16px rgba(168,85,247,0.5);
+}
+.intel-breakdown-row .donut-center-label { color: #5e5571; }
+.intel-breakdown-row .donut-legend-label { color: #f1ecfb; }
+.intel-breakdown-row .donut-legend-value { color: #a89cc8; }
+.intel-breakdown-row .donut-legend-percent { color: #a855f7; }
+
+/* ── XP Trend chart ─────────────────────────────────────────── */
+.intel-trend-section {
+  padding: 0 24px;
+  margin-top: 16px;
+}
+.intel-trend-card {
+  background: #120d1a;
+  border: 1px solid rgba(139,92,246,0.2);
+  border-radius: 16px;
+  padding: 22px 24px;
+}
+.intel-trend-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.intel-trend-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: #a89cc8;
+  text-transform: uppercase;
+}
+.intel-trend-delta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #22c55e;
+  letter-spacing: 0.06em;
+}
+
+/* SVG sparkline */
+.intel-sparkline { width: 100%; height: 80px; overflow: visible; }
+.intel-spark-area { fill: url(#sparkGrad); opacity: 0.25; }
+.intel-spark-line { fill: none; stroke: #a855f7; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 4px rgba(168,85,247,0.6)); }
+
+.intel-spark-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.intel-spark-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: #5e5571;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .intel-hero { padding: 24px 16px 20px; }
+  .intel-stats-row { grid-template-columns: repeat(2, 1fr); padding: 16px; }
+  .intel-breakdown-row { grid-template-columns: 1fr; padding: 0 16px; }
+  .intel-grid-section { padding: 0 16px; }
+  .intel-trend-section { padding: 0 16px; }
+  .intel-section-label { padding-left: 16px; padding-right: 16px; }
+}
+@media (max-width: 480px) {
+  .intel-stats-row { grid-template-columns: 1fr; }
+}

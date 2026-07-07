@@ -1,0 +1,21 @@
+/* aura-logomark.css
+   Was SVG-targeted (stroke/fill on path elements) for the hand-coded
+   placeholder monogram. Now AuraLogoMark renders the real artwork as
+   an <img>, so styling moves to drop-shadow (the PNG already has its
+   own internal purple glow baked in from the source art — this adds
+   a bit of extra lift so it doesn't look flat against dark surfaces,
+   and intensifies on hover same as the old version did). */
+
+.aura-logomark {
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 0 5px var(--aura-purple-glow, rgba(168, 85, 247, 0.5)));
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aura-logomark {
+    transition: filter 0.3s ease;
+  }
+}

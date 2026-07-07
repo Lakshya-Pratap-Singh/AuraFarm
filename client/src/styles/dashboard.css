@@ -1,460 +1,559 @@
-/* ─── Dashboard Page ───────────────────────────────────────────────────── */
+/* ============================================================
+   AURAFARM — Dashboard
+   Pixel-matches the desktop/mobile mockup:
+   · Hero banner with gradient overlay
+   · 4 stat cards in a row
+   · 3-column bottom row: Missions | Aura Overview | Achievement
+   ============================================================ */
 
-.dashboard {
-  padding: 32px 24px 48px;
-  max-width: 1400px;
-}
-
-.dashboard-command-layout {
-  display: grid;
-  gap: 18px;
-}
-
-.dashboard-panel,
-.dashboard-widget-card {
+/* ── Page shell ─────────────────────────────────────────────── */
+.db-page {
+  min-height: 100vh;
+  background: #080510;
+  color: #f1ecfb;
+  font-family: var(--aura-font-body, 'Inter', sans-serif);
+  padding: 0 24px 40px;
   position: relative;
-  background:
-    linear-gradient(180deg, rgba(18, 18, 18, 0.98), rgba(6, 8, 10, 0.98));
-  border: 1px solid rgba(212, 175, 55, 0.12);
-  border-radius: 18px;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 0 0 1px rgba(255, 255, 255, 0.02),
-    0 18px 50px rgba(0, 0, 0, 0.45);
-  overflow: hidden;
+  z-index: 1;
 }
 
-.dashboard-panel::before,
-.dashboard-widget-card::before {
-  content: "";
+/* ── Top bar (XP gem + date + bell) ────────────────────────── */
+.db-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 0 0;
+  margin-bottom: -8px;
+  position: relative;
+  z-index: 2;
+}
+
+.db-topbar-xp {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(139, 92, 246, 0.14);
+  border: 1px solid rgba(168, 85, 247, 0.28);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #f1ecfb;
+}
+.db-topbar-xp-icon {
+  width: 14px;
+  height: 14px;
+  color: #a855f7;
+}
+
+.db-topbar-bell {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 50%;
+  cursor: pointer;
+  color: #a89cc8;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.db-topbar-bell:hover { background: rgba(139, 92, 246, 0.12); color: #a855f7; }
+.db-topbar-bell svg { width: 16px; height: 16px; }
+.db-topbar-bell-dot {
+  position: absolute;
+  top: 6px; right: 7px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #a855f7;
+  border: 1.5px solid #080510;
+}
+
+/* ── Hero banner ────────────────────────────────────────────── */
+.db-hero {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  height: 220px;
+  margin: 16px 0 20px;
+  display: flex;
+  align-items: flex-end;
+  background:
+    radial-gradient(ellipse 80% 100% at 80% 50%, rgba(120, 40, 200, 0.55) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 80% at 20% 80%, rgba(80, 10, 160, 0.4) 0%, transparent 60%),
+    linear-gradient(135deg, #0a0614 0%, #160d28 40%, #1a0e35 60%, #0d0618 100%);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(168,85,247,0.12);
+}
+
+/* Lightning particle overlay */
+.db-hero::before {
+  content: '';
   position: absolute;
   inset: 0;
-  pointer-events: none;
   background:
-    linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.04), transparent);
-  opacity: 0.3;
+    radial-gradient(ellipse 40% 60% at 70% 30%, rgba(168,85,247,0.2) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 50% at 55% 60%, rgba(139,92,246,0.15) 0%, transparent 55%);
+  pointer-events: none;
 }
 
-.dashboard-panel--hero {
+/* Subtle vertical streak lines — evoke the lightning in the mockup */
+.db-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    92deg,
+    transparent 0px,
+    transparent 120px,
+    rgba(168,85,247,0.03) 121px,
+    transparent 122px
+  );
+  pointer-events: none;
+}
+
+.db-hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 28px 28px;
+  max-width: 55%;
+}
+
+.db-hero-title {
+  font-family: var(--aura-font-display, 'Cinzel', serif);
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1.15;
+  color: #ffffff;
+  text-shadow: 0 0 30px rgba(168,85,247,0.6), 0 2px 8px rgba(0,0,0,0.8);
+  margin: 0 0 10px;
+}
+
+.db-hero-sub {
+  font-size: 13px;
+  color: rgba(241,236,251,0.72);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ── 4 Stat cards row ───────────────────────────────────────── */
+.db-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.db-stat-card {
+  background: #13101c;
+  border: 1px solid rgba(168,85,247,0.1);
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.db-stat-card:hover {
+  border-color: rgba(168,85,247,0.22);
+  box-shadow: 0 4px 20px rgba(168,85,247,0.08);
+}
+.db-stat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(168,85,247,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.db-stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8b7faa;
+}
+
+.db-stat-value {
+  font-size: 30px;
+  font-weight: 700;
+  color: #f1ecfb;
+  line-height: 1;
+}
+
+.db-stat-sub {
+  font-size: 11.5px;
+  color: #8b7faa;
+  margin-top: 2px;
+}
+
+/* Aura Level card — badge icon */
+.db-stat-level-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 24px;
+}
+.db-stat-level-badge {
+  width: 44px;
+  height: 44px;
+  filter: drop-shadow(0 0 8px rgba(168,85,247,0.6));
 }
 
-.dashboard-panel__eyebrow {
-  margin: 0 0 6px;
-  font-size: 0.72rem;
-  color: #d4af37;
-  letter-spacing: 0.42em;
-  text-transform: uppercase;
-}
-
-.dashboard-panel__title {
-  margin: 0;
-  font-size: 1.8rem;
-  color: #f5f5f5;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-/* ── Hero inline stats — current objective + completion %, sitting
-   under the title. Reuses the same gold/gray palette as the rest of
-   the hero rather than introducing new colors. ──────────────────── */
-.dashboard-panel__hero-meta {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  margin-top: 14px;
-}
-
-.dashboard-panel__hero-meta-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  max-width: 240px;
-}
-
-.dashboard-panel__hero-meta-label {
-  font-size: 0.68rem;
-  color: #9ca3af;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-}
-
-.dashboard-panel__hero-meta-value {
-  font-size: 0.92rem;
-  color: #f5f5f5;
+.db-stat-rank {
+  font-size: 12px;
+  color: #a855f7;
   font-weight: 600;
+  margin-top: 2px;
+}
+
+/* XP progress bar */
+.db-xp-bar-wrap {
+  width: 100%;
+  height: 5px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  margin-top: 6px;
+}
+.db-xp-bar {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
+  box-shadow: 0 0 8px rgba(168,85,247,0.6);
+  transition: width 0.8s ease;
 }
 
-.dashboard-panel__hero-meta-divider {
-  width: 1px;
-  height: 28px;
-  background: rgba(212, 175, 55, 0.18);
-  flex-shrink: 0;
-}
-
-.dashboard-panel__status-pill {
-  display: inline-flex;
+/* Streak card — flame emoji + big number */
+.db-stat-streak-row {
+  display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 14px;
-  background: rgba(212, 175, 55, 0.08);
-  border: 1px solid rgba(212, 175, 55, 0.24);
-  border-radius: 999px;
-  color: #f5f5f5;
-  font-size: 0.78rem;
-  letter-spacing: 0.24em;
+}
+.db-stat-flame {
+  font-size: 24px;
+  line-height: 1;
 }
 
-.dashboard-panel__status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
-  animation: pulse-dot 2s infinite;
-}
-
-.dashboard-panel__header {
+/* Daily progress — circular ring */
+.db-stat-ring-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 18px;
 }
-
-.dashboard-panel__meta {
-  color: #9ca3af;
-  font-size: 0.78rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+.db-stat-ring-wrap {
+  position: relative;
+  width: 58px;
+  height: 58px;
 }
-
-.dashboard-metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
+.db-stat-ring-svg {
+  width: 58px;
+  height: 58px;
+  transform: rotate(-90deg);
 }
-
-.dashboard-widget-card {
-  padding: 18px 18px 16px;
-  min-height: 140px;
+.db-stat-ring-track {
+  fill: none;
+  stroke: rgba(255,255,255,0.08);
+  stroke-width: 4;
 }
-
-.dashboard-widget-card--metric {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+.db-stat-ring-fill {
+  fill: none;
+  stroke: #a855f7;
+  stroke-width: 4;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 4px rgba(168,85,247,0.7));
+  transition: stroke-dashoffset 0.8s ease;
 }
-
-.widget-card__header {
+.db-stat-ring-label {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.widget-card__title {
-  font-size: 0.75rem;
-  color: #9ca3af;
-  text-transform: uppercase;
-  letter-spacing: 0.24em;
-}
-
-.widget-card__signal {
-  width: 42px;
-  height: 3px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #d4af37, #f4d03f);
-}
-
-.widget-card__value-wrap {
-  display: flex;
-  align-items: end;
-  min-height: 56px;
-}
-
-.widget-counter {
-  font-size: clamp(2rem, 3vw, 3rem);
-  font-weight: 700;
-  color: #f5f5f5;
-  letter-spacing: 0.04em;
-  text-shadow: 0 0 18px rgba(212, 175, 55, 0.18);
-}
-
-.widget-card__detail {
-  margin: 0;
-  font-size: 0.78rem;
-  color: #9ca3af;
-  letter-spacing: 0.08em;
-}
-
-.dashboard-panel--overview,
-.dashboard-panel--objectives,
-.dashboard-panel--chart,
-.dashboard-panel--feed {
-  padding: 18px 18px 20px;
-}
-
-.dashboard-overview-card {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.dashboard-overview-card > div {
-  padding: 18px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
-  border: 1px solid rgba(212, 175, 55, 0.08);
-  border-radius: 14px;
-}
-
-.dashboard-analytics-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.dashboard-analytics-card__value {
-  margin: 0;
-  color: #f5f5f5;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.dashboard-overview-card__label {
-  margin: 0 0 10px;
-  color: #9ca3af;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-}
-
-.dashboard-overview-card h3 {
-  margin: 0;
-  color: #d4af37;
-  font-size: 2rem;
-}
-
-.dashboard-objective-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.dashboard-widget-card--objective {
-  display: flex;
-  flex-direction: column;
   justify-content: center;
-  gap: 12px;
-  min-height: 150px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #f1ecfb;
 }
 
-.dashboard-objective-card__name {
-  margin: 0;
-  color: #f5f5f5;
-  font-size: 1rem;
+/* ── Bottom 3-column row ────────────────────────────────────── */
+.db-bottom {
+  display: grid;
+  grid-template-columns: 1fr 0.85fr 0.85fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.db-panel {
+  background: #13101c;
+  border: 1px solid rgba(168,85,247,0.1);
+  border-radius: 16px;
+  padding: 20px;
+  transition: border-color 0.2s ease;
+}
+.db-panel:hover {
+  border-color: rgba(168,85,247,0.18);
+}
+
+.db-panel-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8b7faa;
+  margin: 0 0 16px;
+}
+
+/* ── Today's Missions panel ─────────────────────────────────── */
+.db-mission-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.db-mission-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+.db-mission-row:hover {
+  background: rgba(139,92,246,0.07);
+  border-color: rgba(168,85,247,0.14);
+}
+
+/* Active/in-progress row — purple tint like the mockup's "Morning Meditation 50%>" */
+.db-mission-row--active {
+  background: rgba(109,40,217,0.18);
+  border-color: rgba(168,85,247,0.28);
+}
+
+.db-mission-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(139,92,246,0.15);
+  border: 1px solid rgba(168,85,247,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.db-mission-info {
+  flex: 1;
+  min-width: 0;
+}
+.db-mission-title {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #f1ecfb;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.db-mission-sub {
+  font-size: 10.5px;
+  color: #6b5f8a;
+  margin-top: 1px;
+}
+
+.db-mission-status {
+  flex-shrink: 0;
+  font-size: 11px;
   font-weight: 600;
+}
+.db-mission-status--done {
+  color: #7c3aed;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.db-mission-status--done svg { width: 14px; height: 14px; }
+
+/* Progress arrow button — the purple "50% >" pill */
+.db-mission-arrow {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: #7c3aed;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  flex-shrink: 0;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+.db-mission-arrow:hover { background: #6d28d9; transform: scale(1.06); }
+.db-mission-arrow svg { width: 14px; height: 14px; }
+
+.db-mission-pct {
+  font-size: 12px;
+  font-weight: 600;
+  color: #a89cc8;
+  min-width: 28px;
+  text-align: right;
+}
+
+.db-view-all {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #a855f7;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s ease;
+}
+.db-view-all:hover { opacity: 0.75; }
+.db-view-all svg { width: 12px; height: 12px; }
+
+/* ── Aura Overview panel ────────────────────────────────────── */
+.db-aura-ring-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.db-aura-ring {
+  position: relative;
+  width: 130px;
+  height: 130px;
+}
+.db-aura-ring-svg {
+  width: 130px;
+  height: 130px;
+  transform: rotate(-90deg);
+}
+.db-aura-ring-track {
+  fill: none;
+  stroke: rgba(255,255,255,0.05);
+  stroke-width: 8;
+}
+.db-aura-ring-fill {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke: url(#aura-ring-gradient);
+  filter: drop-shadow(0 0 8px rgba(168,85,247,0.7));
+  transition: stroke-dashoffset 1s ease;
+}
+.db-aura-ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+.db-aura-ring-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #f1ecfb;
+  line-height: 1;
+}
+.db-aura-ring-sub {
+  font-size: 9.5px;
+  color: #8b7faa;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.db-aura-delta {
+  font-size: 12px;
+  color: #a89cc8;
+  text-align: center;
+}
+.db-aura-delta span {
+  color: #22d3a0;
+  font-weight: 600;
+}
+
+/* Sparkline waveform under the ring */
+.db-aura-wave {
+  width: 100%;
+  height: 30px;
+  margin-top: 4px;
+  opacity: 0.5;
+}
+
+/* ── Recent Achievement panel ───────────────────────────────── */
+.db-achievement {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  padding: 4px 0;
+}
+
+.db-achievement-badge {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(139,92,246,0.2) 0%, rgba(80,20,160,0.1) 100%);
+  border: 1px solid rgba(168,85,247,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 24px rgba(168,85,247,0.25);
+  margin-bottom: 4px;
+}
+.db-achievement-badge-icon {
+  font-size: 36px;
+}
+
+.db-achievement-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #f1ecfb;
+}
+.db-achievement-desc {
+  font-size: 11.5px;
+  color: #8b7faa;
   line-height: 1.4;
 }
-
-.dashboard-objective-card__progress {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: #d4af37;
-  font-size: 0.9rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+.db-achievement-xp {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #a855f7;
 }
 
-.dashboard-chart {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  align-items: end;
-  gap: 10px;
-  height: 240px;
-  padding: 18px 6px 0;
-}
+/* ── Mobile layout ──────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .db-page { padding: 0 16px 100px; }
 
-.dashboard-chart__column {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  height: 100%;
-}
-
-.dashboard-chart__bar {
-  width: 100%;
-  max-width: 32px;
-  min-height: 16px;
-  border-radius: 999px 999px 6px 6px;
-  background: linear-gradient(180deg, #f4d03f, #d4af37);
-  box-shadow: inset 0 -8px 18px rgba(0, 0, 0, 0.2), 0 0 14px rgba(212, 175, 55, 0.22);
-  transition: height 0.8s ease;
-}
-
-.dashboard-chart__label {
-  color: #9ca3af;
-  font-size: 0.75rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.dashboard-feed {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.dashboard-feed__item {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 12px;
-  align-items: start;
-  padding: 12px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.dashboard-feed__item:first-child {
-  border-top: 0;
-  padding-top: 0;
-}
-
-.dashboard-feed__dot {
-  width: 10px;
-  height: 10px;
-  margin-top: 6px;
-  border-radius: 50%;
-  background: #d4af37;
-  box-shadow: 0 0 0 6px rgba(212, 175, 55, 0.08);
-}
-
-/* Event-type variants — "created" keeps the default gold dot above,
-   "completed" gets the same green used by the ONLINE status pulse, so
-   the feed now visually distinguishes deploy vs completion events
-   instead of every entry looking identical. */
-.dashboard-feed__dot--completed {
-  background: #22c55e;
-  box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.08);
-}
-
-.dashboard-feed__title {
-  margin: 0;
-  color: #f5f5f5;
-  font-size: 0.92rem;
-  font-weight: 600;
-}
-
-.dashboard-feed__meta {
-  margin: 5px 0 0;
-  color: #9ca3af;
-  font-size: 0.8rem;
-}
-
-.dashboard-feed__time {
-  color: #d4af37;
-  font-size: 0.78rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-@keyframes pulse-dot {
-  0% {
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6);
+  .db-hero {
+    height: 200px;
+    margin: 12px 0 16px;
+    border-radius: 16px;
   }
-  70% {
-    box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
-  }
-}
+  .db-hero-content { max-width: 80%; padding: 0 20px 22px; }
+  .db-hero-title { font-size: 24px; }
 
-@media (max-width: 1024px) {
-  .dashboard-metrics-grid,
-  .dashboard-objective-grid,
-  .dashboard-analytics-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 768px) {
-  .dashboard {
-    padding: 24px 16px 40px;
+  .db-stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
   }
 
-  .dashboard-panel--hero {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
-  }
-
-  .dashboard-panel__title {
-    font-size: 1.4rem;
-  }
-
-  /* Hero meta wraps instead of overflowing on narrow screens, and the
-     vertical divider (meant for a single inline row) is dropped since
-     it looks wrong sitting beside a wrapped line. */
-  .dashboard-panel__hero-meta {
-    flex-wrap: wrap;
-    gap: 14px 20px;
-  }
-
-  .dashboard-panel__hero-meta-item {
-    max-width: 100%;
-  }
-
-  .dashboard-panel__hero-meta-divider {
-    display: none;
-  }
-
-  .dashboard-objective-grid,
-  .dashboard-overview-card,
-  .dashboard-analytics-grid {
+  .db-bottom {
     grid-template-columns: 1fr;
-  }
-
-  /* Metrics grid becomes a swipeable horizontal carousel on mobile
-     instead of stacking vertically — each MetricCard is a scroll-snap
-     point, sized so the next card peeks in at the edge as a swipe
-     affordance. Pure CSS, same MetricCard markup, no new component. */
-  .dashboard-metrics-grid {
-    display: flex;
-    grid-template-columns: unset;
     gap: 14px;
-    margin: 0 -16px;
-    padding: 0 16px 6px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    scroll-padding-left: 16px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-
-  .dashboard-metrics-grid::-webkit-scrollbar {
-    display: none;
-  }
-
-  .dashboard-metrics-grid .dashboard-widget-card--metric {
-    flex: 0 0 80%;
-    scroll-snap-align: start;
-  }
-
-  .dashboard-chart {
-    gap: 6px;
-  }
-
-  .dashboard-chart__label {
-    font-size: 0.65rem;
-    letter-spacing: 0.08em;
   }
 }

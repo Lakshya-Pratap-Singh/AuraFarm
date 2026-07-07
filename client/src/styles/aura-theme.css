@@ -1,0 +1,185 @@
+/* ============================================================
+   AURAFARM — Global Design Tokens & Ambient Background
+   Dark fantasy / futuristic aura aesthetic.
+
+   This is the foundation everything else (cards, buttons, headings,
+   navbar) will reference via the --aura- variables below. Import this
+   ONCE, globally (e.g. in main.jsx, right after or instead of
+   index.css — see migration note at the bottom of this file).
+   ============================================================ */
+
+:root {
+  /* --- Core palette --- */
+  --aura-bg: #050505;
+  --aura-bg-elevated: #0d0a12;
+  --aura-surface: #15101e;
+  --aura-surface-alt: #1c1626;
+
+  --aura-purple: #8b5cf6;
+  --aura-purple-bright: #a855f7;
+  --aura-violet: #5b21b6;
+  --aura-magenta: #c026d3; /* used sparingly — embers/energy accents only */
+
+  --aura-purple-dim: rgba(139, 92, 246, 0.12);
+  --aura-purple-glow: rgba(168, 85, 247, 0.55);
+  --aura-purple-glow-soft: rgba(168, 85, 247, 0.25);
+  --aura-violet-glow: rgba(91, 33, 182, 0.45);
+
+  --aura-metal: #2b2733; /* metallic dark grey, for button/card bodies */
+  --aura-metal-light: #423d4d;
+
+  --aura-text: #f1ecfb;
+  --aura-text-muted: #a89cc8;
+  --aura-text-faint: #5e5571;
+
+  /* --- Typography ---
+     Corrected after seeing the real logo: it's a gothic fantasy serif
+     with sharp angular serifs and a small-caps treatment, NOT a sci-fi
+     sans. Cinzel (bold/black weight) is the closest solid Google Font
+     match — needs adding via @import or a <link> tag, it's not already
+     loaded anywhere in the project (Orbitron/Inter/JetBrains Mono/Space
+     Grotesk are, per the rest of the app, but Cinzel is new). */
+  --aura-font-display: "Cinzel", serif; /* logo-style headings (H1/H2) */
+  --aura-font-sharp: "Orbitron", sans-serif; /* H3 — sharp angular, keeps the sci-fi sans for THIS one level only */
+  --aura-font-body: "Inter", sans-serif;
+  --aura-font-mono: "JetBrains Mono", monospace;
+
+  /* --- Shape --- */
+  --aura-radius-card: 18px; /* per spec — all cards use this exactly */
+  --aura-radius-sm: 10px;
+  --aura-radius-pill: 999px;
+}
+
+/* ── Body backdrop — pure black base + floating particles + slow aura
+   smoke + faint energy waves. All CSS-only (no canvas/JS), layered via
+   pseudo-elements on a single fixed wrapper so it never affects layout
+   or scroll performance. ──────────────────────────────────────────── */
+
+body {
+  background: var(--aura-bg);
+}
+
+.aura-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: var(--aura-bg);
+}
+
+/* Slow-moving aura smoke — two large, very soft blurred blobs drifting
+   past each other. Cheap: two elements, transform-only, GPU composited. */
+.aura-backdrop::before,
+.aura-backdrop::after {
+  content: "";
+  position: absolute;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.22;
+  will-change: transform;
+}
+
+.aura-backdrop::before {
+  top: -20%;
+  left: -15%;
+  background: radial-gradient(circle, var(--aura-violet) 0%, transparent 70%);
+  animation: aura-smoke-drift-a 26s ease-in-out infinite;
+}
+
+.aura-backdrop::after {
+  bottom: -25%;
+  right: -10%;
+  background: radial-gradient(circle, var(--aura-purple) 0%, transparent 70%);
+  animation: aura-smoke-drift-b 32s ease-in-out infinite;
+}
+
+@keyframes aura-smoke-drift-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%       { transform: translate(8vmax, 6vmax) scale(1.12); }
+}
+
+@keyframes aura-smoke-drift-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%       { transform: translate(-6vmax, -8vmax) scale(1.08); }
+}
+
+/* Floating particles — a fixed small set of glowing dots rather than a
+   JS-driven particle system, for guaranteed mobile performance. Each
+   particle is one element with its own size/position/delay, looping
+   a simple rise-and-fade. Add/remove .aura-particle children freely;
+   this is intentionally a flat list, not a generated grid, so density
+   can be tuned per-page without touching the animation logic. */
+.aura-particle {
+  position: absolute;
+  bottom: -10%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--aura-purple-bright);
+  box-shadow: 0 0 8px var(--aura-purple-glow), 0 0 16px var(--aura-purple-glow-soft);
+  opacity: 0;
+  animation: aura-particle-rise 14s linear infinite;
+}
+
+@keyframes aura-particle-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(0) translateX(0);
+  }
+  8% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-115vh) translateX(var(--aura-particle-drift, 20px));
+  }
+}
+
+/* Very subtle energy wave — a slow horizontal sweep of a faint gradient
+   band, low opacity so it reads as ambient texture, not a visible bar. */
+.aura-backdrop .aura-energy-wave {
+  position: absolute;
+  inset: -10% -10%;
+  background: linear-gradient(
+    100deg,
+    transparent 35%,
+    rgba(168, 85, 247, 0.05) 50%,
+    transparent 65%
+  );
+  animation: aura-wave-sweep 18s linear infinite;
+}
+
+@keyframes aura-wave-sweep {
+  0% { transform: translateX(-20%); }
+  100% { transform: translateX(20%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aura-backdrop::before,
+  .aura-backdrop::after,
+  .aura-particle,
+  .aura-energy-wave {
+    animation: none;
+  }
+}
+
+/* ── Migration note ──────────────────────────────────────────────────
+   index.css currently defines --color-gold/--color-bg/etc. and styles
+   #root/.app-shell/.main-content directly. This file does NOT redefine
+   those structural rules (app-shell flex layout, sidebar margin math,
+   scrollbar theming) — only the color/typography TOKENS and the new
+   ambient background. Two ways to proceed once you're ready to flip
+   the whole app over:
+     1) Re-point index.css's --color-* values to the --aura-* ones above
+        (fastest — keeps one token file, just repaints it purple), or
+     2) Let aura-theme.css's tokens take over per-component as each
+        component gets its gold→purple pass (what the phased plan below
+        does — safer, one screen at a time, nothing breaks mid-way).
+   Going with option 2 for the phased rollout.
+   ───────────────────────────────────────────────────────────────────── */

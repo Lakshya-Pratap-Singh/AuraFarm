@@ -13,7 +13,7 @@
 
 import "../styles/donut-chart.css";
 
-const GOLD_SHADES = ["#e0b85a", "#c19a3f", "#8a6c2b", "#f4d484", "#a67c2e", "#6b5220"];
+const GOLD_SHADES = ["#a855f7", "#7c3aed", "#c084fc", "#6d28d9", "#ddd6fe", "#4c1d95"];
 
 function DonutChart({ title, data = {} }) {
   const entries = Object.entries(data).sort((a, b) => b[1] - a[1]);

@@ -1,80 +1,60 @@
-/* bottom-nav.css — bn- prefix
-   Mirrors sidebar.css's actual gold tokens (--sb-gold: #d4af37,
-   --sb-gold-bright: #f4d03f, --sb-bg: #0e0e10) rather than re-declaring
-   a new palette, so the bottom bar reads as the same surface as the
-   sidebar it replaces on mobile.
-*/
+/* ============================================================
+   AURAFARM — BottomNav (mobile)
+   Matches the mockup's mobile bottom nav exactly:
+   · Dark pill bar floating above the screen edge
+   · 5 slots: Dashboard | Missions | [raised AF center] | Stats | Profile
+   · Active tab = purple icon + label
+   ============================================================ */
 
 .bn-root {
   position: fixed;
-  left: 16px;
-  right: 16px;
-  bottom: 16px;
-  bottom: calc(16px + env(safe-area-inset-bottom));
-  z-index: 100;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
 
   display: flex;
   align-items: center;
   justify-content: space-around;
 
+  background: #0f0c18;
+  border-top: 1px solid rgba(168, 85, 247, 0.12);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.5), 0 -1px 0 rgba(168, 85, 247, 0.08);
+
   height: 64px;
-  padding: 0 6px;
-  border-radius: 20px;
+  padding: 0 8px;
 
-  background: var(--sb-bg, #0e0e10);
-  border: 1px solid var(--sb-border, rgba(255, 255, 255, 0.07));
-  box-shadow:
-    0 0 0 1px var(--sb-gold-border, rgba(212, 175, 55, 0.22)),
-    0 8px 32px rgba(0, 0, 0, 0.6);
+  /* Safe area for notched phones */
+  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
-/* Floating active indicator — one element, slid via transform so it
-   animates smoothly between tabs instead of cross-fading per-item */
-.bn-indicator {
-  position: absolute;
-  top: 6px;
-  bottom: 6px;
-  border-radius: 14px;
-  background: var(--sb-gold-soft, rgba(212, 175, 55, 0.12));
-  border: 1px solid var(--sb-gold-border, rgba(212, 175, 55, 0.22));
-  box-shadow: 0 0 18px rgba(212, 175, 55, 0.16);
-  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), width 0.32s cubic-bezier(0.22, 1, 0.36, 1);
-  pointer-events: none;
-}
-
+/* ── Regular tabs ───────────────────────────────────────────── */
 .bn-item {
-  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 3px;
   padding: 8px 4px;
-  border-radius: 14px;
-  background: transparent;
   border: none;
-  color: var(--sb-muted, #6b6e78);
-  font-size: 9.5px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  white-space: nowrap;
+  background: none;
+  color: #6b5f8a;
   cursor: pointer;
-  transition: color 0.2s ease, transform 0.15s ease;
+  border-radius: 12px;
+  transition: color 0.18s ease, background 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
 }
-
 .bn-item:active {
-  transform: scale(0.93);
+  background: rgba(139, 92, 246, 0.08);
 }
 
 .bn-item-icon {
-  position: relative;
   width: 20px;
   height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
 }
 .bn-item-icon svg {
   width: 100%;
@@ -82,41 +62,60 @@
 }
 
 .bn-item-label {
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 9.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
 }
 
+/* Active state — purple icon + label */
 .bn-item--active {
-  color: var(--sb-gold-bright, #f4d03f);
+  color: #a855f7;
 }
 .bn-item--active .bn-item-icon {
-  filter: drop-shadow(0 0 5px rgba(244, 208, 63, 0.55));
-  transform: scale(1.08);
+  filter: drop-shadow(0 0 4px rgba(168, 85, 247, 0.6));
 }
 
-/* XP badge — small count chip on top-right of the icon */
-.bn-badge {
-  position: absolute;
-  top: -4px;
-  right: -8px;
-  min-width: 15px;
-  height: 15px;
-  padding: 0 3px;
-  border-radius: 999px;
-  background: var(--sb-gold-bright, #f4d03f);
-  color: #1a1408;
-  font-size: 9px;
-  font-weight: 700;
-  line-height: 15px;
-  text-align: center;
-  box-shadow: 0 0 6px rgba(244, 208, 63, 0.6);
+/* ── Center AF logo button ──────────────────────────────────── */
+.bn-center-btn {
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Raised above the bar */
+  margin-top: -20px;
+  -webkit-tap-highlight-color: transparent;
 }
 
+.bn-center-inner {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #1a1030;
+  border: 2px solid rgba(168, 85, 247, 0.5);
+  box-shadow:
+    0 0 0 3px rgba(168, 85, 247, 0.15),
+    0 4px 16px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(168, 85, 247, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.bn-center-btn:active .bn-center-inner {
+  transform: scale(0.94);
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.25), 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Reduced motion ─────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .bn-indicator,
   .bn-item,
-  .bn-item-icon {
-    transition: none;
-  }
+  .bn-center-inner { transition: none; }
 }

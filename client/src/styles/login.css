@@ -1,21 +1,24 @@
 /* ============================================================
-   DAILYWISE — login.css
-   Operative Access gate · Black/Gold, matches Sidebar brand identity
+   AURAFARM — login.css
+   Cultivator Access gate · Black/Purple aura glow, matches Sidebar
+   brand identity. REPAINTED from DailyWise's gold/Batcave palette —
+   structural rules (card sizing, button layout) are unchanged, only
+   colors/typography/copy moved.
    ============================================================ */
 
 :root {
-  --lg-bg:     #0a0a0c;
-  --lg-card:   #14151a;
-  --lg-border: rgba(255, 255, 255, 0.08);
-  --lg-gold:        #d4af37;
-  --lg-gold-bright: #f4d03f;
-  --lg-gold-border: rgba(212, 175, 55, 0.22);
-  --lg-text:       #e8e6e1;
-  --lg-text-muted: #8b8d96;
+  --lg-bg:     #050505;
+  --lg-card:   #15101e;
+  --lg-border: rgba(168, 85, 247, 0.1);
+  --lg-purple:        var(--aura-purple-bright, #a855f7);
+  --lg-purple-bright: var(--aura-purple-bright, #a855f7);
+  --lg-purple-border: rgba(168, 85, 247, 0.24);
+  --lg-text:       var(--aura-text, #f1ecfb);
+  --lg-text-muted: var(--aura-text-muted, #a89cc8);
 
-  --lg-font-display: 'Rajdhani', sans-serif;
-  --lg-font-body:    'Inter', sans-serif;
-  --lg-font-mono:    'JetBrains Mono', monospace;
+  --lg-font-display: var(--aura-font-display, 'Cinzel', serif);
+  --lg-font-body:    var(--aura-font-body, 'Inter', sans-serif);
+  --lg-font-mono:    var(--aura-font-mono, 'JetBrains Mono', monospace);
 }
 
 .login-page {
@@ -36,7 +39,8 @@
   border: 1px solid var(--lg-border);
   border-radius: 24px;
   box-shadow:
-    0 0 0 1px var(--lg-gold-border),
+    0 0 0 1px var(--lg-purple-border),
+    0 0 40px rgba(168, 85, 247, 0.08),
     0 20px 60px rgba(0, 0, 0, 0.6);
   padding: 36px 32px 32px;
   display: flex;
@@ -54,13 +58,11 @@
   margin-bottom: 6px;
 }
 
-.login-bat {
-  width: 44px;
-  height: 22px;
-  color: var(--lg-gold);
+.login-mark {
+  width: 48px;
+  height: 48px;
   margin-bottom: 4px;
 }
-.login-bat svg { width: 100%; height: 100%; }
 
 .login-logo {
   font-family: var(--lg-font-display);
@@ -69,7 +71,10 @@
   letter-spacing: 0.07em;
   color: var(--lg-text);
 }
-.login-gold { color: var(--lg-gold); }
+.login-purple {
+  color: var(--lg-purple-bright);
+  text-shadow: 0 0 10px var(--aura-purple-glow-soft, rgba(168, 85, 247, 0.4));
+}
 
 .login-tagline {
   font-family: var(--lg-font-mono);
@@ -114,7 +119,7 @@
   margin-top: 4px;
 }
 .login-google-btn:hover:not(:disabled) {
-  box-shadow: 0 4px 18px rgba(212, 175, 55, 0.18);
+  box-shadow: 0 4px 18px rgba(168, 85, 247, 0.22);
   transform: translateY(-1px);
   background: #fafafa;
 }
@@ -159,8 +164,8 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--lg-gold-bright);
-  box-shadow: 0 0 8px rgba(244, 208, 63, 0.7);
+  background: var(--lg-purple-bright);
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.7);
   animation: auth-dot-pulse 1.2s ease-in-out infinite;
 }
 

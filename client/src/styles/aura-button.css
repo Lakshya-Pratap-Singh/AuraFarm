@@ -1,0 +1,75 @@
+/* aura-button.css */
+
+.aura-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 26px;
+  min-height: 44px; /* thumb-target minimum, learned the hard way earlier in this project */
+  border-radius: 12px;
+  background: linear-gradient(160deg, var(--aura-metal, #2b2733), var(--aura-metal-light, #423d4d));
+  border: 1.5px solid var(--aura-purple-bright, #a855f7);
+  color: var(--aura-text, #f1ecfb);
+  font-family: var(--aura-font-sharp, "Orbitron", sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.25);
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease,
+    border-color 0.2s ease;
+}
+
+.aura-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.45), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.aura-btn-label {
+  position: relative;
+  z-index: 1;
+}
+
+@media (hover: hover) {
+  .aura-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 26px rgba(168, 85, 247, 0.55), 0 0 50px rgba(168, 85, 247, 0.25);
+    border-color: var(--aura-purple-bright, #a855f7);
+  }
+  .aura-btn:hover::before {
+    opacity: 1;
+    animation: aura-btn-pulse 1.2s ease-in-out infinite;
+  }
+}
+
+.aura-btn:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 36px rgba(168, 85, 247, 0.75), 0 0 70px rgba(168, 85, 247, 0.4);
+}
+
+@keyframes aura-btn-pulse {
+  0%, 100% { opacity: 0.55; }
+  50%       { opacity: 1; }
+}
+
+.aura-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aura-btn,
+  .aura-btn::before {
+    transition: none;
+    animation: none;
+  }
+}
