@@ -35,7 +35,7 @@
   /* Sidebar is a floating pill: offset = width + gap from edge */
   --sidebar-width: 240px;            /* expanded — must match sidebar.css --sb-expanded */
   --sidebar-collapsed-width: 72px;   /* must match sidebar.css --sb-collapsed */
-  --sidebar-gap: 16px;               /* gap from window edge — must match sidebar.css --sb-gap */
+  --sidebar-gap: 16px;               /* currently unused by layout math (sidebar is edge-to-edge); kept in case a floating-sidebar variant returns */
   --radius-md: 10px;
   --radius-lg: 16px;
 }
@@ -106,8 +106,11 @@ button {
 
 .main-content {
   flex: 1;
-  /* sidebar width + the gap it floats from the left edge + a little breathing room */
-  margin-left: calc(var(--sidebar-width) + var(--sidebar-gap) + 16px);
+  /* Sidebar is a fixed, edge-to-edge panel (not floating), so content
+     should begin exactly where the sidebar ends. The 40px/48px padding
+     below already provides breathing room from that edge — don't stack
+     extra margin on top of it. */
+  margin-left: var(--sidebar-width);
   padding: 40px 48px;
   position: relative;
   z-index: 2;
@@ -117,7 +120,7 @@ button {
 
 /* When sidebar is collapsed, content expands to reclaim the space */
 .app-shell--collapsed .main-content {
-  margin-left: calc(var(--sidebar-collapsed-width) + var(--sidebar-gap) + 16px);
+  margin-left: var(--sidebar-collapsed-width);
 }
 
 @media (max-width: 767px) {

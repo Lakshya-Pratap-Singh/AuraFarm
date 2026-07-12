@@ -39,6 +39,11 @@ function useSwipeGesture({
   onDragStart,
   onDrag,
   onRelease,
+  onComplete,
+  onEdit,
+  completeThreshold = 0.85,
+  editThreshold = 0.5,
+  bidirectional = false,
 } = {}) {
   const trackRef = useRef(null);
   const [dragX, setDragX] = useState(0);
@@ -97,9 +102,9 @@ function useSwipeGesture({
         onDragStart?.();
       }
 
-      // Right-swipe-only, matches "swipe to complete" semantics — clamp
-      // at 0 so dragging left never produces a negative offset.
-      const clamped = Math.max(deltaX, 0);
+      const clamped = bidirectional
+        ? Math.max(Math.min(deltaX, trackWidth), -trackWidth)
+        : Math.max(deltaX, 0);
       setDragX(clamped);
       onDrag?.(clamped, trackWidth);
     },
@@ -119,9 +124,19 @@ function useSwipeGesture({
     setDragX(0);
 
     if (wasDragging) {
+      const percent = finalWidth > 0 ? Math.min(Math.abs(finalX) / finalWidth, 1) : 0;
+      if (finalX > 0) {
+        if (percent >= completeThreshold) {
+          onComplete?.();
+        }
+      } else if (finalX < 0) {
+        if (percent >= editThreshold) {
+          onEdit?.();
+        }
+      }
       onRelease?.(finalX, finalWidth);
     }
-  }, [dragX, trackWidth, onRelease]);
+  }, [dragX, trackWidth, onRelease, onComplete, onEdit, completeThreshold, editThreshold]);
 
   const handlers = {
     onPointerDown: handlePointerDown,
@@ -130,7 +145,11 @@ function useSwipeGesture({
     onPointerCancel: endDrag,
   };
 
-  return { trackRef, dragX, trackWidth, isDragging, handlers };
+  const direction = dragX > 0 ? "right" : dragX < 0 ? "left" : null;
+  const fillPct = trackWidth > 0 ? Math.min(Math.max(dragX, 0) / trackWidth, 1) : 0;
+  const leftPct = trackWidth > 0 ? Math.min(Math.max(-dragX, 0) / trackWidth, 1) : 0;
+
+  return { trackRef, dragX, trackWidth, isDragging, direction, fillPct, leftPct, handlers };
 }
 
 export default useSwipeGesture;

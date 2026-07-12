@@ -59,11 +59,6 @@
 .sidebar--collapsed {
   width: var(--sidebar-collapsed-width) !important;
 }
-.app-shell .main-content {
-  /* Margin is handled by the app shell state in global.css */
-  flex: 1;
-  min-width: 0;
-}
 
 /* ── Brand ──────────────────────────────────────────────────── */
 .sb-brand {
@@ -352,20 +347,17 @@
 }
 
 /* ── App-shell layout ────────────────────────────────────────── */
-/* Sets the main content area offset so it doesn't hide under sidebar */
-.app-shell {
-  display: flex;
-}
-.app-shell .main-content {
-  margin-left: var(--sb-w);
-  flex: 1;
-  min-width: 0;
-}
+/* NOTE: .app-shell display:flex and .main-content's margin-left math
+   live ONLY in index.css now — this file used to duplicate both with
+   a plain .app-shell .main-content selector, which (being MORE specific
+   than index.css's .main-content alone) silently won the cascade and
+   pinned the content offset to the sidebar's EXPANDED width all the
+   time, regardless of collapsed state. That's what created the dead
+   zone. Don't reintroduce a margin-left rule here — edit index.css. */
 
 /* ── Mobile — bottom bar fallback ────────────────────────────── */
 @media (max-width: 767px) {
   .sidebar { display: none; }
-  .app-shell .main-content { margin-left: 0; padding-bottom: 80px; }
 }
 
 /* ── Reduced motion ─────────────────────────────────────────── */
