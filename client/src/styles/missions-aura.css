@@ -5,7 +5,6 @@
    import in Missions.jsx / MissionCard.jsx directly.
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
 
 :root {
   --af-bg:          #050505;
@@ -46,27 +45,22 @@
   position: relative;
   padding: 36px 32px 28px;
   overflow: hidden;
-  background: linear-gradient(180deg, #0d0118 0%, #050505 100%);
+  background: var(--hero-bg-glow-1), var(--hero-bg-glow-2), var(--hero-bg-base);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   border-bottom: 1px solid var(--af-border);
 }
 
-.missions-hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(91,33,182,0.25), transparent 70%);
-  pointer-events: none;
-}
-
 .missions-hero-heading {
-  font-family: var(--af-font-display);
+  font-family: var(--heading-font);
   font-size: clamp(2.8rem, 8vw, 5rem);
   line-height: 1;
-  background: linear-gradient(to bottom, #ffffff, #c4b5fd, #8b5cf6);
+  background: var(--heading-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 18px rgba(168,85,247,0.55));
+  filter: var(--heading-glow);
   margin-bottom: 8px;
   position: relative;
   z-index: 1;

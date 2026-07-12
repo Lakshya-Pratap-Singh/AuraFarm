@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useXP } from "../context/XPContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useBanner, getHeroBackgroundStyle } from "../context/BannerContext.jsx";
 import { computeStreaks } from "../components/ActivityGrid.jsx";
 import useSwipeGesture from "../hooks/useSwipeGesture.js";
 import CategoryBadge from "../components/common/CategoryBadge.jsx";
@@ -174,6 +175,7 @@ function DashMissionRow({ mission, onComplete, onNavigate }) {
 export default function Dashboard({ missions = [], setMissions, onNavigate }) {
   const { totalXP, xpIntoLevel, xpNeededForNextLevel, level, rankTitle } = useXP();
   const { user } = useAuth();
+  const { bannerUrl } = useBanner();
 
   // Compute current streak from stored daily snapshots
   const currentStreak = useMemo(() => {
@@ -226,7 +228,7 @@ export default function Dashboard({ missions = [], setMissions, onNavigate }) {
       </div>
 
       {/* Hero banner */}
-      <section className="db-hero" aria-label="Hero">
+      <section className="db-hero" aria-label="Hero" style={getHeroBackgroundStyle(bannerUrl)}>
         <div className="db-hero-content">
           <h1 className="db-hero-title">Become What<br />You Dreamt For.</h1>
           <p className="db-hero-sub">

@@ -113,6 +113,26 @@ function App() {
   return (
     <RelicUnlockProvider>
       <div className={`app-shell ${sidebarCollapsed ? 'app-shell--collapsed' : ''}`}>
+        {/* Ambient theme backdrop — one persistent animated layer (drifting
+            aura smoke, rising particles, a slow energy-wave sweep) behind
+            every page, so navigating between routes doesn't flash a
+            different background color underneath. Fixed + z-index:0, so
+            it sits behind the sidebar/main-content regardless of scroll. */}
+        <div className="aura-backdrop" aria-hidden="true">
+          <div className="aura-energy-wave" />
+          {[...Array(8)].map((_, i) => (
+            <span
+              key={i}
+              className="aura-particle"
+              style={{
+                left: `${5 + i * 12}%`,
+                animationDelay: `${i * 1.8}s`,
+                "--aura-particle-drift": `${(i % 2 === 0 ? 1 : -1) * (20 + i * 4)}px`,
+              }}
+            />
+          ))}
+        </div>
+
         {isMobile ? (
           <BottomNav activeNav={activeNav} onNavChange={handleNavChange} />
         ) : (

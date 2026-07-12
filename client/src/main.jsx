@@ -5,13 +5,16 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { XPProvider } from "./context/XPContext.jsx";
+import { BannerProvider } from "./context/BannerContext.jsx";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <AuthProvider>
       <XPProvider>
-        <App />
+        <BannerProvider>
+          <App />
+        </BannerProvider>
       </XPProvider>
     </AuthProvider>
   </BrowserRouter>

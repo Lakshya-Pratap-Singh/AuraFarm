@@ -55,10 +55,10 @@
    pseudo-elements on a single fixed wrapper so it never affects layout
    or scroll performance. ──────────────────────────────────────────── */
 
-body {
-  background: var(--aura-bg);
-}
-
+/* body's base background color is owned by index.css (--color-bg) —
+   not redeclared here, to avoid two files silently fighting over the
+   same property. This backdrop is what's actually visible: a fixed,
+   full-viewport layer painted on top of that base color. */
 .aura-backdrop {
   position: fixed;
   inset: 0;

@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import RelicCard from "../components/RelicCard.jsx";
 import RelicModal from "../components/RelicModal.jsx";
 import { useXP } from "../context/XPContext.jsx";
+import { useBanner, getHeroBackgroundStyle } from "../context/BannerContext.jsx";
 import { computeStreaks } from "../components/ActivityGrid.jsx";
 import { getRelicImage } from "../data/relicAssets.js";
 import CategoryBadge from "../components/common/CategoryBadge.jsx";
@@ -289,6 +290,7 @@ function Relics({ missions = [], objectives = [] }) {
   const unlockState = useRelicUnlockState();
   const [selectedRelic, setSelectedRelic] = useState(null);
   const [filter, setFilter] = useState("ALL"); // ALL | UNLOCKED | LOCKED
+  const { bannerUrl } = useBanner();
 
   // Enrich catalog with images + live unlock state
   const enrichedRelics = useMemo(() =>
@@ -326,7 +328,7 @@ function Relics({ missions = [], objectives = [] }) {
   return (
     <div className="relics-page">
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <div className="relics-hero">
+      <div className="relics-hero" style={getHeroBackgroundStyle(bannerUrl)}>
         <h1 className="relics-hero-heading">Relics</h1>
         <p className="relics-hero-sub">Ancient artifacts. Earned through discipline, consistency, and mastery.</p>
       </div>

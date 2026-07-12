@@ -5,6 +5,7 @@
 import { useState, useMemo } from "react";
 import ActivityGrid from "../components/ActivityGrid.jsx";
 import DonutChart from "../components/DonutChart.jsx";
+import { useBanner, getHeroBackgroundStyle } from "../context/BannerContext.jsx";
 import "../styles/intelligence-aura.css";
 
 const FlameIcon = () => (
@@ -64,6 +65,7 @@ function Sparkline({ weeklyData }) {
 
 function Intelligence({ missions = [] }) {
   const [analytics, setAnalytics] = useState({ currentStreak: 0, bestStreak: 0, averageRate: 0 });
+  const { bannerUrl } = useBanner();
 
   const totalCompleted = missions.filter((m) => m.completed).length;
 
@@ -84,7 +86,7 @@ function Intelligence({ missions = [] }) {
   return (
     <div className="intel-page">
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <div className="intel-hero">
+      <div className="intel-hero" style={getHeroBackgroundStyle(bannerUrl)}>
         <h1 className="intel-hero-heading">Intelligence</h1>
         <p className="intel-hero-sub">Tactical analytics on operational consistency and aura growth.</p>
       </div>

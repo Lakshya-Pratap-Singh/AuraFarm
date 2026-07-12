@@ -2,9 +2,10 @@
 // AuthContext, toggles are local UI state only (aesthetic preferences can
 // be persisted to localStorage if you want persistence later).
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useXP } from "../context/XPContext.jsx";
+import { useBanner, getHeroBackgroundStyle } from "../context/BannerContext.jsx";
 import "../styles/settings-aura.css";
 
 function ChevronRight() {
@@ -37,6 +38,9 @@ function GlobeIcon() {
 function TrashIcon() {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 }
+function ImageIcon() {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+}
 
 function Toggle({ on, onToggle }) {
   return (
@@ -63,10 +67,14 @@ function SettingsRow({ icon, title, sub, right, onClick, danger }) {
 function Settings() {
   const { user, logout } = useAuth();
   const { level, totalXP } = useXP();
+  const { bannerUrl, isCustom, persistError, setCustomBanner, resetToDefaultBanner } = useBanner();
 
   const [notifications, setNotifications] = useState(true);
   const [sounds, setSounds] = useState(false);
   const [animations, setAnimations] = useState(true);
+  const [bannerError, setBannerError] = useState("");
+  const [bannerBusy, setBannerBusy] = useState(false);
+  const fileInputRef = useRef(null);
 
   const handleLogout = () => {
     if (window.confirm("End your session? Your progress is saved.")) logout();
@@ -82,10 +90,25 @@ function Settings() {
     }
   };
 
+  const handleBannerFile = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-selecting the same file later
+    if (!file) return;
+    setBannerBusy(true);
+    setBannerError("");
+    try {
+      await setCustomBanner(file);
+    } catch (err) {
+      setBannerError(err.message || "Couldn't set that banner.");
+    } finally {
+      setBannerBusy(false);
+    }
+  };
+
   return (
     <div className="settings-page">
       {/* ── Hero ────────────────────────────────────────────── */}
-      <div className="settings-hero">
+      <div className="settings-hero" style={getHeroBackgroundStyle(bannerUrl)}>
         <h1 className="settings-hero-heading">Settings</h1>
         <p className="settings-hero-sub">Customize your AuraFarm experience.</p>
       </div>
@@ -115,6 +138,58 @@ function Settings() {
           <div className="settings-group">
             <SettingsRow icon={<UserIcon />} title="Edit Profile" sub="Change your name and avatar" />
             <SettingsRow icon={<ShieldIcon />} title="Privacy & Security" sub="Manage your account security" />
+          </div>
+        </div>
+
+        {/* ── Appearance ──────────────────────────────────────── */}
+        <div>
+          <p className="settings-group-label">Appearance</p>
+          <div className="settings-group">
+            <div className="settings-banner-row">
+              <div className="settings-banner-preview">
+                <img src={bannerUrl} alt="Current hero banner" />
+              </div>
+              <div className="settings-banner-info">
+                <span className="settings-row-title">Hero Banner</span>
+                <span className="settings-row-sub">
+                  {isCustom ? "Custom banner — shown on every page" : "Default banner — shown on every page"}
+                </span>
+                {bannerError && <span className="settings-banner-error">{bannerError}</span>}
+                {persistError && !bannerError && (
+                  <span className="settings-banner-error">
+                    Saved for this session, but it's too large to persist — it'll revert after a refresh. Try a smaller image.
+                  </span>
+                )}
+                <div className="settings-banner-actions">
+                  <button
+                    type="button"
+                    className="settings-banner-btn"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={bannerBusy}
+                  >
+                    <ImageIcon />
+                    {bannerBusy ? "Uploading…" : "Upload New Banner"}
+                  </button>
+                  {isCustom && (
+                    <button
+                      type="button"
+                      className="settings-banner-btn settings-banner-btn--ghost"
+                      onClick={resetToDefaultBanner}
+                      disabled={bannerBusy}
+                    >
+                      Reset to Default
+                    </button>
+                  )}
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  onChange={handleBannerFile}
+                  style={{ display: "none" }}
+                />
+              </div>
+            </div>
           </div>
         </div>
 

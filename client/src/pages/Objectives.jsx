@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useBanner, getHeroBackgroundStyle } from "../context/BannerContext.jsx";
 import "../styles/objectives-aura.css";
 
 function getObjectiveStats(objectives, missions) {
@@ -67,6 +68,7 @@ function Objectives({ objectives, setObjectives, missions }) {
   const [showAdd, setShowAdd] = useState(false);
   const [title, setTitle] = useState("");
   const [targetDate, setTargetDate] = useState("");
+  const { bannerUrl } = useBanner();
 
   const handleAdd = () => {
     if (!title.trim()) return;
@@ -82,7 +84,7 @@ function Objectives({ objectives, setObjectives, missions }) {
   return (
     <div className="objectives-page">
       {/* ── Hero ───────────────────────────────────────────────── */}
-      <div className="obj-hero">
+      <div className="obj-hero" style={getHeroBackgroundStyle(bannerUrl)}>
         <h1 className="obj-hero-heading">Objectives</h1>
         <p className="obj-hero-sub">Long-term goals. Eternal transformation.</p>
       </div>

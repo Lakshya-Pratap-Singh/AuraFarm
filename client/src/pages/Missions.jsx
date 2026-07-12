@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { useXP, MISSION_XP_TABLE } from "../context/XPContext.jsx";
+import { useBanner, getHeroBackgroundStyle } from "../context/BannerContext.jsx";
 import useSwipeGesture from "../hooks/useSwipeGesture.js";
 import { buildNewMission } from "../hooks/useMissionReset.js";
 import CategoryBadge from "../components/common/CategoryBadge.jsx";
@@ -340,6 +341,7 @@ function Missions({ missions, setMissions, objectives = [] }) {
   const [recurrenceDays,  setRecurrenceDays]  = useState(1);
 
   const { gainXP, totalXP } = useXP();
+  const { bannerUrl } = useBanner();
 
   // Midnight streak from localStorage
   const currentStreak = (() => {
@@ -412,7 +414,7 @@ function Missions({ missions, setMissions, objectives = [] }) {
     <div className="missions-page">
 
       {/* ── Hero ─────────────────────────────────────────────────── */}
-      <div className="missions-hero">
+      <div className="missions-hero" style={getHeroBackgroundStyle(bannerUrl)}>
         <h1 className="missions-hero-heading">Missions</h1>
         <p className="missions-hero-sub">Complete missions. Earn Aura XP. Forge your legacy.</p>
         <p className="mc-swipe-instructions">
