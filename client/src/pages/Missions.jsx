@@ -192,10 +192,10 @@ function MissionCard({ mission, onComplete, onDelete, onEdit }) {
 
   // Swipe gesture
   const { trackRef, fillPct, leftPct, isDragging, direction, handlers } = useSwipeGesture({
-    disabled:      mission.completed,
+    bidirectional:   true,
     ignoreSelector: ".mc-aura-delete,.mc-swipe-btn",
-    onComplete:    () => onComplete(mission.id),
-    onEdit:        () => onEdit(mission),
+    onComplete:      mission.completed ? undefined : () => onComplete(mission.id),
+    onEdit:          mission.completed ? () => onComplete(mission.id) : () => onEdit(mission),
   });
 
   // Visual state
@@ -238,7 +238,7 @@ function MissionCard({ mission, onComplete, onDelete, onEdit }) {
           aria-hidden="true"
         >
           <EditIcon />
-          <span>EDIT</span>
+          <span>{mission.completed ? "REOPEN" : "EDIT"}</span>
         </div>
       )}
 
@@ -267,14 +267,15 @@ function MissionCard({ mission, onComplete, onDelete, onEdit }) {
 
       {/* Right side */}
       <div className="mc-aura-right">
+        <span className="mc-swipe-hint" aria-hidden="true">
+          {mission.completed ? "←" : "→"}
+        </span>
         {mission.completed ? (
           <div className="mc-aura-completed-badge">
             <CheckCircleIcon />
             <span>DONE</span>
           </div>
-        ) : (
-          <span className="mc-swipe-hint" aria-hidden="true">→</span>
-        )}
+        ) : null}
         <button
           className="mc-aura-delete"
           onClick={e => { e.stopPropagation(); onDelete(mission.id); }}

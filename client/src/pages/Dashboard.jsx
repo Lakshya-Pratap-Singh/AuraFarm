@@ -111,14 +111,16 @@ function Sparkline({ xp }) {
 
 
 // ── Dashboard Mission Row — swipe-fill gesture, no card slide ────────────
-function DashMissionRow({ mission, onComplete }) {
-  const { trackRef, fillPct, isDragging, direction, handlers } = useSwipeGesture({
-    disabled: mission.completed,
-    onComplete: () => onComplete(mission.id),
+function DashMissionRow({ mission, onComplete, onNavigate }) {
+  const { trackRef, fillPct, leftPct, isDragging, direction, handlers } = useSwipeGesture({
+    bidirectional: true,
+    onComplete: mission.completed ? undefined : () => onComplete(mission.id),
+    onEdit: mission.completed ? () => onComplete(mission.id) : () => onNavigate?.("Missions"),
   });
 
   const swipeStage = fillPct >= 0.85 ? "ready" : fillPct >= 0.4 ? "progress" : "idle";
   const isRightDrag = isDragging && direction === "right";
+  const isLeftDrag = isDragging && direction === "left";
   const done = mission.completed;
 
   return (
@@ -142,6 +144,11 @@ function DashMissionRow({ mission, onComplete }) {
           )}
         </div>
       )}
+      {isLeftDrag && leftPct > 0 && (
+        <div className="db-swipe-edit-reveal" aria-hidden="true" style={{ opacity: Math.min(leftPct * 2, 1) }}>
+          <span>{mission.completed ? "REOPEN" : "EDIT"}</span>
+        </div>
+      )}
 
       <span className="db-mission-category">
         <CategoryBadge category={mission.category || "others"} size="lg" showLabel={false} />
@@ -150,7 +157,9 @@ function DashMissionRow({ mission, onComplete }) {
         <div className="db-mission-title">{mission.title}</div>
         <div className="db-mission-sub"><CategoryBadge category={mission.category || "others"} size="xs" /></div>
       </div>
-      {done ? (
+      {isLeftDrag && leftPct > 0 ? (
+        <span className="db-mission-arrow-hint" aria-hidden="true">←</span>
+      ) : done ? (
         <span className="db-mission-status db-mission-status--done">
           Completed <CheckCircle />
         </span>
@@ -301,6 +310,7 @@ export default function Dashboard({ missions = [], setMissions, onNavigate }) {
                 key={m.id}
                 mission={m}
                 onComplete={handleCompleteMission}
+                onNavigate={onNavigate}
               />
             ))}
           </div>
