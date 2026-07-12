@@ -11,6 +11,8 @@
 // Usage:
 //   <DonutChart title="CATEGORY BREAKDOWN" data={categoryCounts} />
 
+import CategoryBadge from "./common/CategoryBadge.jsx";
+import { CATEGORY_ASSETS } from "../data/categoryAssets.js";
 import "../styles/donut-chart.css";
 
 const GOLD_SHADES = ["#a855f7", "#7c3aed", "#c084fc", "#6d28d9", "#ddd6fe", "#4c1d95"];
@@ -91,7 +93,10 @@ function DonutChart({ title, data = {} }) {
                   className="donut-legend-dot"
                   style={{ background: seg.color, boxShadow: `0 0 6px ${seg.color}` }}
                 />
-                <span className="donut-legend-label">{seg.label.toUpperCase()}</span>
+                {CATEGORY_ASSETS[seg.label.toLowerCase()]
+                  ? <CategoryBadge category={seg.label} size="xs" />
+                  : <span className="donut-legend-label">{seg.label.toUpperCase()}</span>
+                }
                 <span className="donut-legend-value">{seg.value}</span>
                 <span className="donut-legend-percent">{seg.percent}%</span>
               </li>

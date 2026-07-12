@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
 
 .settings-page {
-  background: #050505;
+  background: transparent;
   min-height: 100vh;
   padding: 0 0 80px;
   color: #f1ecfb;

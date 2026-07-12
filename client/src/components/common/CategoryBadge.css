@@ -1,0 +1,47 @@
+/* CategoryBadge.css — scoped styles for the reusable category sigil badge */
+
+.cat-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: transparent;
+  border: none;
+}
+
+/* Hover — subtle glow + micro-lift */
+.cat-badge[role="button"]:hover,
+.cat-badge:not([role]):hover {
+  filter: brightness(1.1);
+  transform: scale(1.04);
+}
+.cat-badge[role="button"]:active {
+  transform: scale(0.97);
+}
+
+/* Sigil image */
+.cat-badge-sigil {
+  display: block;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+/* Label */
+.cat-badge-label {
+  line-height: 1;
+}
+
+/* Size variants — only layout properties here; color + size come from inline style */
+.cat-badge--xs { border-radius: 6px; }
+.cat-badge--sm { border-radius: 8px; }
+.cat-badge--md { border-radius: 10px; }
+.cat-badge--lg { border-radius: 12px; }
+
+/* Focus ring for keyboard navigation */
+.cat-badge[role="button"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--cat-color, #a855f7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cat-badge { transition: none; }
+}
