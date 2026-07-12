@@ -531,6 +531,15 @@ input[type="date"].obj-field-input {
   color: var(--obj-text-muted);
 }
 
+.obj-mission-category {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .obj-mission-item--done {
   color: var(--obj-text-faint);
   text-decoration: line-through;

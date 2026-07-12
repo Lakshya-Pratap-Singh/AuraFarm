@@ -1,0 +1,745 @@
+/* ============================================================
+   AURAFARM — relics.css
+   Rarity-aware card system, modal, and unlock overlay.
+   All rarity glow/border values defined as CSS custom properties
+   at the top so swapping a tier's appearance is one-line change.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
+
+/* ── Rarity tokens ─────────────────────────────────────────── */
+:root {
+  --relic-common-border:    rgba(139,92,246,0.35);
+  --relic-common-glow:      rgba(139,92,246,0.25);
+  --relic-common-color:     #8b5cf6;
+
+  --relic-rare-border:      rgba(168,85,247,0.45);
+  --relic-rare-glow:        rgba(168,85,247,0.35);
+  --relic-rare-color:       #a855f7;
+
+  --relic-epic-border:      rgba(192,132,252,0.5);
+  --relic-epic-glow:        rgba(192,132,252,0.4);
+  --relic-epic-color:       #c084fc;
+
+  --relic-legendary-border: rgba(250,189,50,0.5);
+  --relic-legendary-glow:   rgba(168,85,247,0.5);
+  --relic-legendary-color:  #fabb32;
+
+  --relic-mythic-border:    rgba(255,255,255,0.55);
+  --relic-mythic-glow:      rgba(250,189,50,0.4);
+  --relic-mythic-color:     #f8fafc;
+}
+
+/* ── Page ───────────────────────────────────────────────────── */
+.relics-page {
+  background: transparent;
+  min-height: 100vh;
+  padding: 0 0 100px;
+  color: #f1ecfb;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Hero ───────────────────────────────────────────────────── */
+.relics-hero {
+  position: relative;
+  padding: 36px 32px 28px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0d0118 0%, #050505 100%);
+  border-bottom: 1px solid rgba(139,92,246,0.2);
+}
+.relics-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(91,33,182,0.3), transparent 70%);
+  pointer-events: none;
+}
+.relics-hero-heading {
+  font-family: 'Pirata One', serif;
+  font-size: clamp(2.8rem, 8vw, 5rem);
+  line-height: 1;
+  background: linear-gradient(to bottom, #ffffff, #c4b5fd, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 20px rgba(168,85,247,0.6));
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+.relics-hero-sub {
+  font-size: 13.5px;
+  color: #a89cc8;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Stats bar ──────────────────────────────────────────────── */
+.relics-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 20px 32px;
+}
+.relics-stat {
+  background: #120d1a;
+  border: 1px solid rgba(139,92,246,0.2);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.relics-stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 700;
+  color: #a855f7;
+  text-shadow: 0 0 12px rgba(168,85,247,0.5);
+}
+.relics-stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: #5e5571;
+  text-transform: uppercase;
+}
+
+/* ── Sections ───────────────────────────────────────────────── */
+.relics-body {
+  padding: 28px 32px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.relics-section {}
+
+.relics-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.relics-section-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.relics-section-title--common    { color: var(--relic-common-color); }
+.relics-section-title--rare      { color: var(--relic-rare-color); }
+.relics-section-title--epic      { color: var(--relic-epic-color); }
+.relics-section-title--legendary { color: var(--relic-legendary-color); }
+.relics-section-title--mythic    { color: var(--relic-mythic-color); }
+
+.relics-section-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #5e5571;
+  margin-left: auto;
+}
+
+.relics-section-line {
+  flex: 1;
+  height: 1px;
+}
+.relics-section-line--common    { background: linear-gradient(90deg, var(--relic-common-border), transparent); }
+.relics-section-line--rare      { background: linear-gradient(90deg, var(--relic-rare-border), transparent); }
+.relics-section-line--epic      { background: linear-gradient(90deg, var(--relic-epic-border), transparent); }
+.relics-section-line--legendary { background: linear-gradient(90deg, var(--relic-legendary-border), transparent); }
+.relics-section-line--mythic    { background: linear-gradient(90deg, var(--relic-mythic-border), transparent); }
+
+/* ── Grid ───────────────────────────────────────────────────── */
+.relics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+}
+
+/* ── Relic Card ─────────────────────────────────────────────── */
+.relic-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 22px 14px 18px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid;
+  cursor: pointer;
+  transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.25s ease, border-color 0.25s ease;
+  text-align: center;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Rarity border colors */
+.relic-card--common    { border-color: var(--relic-common-border); }
+.relic-card--rare      { border-color: var(--relic-rare-border); }
+.relic-card--epic      { border-color: var(--relic-epic-border); }
+.relic-card--legendary { border-color: var(--relic-legendary-border); }
+.relic-card--mythic    { border-color: var(--relic-mythic-border); }
+
+/* Locked state */
+.relic-card--locked {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* Corner decoration */
+.relic-card::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 18px; height: 18px;
+  border-top: 2px solid;
+  border-left: 2px solid;
+  border-radius: 18px 0 0 0;
+  opacity: 0.7;
+}
+.relic-card--common::before    { border-color: var(--relic-common-color); }
+.relic-card--rare::before      { border-color: var(--relic-rare-color); }
+.relic-card--epic::before      { border-color: var(--relic-epic-color); }
+.relic-card--legendary::before { border-color: var(--relic-legendary-color); }
+.relic-card--mythic::before    { border-color: var(--relic-mythic-color); }
+
+/* Icon container */
+.relic-card-icon {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+}
+.relic-card-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.relic-card--locked .relic-card-icon img {
+  filter: brightness(0.2) blur(2px);
+}
+
+/* Lock overlay */
+.relic-card-lock {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #5e5571;
+}
+
+/* Glow ring behind unlocked icon */
+.relic-card:not(.relic-card--locked) .relic-card-icon::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  opacity: 0.4;
+  pointer-events: none;
+}
+.relic-card--common .relic-card-icon::after    { background: radial-gradient(circle, var(--relic-common-glow), transparent 70%); }
+.relic-card--rare .relic-card-icon::after      { background: radial-gradient(circle, var(--relic-rare-glow), transparent 70%); }
+.relic-card--epic .relic-card-icon::after      { background: radial-gradient(circle, var(--relic-epic-glow), transparent 70%); }
+.relic-card--legendary .relic-card-icon::after { background: radial-gradient(circle, var(--relic-legendary-glow), transparent 70%); }
+.relic-card--mythic .relic-card-icon::after    { background: radial-gradient(circle, var(--relic-mythic-glow), transparent 70%); }
+
+.relic-card-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #f1ecfb;
+  line-height: 1.35;
+}
+.relic-card--locked .relic-card-name { color: #5e5571; }
+
+.relic-card-rarity {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.relic-card--common    .relic-card-rarity { color: var(--relic-common-color); }
+.relic-card--rare      .relic-card-rarity { color: var(--relic-rare-color); }
+.relic-card--epic      .relic-card-rarity { color: var(--relic-epic-color); }
+.relic-card--legendary .relic-card-rarity { color: var(--relic-legendary-color); }
+.relic-card--mythic    .relic-card-rarity { color: var(--relic-mythic-color); }
+
+/* Legendary shimmer stripe */
+.relic-card--legendary::after,
+.relic-card--mythic::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+  animation: relic-shimmer 4s linear infinite;
+  pointer-events: none;
+}
+@keyframes relic-shimmer {
+  0%   { left: -60%; }
+  100% { left: 140%; }
+}
+
+/* ── Modal ──────────────────────────────────────────────────── */
+.relic-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: rgba(5,5,5,0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.relic-modal {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  background: #120d1a;
+  border: 1px solid;
+  border-radius: 22px;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+.relic-modal--common    { border-color: var(--relic-common-border);    box-shadow: 0 0 40px var(--relic-common-glow); }
+.relic-modal--rare      { border-color: var(--relic-rare-border);      box-shadow: 0 0 40px var(--relic-rare-glow); }
+.relic-modal--epic      { border-color: var(--relic-epic-border);      box-shadow: 0 0 40px var(--relic-epic-glow); }
+.relic-modal--legendary { border-color: var(--relic-legendary-border); box-shadow: 0 0 60px var(--relic-legendary-glow); }
+.relic-modal--mythic    { border-color: var(--relic-mythic-border);    box-shadow: 0 0 60px var(--relic-mythic-glow), 0 0 100px rgba(168,85,247,0.2); }
+
+.relic-modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #a89cc8;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+.relic-modal-close:hover { background: rgba(168,85,247,0.15); color: #f1ecfb; }
+
+.relic-modal-icon {
+  width: 88px;
+  height: 88px;
+  margin-bottom: 4px;
+}
+.relic-modal-icon img { width: 100%; height: 100%; object-fit: contain; }
+
+.relic-modal-rarity {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+.relic-modal--common    .relic-modal-rarity { color: var(--relic-common-color);    border-color: var(--relic-common-border);    background: rgba(139,92,246,0.1); }
+.relic-modal--rare      .relic-modal-rarity { color: var(--relic-rare-color);      border-color: var(--relic-rare-border);      background: rgba(168,85,247,0.1); }
+.relic-modal--epic      .relic-modal-rarity { color: var(--relic-epic-color);      border-color: var(--relic-epic-border);      background: rgba(192,132,252,0.1); }
+.relic-modal--legendary .relic-modal-rarity { color: var(--relic-legendary-color); border-color: var(--relic-legendary-border); background: rgba(250,189,50,0.1); }
+.relic-modal--mythic    .relic-modal-rarity { color: var(--relic-mythic-color);    border-color: var(--relic-mythic-border);    background: rgba(255,255,255,0.06); }
+
+.relic-modal-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #f1ecfb;
+  margin: 0;
+}
+
+.relic-modal-desc {
+  font-size: 13.5px;
+  color: #a89cc8;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.relic-modal-meta {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid rgba(139,92,246,0.15);
+  padding-top: 14px;
+  margin-top: 4px;
+}
+.relic-modal-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+}
+.relic-modal-meta-label { color: #5e5571; letter-spacing: 0.08em; }
+.relic-modal-meta-value { color: #f1ecfb; font-weight: 600; }
+.relic-modal-meta-value--unlocked { color: #22c55e; }
+.relic-modal-meta-value--locked   { color: #5e5571; }
+
+/* ── Unlock Overlay ─────────────────────────────────────────── */
+.relic-unlock-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5,5,5,0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+}
+
+.relic-unlock-aura-burst {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.relic-unlock-aura-burst::before,
+.relic-unlock-aura-burst::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  translate: -50% -50%;
+  border-radius: 50%;
+}
+.relic-unlock-aura-burst::before {
+  width: 60vmax; height: 60vmax;
+  background: radial-gradient(circle, rgba(168,85,247,0.2) 0%, transparent 60%);
+}
+.relic-unlock-aura-burst::after {
+  width: 30vmax; height: 30vmax;
+  background: radial-gradient(circle, rgba(168,85,247,0.35) 0%, transparent 55%);
+}
+
+.relic-unlock-card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 40px 52px;
+  border-radius: 24px;
+  background: rgba(18,13,26,0.95);
+  border: 1px solid rgba(168,85,247,0.4);
+  box-shadow: 0 0 60px rgba(168,85,247,0.3), 0 20px 60px rgba(0,0,0,0.7);
+  text-align: center;
+  max-width: 340px;
+  width: 90%;
+}
+
+.relic-unlock-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  color: #a855f7;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.relic-unlock-icon {
+  width: 80px; height: 80px;
+  margin: 8px 0;
+  filter: drop-shadow(0 0 18px rgba(168,85,247,0.65));
+}
+.relic-unlock-icon img { width: 100%; height: 100%; object-fit: contain; }
+
+.relic-unlock-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #f1ecfb;
+  margin: 0;
+  text-shadow: 0 0 20px rgba(168,85,247,0.4);
+}
+
+.relic-unlock-desc {
+  font-size: 13px;
+  color: #a89cc8;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.relic-unlock-dismiss {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: #5e5571;
+  margin-top: 8px;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .relics-hero { padding: 24px 16px 20px; }
+  .relics-stats-bar { grid-template-columns: repeat(2,1fr); padding: 16px; gap: 10px; }
+  .relics-body { padding: 20px 16px 0; gap: 28px; }
+  .relics-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .relic-card { padding: 18px 10px 14px; }
+  .relic-card-icon { width: 52px; height: 52px; }
+}
+@media (max-width: 380px) {
+  .relics-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .relic-card--legendary::after,
+  .relic-card--mythic::after { animation: none; }
+}
+/* ── Progress bar on locked cards ───────────────────────────── */
+.relic-card-progress {
+  width: 100%;
+  position: relative;
+  height: 4px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: visible;
+  margin-top: 4px;
+}
+.relic-card-progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
+  box-shadow: 0 0 6px rgba(168,85,247,0.6);
+  transition: width 0.6s ease;
+}
+.relic-card-progress-label {
+  display: block;
+  margin-top: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  color: #5e5571;
+  text-align: center;
+}
+
+/* ── Locked image styling ────────────────────────────────────── */
+.relic-card-img--locked {
+  filter: brightness(0.18) blur(1.5px) !important;
+}
+.relic-card-placeholder {
+  font-size: 28px;
+  color: #3d3355;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Filter tabs ────────────────────────────────────────────── */
+.relics-filters {
+  display: flex;
+  gap: 8px;
+  padding: 0 32px 20px;
+}
+.relics-filter-btn {
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(139,92,246,0.25);
+  background: transparent;
+  color: #8b7faa;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+.relics-filter-btn:hover {
+  background: rgba(139,92,246,0.1);
+  color: #f1ecfb;
+  border-color: rgba(168,85,247,0.4);
+}
+.relics-filter-btn--active {
+  background: rgba(139,92,246,0.18);
+  color: #a855f7;
+  border-color: rgba(168,85,247,0.45);
+}
+
+/* ── Modal aura ring ────────────────────────────────────────── */
+.relic-modal-icon {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.relic-modal-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+}
+.relic-modal-icon--locked img { filter: brightness(0.2) blur(2px); }
+
+.relic-modal-aura-ring {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  animation: modal-aura-pulse 2.5s ease-in-out infinite;
+}
+.relic-modal-aura-ring--common    { background: radial-gradient(circle, rgba(139,92,246,0.35) 0%, transparent 65%); }
+.relic-modal-aura-ring--rare      { background: radial-gradient(circle, rgba(168,85,247,0.4)  0%, transparent 65%); }
+.relic-modal-aura-ring--epic      { background: radial-gradient(circle, rgba(192,132,252,0.45) 0%, transparent 65%); }
+.relic-modal-aura-ring--legendary { background: radial-gradient(circle, rgba(250,189,50,0.4) 0%, rgba(168,85,247,0.3) 40%, transparent 65%); }
+.relic-modal-aura-ring--mythic    { background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(250,189,50,0.3) 30%, rgba(168,85,247,0.3) 55%, transparent 70%); }
+
+@keyframes modal-aura-pulse {
+  0%,100% { opacity: 0.6; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.08); }
+}
+
+.relic-modal-placeholder {
+  font-size: 44px;
+  color: #3d3355;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Enhanced Unlock Overlay ─────────────────────────────────── */
+
+/* Rarity-specific overlays */
+.relic-unlock-overlay--legendary {
+  background: rgba(5,5,5,0.9);
+}
+.relic-unlock-overlay--mythic {
+  background: rgba(2,2,8,0.92);
+}
+
+/* Burst variants */
+.relic-unlock-aura-burst--common    { background: radial-gradient(circle at 50% 50%, rgba(139,92,246,0.22) 0%, transparent 60%); position: absolute; inset: 0; }
+.relic-unlock-aura-burst--rare      { background: radial-gradient(circle at 50% 50%, rgba(168,85,247,0.28) 0%, transparent 60%); position: absolute; inset: 0; }
+.relic-unlock-aura-burst--epic      { background: radial-gradient(circle at 50% 50%, rgba(192,132,252,0.32) 0%, transparent 60%); position: absolute; inset: 0; }
+.relic-unlock-aura-burst--legendary { background: radial-gradient(circle at 50% 50%, rgba(250,189,50,0.25) 0%, rgba(168,85,247,0.35) 35%, transparent 65%); position: absolute; inset: 0; }
+.relic-unlock-aura-burst--mythic    { background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.18) 0%, rgba(250,189,50,0.2) 25%, rgba(168,85,247,0.3) 50%, transparent 70%); position: absolute; inset: 0; }
+
+/* Energy waves (legendary) */
+.relic-unlock-wave {
+  position: absolute;
+  top: 50%; left: 50%;
+  translate: -50% -50%;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.relic-unlock-wave--1 {
+  width: 200px; height: 200px;
+  border: 2px solid rgba(250,189,50,0.5);
+}
+.relic-unlock-wave--2 {
+  width: 150px; height: 150px;
+  border: 2px solid rgba(168,85,247,0.6);
+}
+
+/* Orbit rings (mythic) */
+.relic-unlock-orbit-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  translate: -50% -50%;
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-top-color: rgba(250,189,50,0.5);
+  pointer-events: none;
+}
+.relic-unlock-orbit-ring--2 {
+  width: 200px; height: 200px;
+  border-color: rgba(168,85,247,0.2);
+  border-right-color: rgba(192,132,252,0.5);
+}
+
+/* Mythic particles */
+.relic-unlock-particle {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #c084fc;
+  box-shadow: 0 0 8px #a855f7;
+  transform:
+    translate(-50%, -50%)
+    rotate(var(--angle))
+    translateX(120px);
+  pointer-events: none;
+}
+
+/* Card rarity variants */
+.relic-unlock-card--legendary {
+  border-color: rgba(250,189,50,0.5) !important;
+  box-shadow: 0 0 60px rgba(250,189,50,0.25), 0 0 30px rgba(168,85,247,0.3), 0 20px 60px rgba(0,0,0,0.8) !important;
+}
+.relic-unlock-card--mythic {
+  border-color: rgba(255,255,255,0.4) !important;
+  box-shadow: 0 0 80px rgba(255,255,255,0.15), 0 0 40px rgba(250,189,50,0.2), 0 0 20px rgba(168,85,247,0.4), 0 20px 60px rgba(0,0,0,0.8) !important;
+}
+
+/* Icon rarity glow */
+.relic-unlock-icon--common    { filter: drop-shadow(0 0 14px rgba(139,92,246,0.65)); }
+.relic-unlock-icon--rare      { filter: drop-shadow(0 0 18px rgba(168,85,247,0.7)); }
+.relic-unlock-icon--epic      { filter: drop-shadow(0 0 22px rgba(192,132,252,0.75)); }
+.relic-unlock-icon--legendary { filter: drop-shadow(0 0 28px rgba(250,189,50,0.6)) drop-shadow(0 0 14px rgba(168,85,247,0.5)); }
+.relic-unlock-icon--mythic    { filter: drop-shadow(0 0 32px rgba(255,255,255,0.5)) drop-shadow(0 0 16px rgba(250,189,50,0.4)) drop-shadow(0 0 8px rgba(168,85,247,0.6)); }
+
+/* Rarity badge in overlay */
+.relic-unlock-rarity {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+.relic-unlock-rarity--common    { color: #8b5cf6; border-color: rgba(139,92,246,0.4); background: rgba(139,92,246,0.1); }
+.relic-unlock-rarity--rare      { color: #a855f7; border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.1); }
+.relic-unlock-rarity--epic      { color: #c084fc; border-color: rgba(192,132,252,0.4); background: rgba(192,132,252,0.1); }
+.relic-unlock-rarity--legendary { color: #fabb32; border-color: rgba(250,189,50,0.4); background: rgba(250,189,50,0.08); }
+.relic-unlock-rarity--mythic    { color: #f8fafc; border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.05); }
+
+.relic-unlock-placeholder {
+  font-size: 40px;
+  color: #5e5571;
+}
+
+/* ── Mobile filter ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .relics-filters { padding: 0 16px 16px; flex-wrap: wrap; }
+  .relics-filter-btn { font-size: 9px; padding: 6px 12px; }
+  .relic-modal-icon { width: 88px; height: 88px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .relic-modal-aura-ring { animation: none; }
+  .relic-unlock-orbit-ring { animation: none !important; }
+}

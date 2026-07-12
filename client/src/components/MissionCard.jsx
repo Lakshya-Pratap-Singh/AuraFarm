@@ -6,6 +6,7 @@ import {
 import { MISSION_XP_TABLE } from "../context/XPContext.jsx";
 import useSwipeGesture from "../hooks/useSwipeGesture.js";
 import { useEffect, useState } from "react";
+import CategoryBadge from "./common/CategoryBadge.jsx";
 import "../styles/missions.css";
 import "../styles/mission-swipe.css";
 
@@ -142,9 +143,7 @@ function MissionCard({ mission, linkedObjectiveName, onComplete, onDelete }) {
         <span className={`card-badge card-badge--difficulty ${difficultyCfg.accent}`}>
           {difficultyCfg.label}
         </span>
-        <span className={`card-badge card-badge--category ${categoryCfg.accent}`}>
-          {categoryCfg.label}
-        </span>
+        <CategoryBadge category={mission.category} size="xs" />
       </div>
 
       <div className="card-xp-row">

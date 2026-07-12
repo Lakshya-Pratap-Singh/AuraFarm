@@ -2,6 +2,8 @@ import { useState, useMemo } from "react";
 import { useXP } from "../context/XPContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import { computeStreaks } from "../components/ActivityGrid.jsx";
+import useSwipeGesture from "../hooks/useSwipeGesture.js";
+import CategoryBadge from "../components/common/CategoryBadge.jsx";
 import "../styles/dashboard.css";
 
 // ── Icons ──────────────────────────────────────────────────────────────────
@@ -39,18 +41,6 @@ const GemIcon = () => (
     <path d="M9 3 8 9l4 12 4-12-1-6" />
   </svg>
 );
-
-// Mission emoji icons — matched to category
-function missionEmoji(m) {
-  const title = (m.title || "").toLowerCase();
-  if (title.includes("meditat") || title.includes("mind")) return "🔮";
-  if (title.includes("workout") || title.includes("train") || title.includes("gym")) return "⚔️";
-  if (title.includes("read") || title.includes("book") || title.includes("page")) return "📖";
-  if (title.includes("shower") || title.includes("cold")) return "💎";
-  if (title.includes("sleep") || title.includes("rest")) return "🌙";
-  if (title.includes("sugar") || title.includes("diet")) return "🎯";
-  return "✦";
-}
 
 // ── Circular ring SVG helper (used for both stat-ring and aura-overview) ──
 function Ring({ size = 58, strokeWidth = 4, pct = 0, color = "#a855f7", className = "" }) {
@@ -116,6 +106,58 @@ function Sparkline({ xp }) {
       </defs>
       <path d={d} fill="none" stroke="url(#wave-grad)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
+  );
+}
+
+
+// ── Dashboard Mission Row — swipe-fill gesture, no card slide ────────────
+function DashMissionRow({ mission, onComplete }) {
+  const { trackRef, fillPct, isDragging, direction, handlers } = useSwipeGesture({
+    disabled: mission.completed,
+    onComplete: () => onComplete(mission.id),
+  });
+
+  const swipeStage = fillPct >= 0.85 ? "ready" : fillPct >= 0.4 ? "progress" : "idle";
+  const isRightDrag = isDragging && direction === "right";
+  const done = mission.completed;
+
+  return (
+    <div
+      ref={trackRef}
+      className={`db-mission-row ${!done ? "db-mission-row--active" : ""} ${isDragging ? "db-mission-row--dragging" : ""}`}
+      {...handlers}
+      style={{ position: "relative", overflow: "hidden" }}
+    >
+      {/* Swipe fill overlay */}
+      {isRightDrag && fillPct > 0 && (
+        <div
+          className={`db-swipe-fill db-swipe-fill--${swipeStage}`}
+          style={{ width: `${fillPct * 100}%` }}
+          aria-hidden="true"
+        >
+          {fillPct > 0.35 && (
+            <span className="db-swipe-fill-label">
+              {swipeStage === "ready" ? "✓" : `${Math.round(fillPct * 100)}%`}
+            </span>
+          )}
+        </div>
+      )}
+
+      <span className="db-mission-category">
+        <CategoryBadge category={mission.category || "others"} size="lg" showLabel={false} />
+      </span>
+      <div className="db-mission-info">
+        <div className="db-mission-title">{mission.title}</div>
+        <div className="db-mission-sub"><CategoryBadge category={mission.category || "others"} size="xs" /></div>
+      </div>
+      {done ? (
+        <span className="db-mission-status db-mission-status--done">
+          Completed <CheckCircle />
+        </span>
+      ) : (
+        <span className="db-mission-arrow-hint" aria-hidden="true">→</span>
+      )}
+    </div>
   );
 }
 
@@ -254,40 +296,13 @@ export default function Dashboard({ missions = [], setMissions, onNavigate }) {
                 No missions yet. Add some in Missions.
               </p>
             )}
-            {displayMissions.map((m) => {
-              const done = m.completed;
-              return (
-                <div
-                  key={m.id}
-                  className={`db-mission-row ${!done ? "db-mission-row--active" : ""}`}
-                >
-                  <span className="db-mission-icon">{missionEmoji(m)}</span>
-                  <div className="db-mission-info">
-                    <div className="db-mission-title">{m.title}</div>
-                    <div className="db-mission-sub">
-                      {m.category || "General"}
-                    </div>
-                  </div>
-                  {done ? (
-                    <span className="db-mission-status db-mission-status--done">
-                      Completed <CheckCircle />
-                    </span>
-                  ) : (
-                    <>
-                      <span className="db-mission-pct">0%</span>
-                      <button
-                        className="db-mission-arrow"
-                        onClick={() => handleCompleteMission(m.id)}
-                        aria-label={`Complete ${m.title}`}
-                        title="Mark complete"
-                      >
-                        <ChevronRight />
-                      </button>
-                    </>
-                  )}
-                </div>
-              );
-            })}
+            {displayMissions.map((m) => (
+              <DashMissionRow
+                key={m.id}
+                mission={m}
+                onComplete={handleCompleteMission}
+              />
+            ))}
           </div>
           <button
             className="db-view-all"

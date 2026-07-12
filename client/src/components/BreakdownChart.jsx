@@ -10,6 +10,8 @@
 //   <BreakdownChart title="CATEGORY BREAKDOWN" counts={categoryCounts} />
 //   <BreakdownChart title="DIFFICULTY BREAKDOWN" counts={difficultyCounts} />
 
+import CategoryBadge from "./common/CategoryBadge.jsx";
+import { CATEGORY_ASSETS } from "../data/categoryAssets.js";
 import "../styles/breakdown-chart.css";
 
 function BreakdownChart({ title, counts = {} }) {
@@ -28,7 +30,13 @@ function BreakdownChart({ title, counts = {} }) {
         <div className="bd-list">
           {entries.map(([label, count]) => (
             <div className="bd-row" key={label}>
-              <span className="bd-row-label">{label.toUpperCase()}</span>
+              <span className="bd-row-label">
+                {CATEGORY_ASSETS[label.toLowerCase()] ? (
+                  <CategoryBadge category={label} size="xs" />
+                ) : (
+                  label.toUpperCase()
+                )}
+              </span>
               <div className="bd-row-track">
                 <div className="bd-row-fill" style={{ width: `${(count / max) * 100}%` }} />
               </div>

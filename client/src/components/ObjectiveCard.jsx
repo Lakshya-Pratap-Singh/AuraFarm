@@ -1,4 +1,5 @@
 import CircularProgress from "./CircularProgress.jsx";
+import CategoryBadge from "./common/CategoryBadge.jsx";
 import "../styles/objectives.css";
 
 const TargetIcon = () => (
@@ -134,8 +135,8 @@ function ObjectiveCard({ objective, missions, onDelete }) {
                   mission.completed ? "obj-mission-item--done" : ""
                 }`}
               >
-                <span className="obj-mission-dot" />
-                {mission.title}
+                <CategoryBadge category={mission.category || "others"} size="lg" showLabel={false} className="obj-mission-category" />
+                <span>{mission.title}</span>
               </li>
             ))}
           </ul>

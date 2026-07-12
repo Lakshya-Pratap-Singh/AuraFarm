@@ -9,7 +9,7 @@
 /* ── Page shell ─────────────────────────────────────────────── */
 .db-page {
   min-height: 100vh;
-  background: #080510;
+  background: transparent;
   color: #f1ecfb;
   font-family: var(--aura-font-body, 'Inter', sans-serif);
   padding: 0 24px 40px;
@@ -334,17 +334,13 @@
   border-color: rgba(168,85,247,0.28);
 }
 
-.db-mission-icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  background: rgba(139,92,246,0.15);
-  border: 1px solid rgba(168,85,247,0.2);
+.db-mission-category {
+  width: 46px;
+  height: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: 14px;
 }
 
 .db-mission-info {
@@ -556,4 +552,63 @@
     grid-template-columns: 1fr;
     gap: 14px;
   }
+}
+/* ── Dashboard swipe fill overlay ───────────────────────────── */
+.db-mission-row {
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+  transform: none !important;    /* card never translates */
+}
+.db-mission-row--dragging {
+  transition: none;
+}
+
+.db-swipe-fill {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  padding-left: 12px;
+  z-index: 2;
+}
+.db-swipe-fill--idle     { background: linear-gradient(90deg, rgba(139,92,246,0.2), transparent); }
+.db-swipe-fill--progress { background: linear-gradient(90deg, rgba(139,92,246,0.4), rgba(168,85,247,0.15)); }
+.db-swipe-fill--ready    { background: linear-gradient(90deg, rgba(168,85,247,0.65), rgba(192,132,252,0.3)); }
+
+.db-swipe-fill-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #f1ecfb;
+  text-shadow: 0 0 6px rgba(168,85,247,0.8);
+}
+
+.db-swipe-edit-reveal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 14px;
+  gap: 6px;
+  background: linear-gradient(270deg, rgba(56,189,248,0.18), transparent);
+  pointer-events: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #38bdf8;
+  z-index: 2;
+}
+
+/* Arrow hint replaces the old button */
+.db-mission-arrow-hint {
+  font-size: 16px;
+  color: rgba(168,85,247,0.3);
+  flex-shrink: 0;
 }
