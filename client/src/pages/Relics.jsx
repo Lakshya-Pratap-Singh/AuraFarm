@@ -11,13 +11,13 @@ import RelicCard from "../components/RelicCard.jsx";
 import RelicModal from "../components/RelicModal.jsx";
 import { useXP } from "../context/XPContext.jsx";
 import { useBanner, getHeroBackgroundStyle } from "../context/BannerContext.jsx";
-import { computeStreaks } from "../components/ActivityGrid.jsx";
+import { computeStreaks, getLast90Days } from "../components/ActivityGrid.jsx";
 import { getRelicImage } from "../data/relicAssets.js";
 import CategoryBadge from "../components/common/CategoryBadge.jsx";
 import "../styles/relics.css";
 
 // ── Full relic catalog — all 18 relics from the spec ────────────────────
-const RELIC_CATALOG = [
+export const RELIC_CATALOG = [
   // ── COMMON ──────────────────────────────────────────────────
   {
     id: "ember-of-beginning",
@@ -218,7 +218,7 @@ const SECTIONS = [
 ];
 
 // ── Compute unlock state from localStorage ───────────────────────────────
-function useRelicUnlockState() {
+export function useRelicUnlockState() {
   const { level } = useXP();
 
   return useMemo(() => {
@@ -248,10 +248,13 @@ function useRelicUnlockState() {
           objectivesCompleted = objectives.filter(o => o.completed).length;
         }
       }
-      // Streak — from daily-snapshots (same as ActivityGrid)
-      const snapRaw = localStorage.getItem("daily-snapshots");
+      // Streak — from the real activity log ActivityGrid maintains
+      // (this used to read a "daily-snapshots" key nothing ever wrote
+      // to, so the streak-based relic could never unlock).
+      const snapRaw = localStorage.getItem("dailywise_activity_log");
       if (snapRaw) {
-        const days = JSON.parse(snapRaw);
+        const log = JSON.parse(snapRaw);
+        const days = getLast90Days(log);
         const { current } = computeStreaks(days);
         streak = current;
       }

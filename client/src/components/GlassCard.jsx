@@ -9,12 +9,14 @@
 //   <GlassCard theme="cyan">...</GlassCard>
 //   <GlassCard theme="gold" className="mission-card">...</GlassCard>
 
+import GlowTrace from "./GlowTrace.jsx";
 import "../styles/glass-card.css";
 
 function GlassCard({ theme = "cyan", className = "", children, ...rest }) {
   return (
-    <div className={`gc-root gc-theme-${theme} ${className}`.trim()} {...rest}>
+    <div className={`gc-root glow gc-theme-${theme} ${className}`.trim()} {...rest}>
       {children}
+      <GlowTrace />
     </div>
   );
 }

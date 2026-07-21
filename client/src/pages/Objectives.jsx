@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useBanner, getHeroBackgroundStyle } from "../context/BannerContext.jsx";
+import GlowTrace from "../components/GlowTrace.jsx";
 import "../styles/objectives-aura.css";
 
 function getObjectiveStats(objectives, missions) {
@@ -91,37 +93,41 @@ function Objectives({ objectives, setObjectives, missions }) {
 
       {/* ── Stat cards ─────────────────────────────────────────── */}
       <div className="obj-stats-grid">
-        <div className="obj-stat-card">
+        <div className="obj-stat-card glow">
           <div className="obj-stat-info">
             <span className="obj-stat-label">Active Objectives</span>
             <span className="obj-stat-value">{stats.active}</span>
             <span className="obj-stat-sub">Keep pushing forward</span>
           </div>
           <div className="obj-stat-icon"><StatIcon /></div>
+          <GlowTrace />
         </div>
-        <div className="obj-stat-card">
+        <div className="obj-stat-card glow">
           <div className="obj-stat-info">
             <span className="obj-stat-label">Completed</span>
             <span className="obj-stat-value">{stats.complete}</span>
             <span className="obj-stat-sub">Total completed</span>
           </div>
           <div className="obj-stat-icon"><CheckIcon /></div>
+          <GlowTrace />
         </div>
-        <div className="obj-stat-card">
+        <div className="obj-stat-card glow">
           <div className="obj-stat-info">
             <span className="obj-stat-label">Total Progress</span>
             <span className="obj-stat-value">{avgPct}%</span>
             <span className="obj-stat-sub">Across all objectives</span>
           </div>
           <div className="obj-stat-icon"><ProgressIcon /></div>
+          <GlowTrace />
         </div>
-        <div className="obj-stat-card">
+        <div className="obj-stat-card glow">
           <div className="obj-stat-info">
             <span className="obj-stat-label">Total Objectives</span>
             <span className="obj-stat-value">{stats.total}</span>
             <span className="obj-stat-sub">All time</span>
           </div>
           <div className="obj-stat-icon"><MilestoneIcon /></div>
+          <GlowTrace />
         </div>
       </div>
 
@@ -135,25 +141,50 @@ function Objectives({ objectives, setObjectives, missions }) {
       </div>
 
       {/* ── Add panel ───────────────────────────────────────────── */}
-      {showAdd && (
-        <div className="obj-add-panel">
-          <div className="obj-field-group" style={{ gridColumn: "1/-1" }}>
-            <label className="obj-field-label" htmlFor="obj-title">Objective Title</label>
-            <input id="obj-title" className="obj-field-input" type="text" placeholder="Name your objective…"
-              value={title} onChange={(e) => setTitle(e.target.value)} onKeyDown={handleKeyDown} autoFocus autoComplete="off"/>
-          </div>
-          <div className="obj-field-row">
-            <div className="obj-field-group">
-              <label className="obj-field-label" htmlFor="obj-date">Target Date</label>
-              <input id="obj-date" className="obj-field-input" type="date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)}/>
-            </div>
-          </div>
-          <button className="btn-deploy-obj" onClick={handleAdd} disabled={!title.trim()}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
-            Deploy Objective
-          </button>
-        </div>
-      )}
+      <AnimatePresence>
+        {showAdd && (
+          <motion.div
+            className="form-modal-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            onClick={() => setShowAdd(false)}
+          >
+            <motion.div
+              className="form-modal"
+              initial={{ opacity: 0, scale: 0.92, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 20 }}
+              transition={{ duration: 0.22, ease: [0.34, 1.56, 0.64, 1] }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button className="form-modal-close" onClick={() => setShowAdd(false)} aria-label="Close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
+                </svg>
+              </button>
+              <div className="form-modal-title">New Objective</div>
+
+              <div className="obj-field-group" style={{ gridColumn: "1/-1" }}>
+                <label className="obj-field-label" htmlFor="obj-title">Objective Title</label>
+                <input id="obj-title" className="obj-field-input" type="text" placeholder="Name your objective…"
+                  value={title} onChange={(e) => setTitle(e.target.value)} onKeyDown={handleKeyDown} autoFocus autoComplete="off"/>
+              </div>
+              <div className="obj-field-row">
+                <div className="obj-field-group">
+                  <label className="obj-field-label" htmlFor="obj-date">Target Date</label>
+                  <input id="obj-date" className="obj-field-input" type="date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)}/>
+                </div>
+              </div>
+              <button className="btn-deploy-obj" onClick={handleAdd} disabled={!title.trim()}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+                Deploy Objective
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── List ─────────────────────────────────────────────────── */}
       {objectives.length === 0 ? (

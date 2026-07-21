@@ -9,13 +9,13 @@ import Settings from "../pages/Settings";
 import Login from "../pages/Login.jsx";
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
 
-function AppRoutes({ missions, setMissions, objectives, setObjectives }) {
+function AppRoutes({ missions, setMissions, objectives, setObjectives, onNavigate }) {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Navigate to="/login" replace />} />
 
-      <Route path="/" element={<ProtectedRoute><Dashboard missions={missions} setMissions={setMissions} objectives={objectives} /></ProtectedRoute>} />
+      <Route path="/" element={<ProtectedRoute><Dashboard missions={missions} setMissions={setMissions} objectives={objectives} onNavigate={onNavigate} /></ProtectedRoute>} />
       <Route path="/missions" element={<ProtectedRoute><Missions missions={missions} setMissions={setMissions} objectives={objectives} /></ProtectedRoute>} />
       <Route path="/objectives" element={<ProtectedRoute><Objectives objectives={objectives} setObjectives={setObjectives} missions={missions} /></ProtectedRoute>} />
       <Route path="/intelligence" element={<ProtectedRoute><Intelligence missions={missions} /></ProtectedRoute>} />

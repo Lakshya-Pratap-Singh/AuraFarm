@@ -41,6 +41,37 @@
   --radius-md: 10px;
   --radius-lg: 16px;
 
+  /* --- Shared tile treatment: black surface, purple-gold "energy"
+     border, gentle hover zoom. Applied directly on each tile's own
+     selector (border + box-shadow + :hover transform), not via a
+     single shared class, since each tile already has its own base
+     rule to edit. See dashboard.css / objectives.css / missions.css /
+     relics.css / glass-card.css / intelligence*.css / settings-aura.css. */
+  --tile-bg: #000000;
+  --tile-border-purple: rgba(139, 92, 246, 0.38);
+  --tile-border-gold-hint: rgba(201, 162, 39, 0.12);
+  --tile-hover-scale: 1.03;
+
+  /* --- Shared animated tile border (ancient purple-gold-brown) ---
+     Used by the ::before/::after ring on every tile (stat cards,
+     objective/mission/relic cards, glass cards, settings panel).
+     A slow-moving conic gradient "flows" around the ring; hover
+     speeds it up and brightens it. See .tile-ancient-border below
+     and its per-component ::before/::after hookups. */
+  --tile-border-gradient: linear-gradient(
+    120deg,
+    #c9a227 0%,
+    #8b5cf6 20%,
+    #6b4423 40%,
+    #f0c419 60%,
+    #8b5cf6 80%,
+    #c9a227 100%
+  );
+  --tile-border-size: 300% 300%;
+  --tile-border-width: 1.5px;
+  --tile-border-speed: 7s;
+  --tile-border-speed-hover: 2.5s;
+
   /* --- Shared page-hero background ---
      Every page's top hero/header banner (Dashboard, Missions, Objectives,
      Intelligence, Relics, Settings) should read as the same surface, so
@@ -155,6 +186,7 @@ button {
   z-index: 2;
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   min-width: 0; /* prevents flex overflow pushing layout wider than viewport */
+  background: #000000;
 }
 
 /* When sidebar is collapsed, content expands to reclaim the space */
@@ -215,4 +247,155 @@ button {
 ::-webkit-scrollbar-thumb {
   background: var(--color-border-strong);
   border-radius: 4px;
+}
+
+/* --- Shared animated ancient border keyframes ---
+   Referenced by the ::before/::after ring added to every tile
+   (stat cards, objective/mission/relic cards, glass cards, the
+   settings profile panel). The gradient itself lives on each
+   component's own pseudo-element (via var(--tile-border-gradient));
+   this just slides it so the ring reads as "alive". Hover speeds
+   the same animation up per-component with --tile-border-speed-hover. */
+@keyframes tile-border-flow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* --- Shared purple "glow trace" border animation ---
+   Adapted from a glowing-border-trace-button reference: a short bright
+   segment races around the tile's outline on hover, with a blurred
+   twin behind it for bloom. Colors tuned to the app's aura-purple
+   palette (see aura-theme.css). Usage: add class="glow" to the tile's
+   root element, then nest
+     <svg class="glow-container">
+       <rect pathLength="100" stroke-linecap="round" class="glow-blur"></rect>
+       <rect pathLength="100" stroke-linecap="round" class="glow-line"></rect>
+     </svg>
+   as its last child. Override --glow-radius per tile type if its
+   border-radius isn't 16px (see .relic-card / .settings-profile-card
+   below for the 18px examples). */
+.glow {
+  --glow-line-color: var(--aura-purple-bright, #a855f7);
+  --glow-line-thickness: 2px;
+  --glow-line-length: 22;
+  --glow-blur-color: var(--aura-purple, #8b5cf6);
+  --glow-accent-color: #c9a227;
+  --glow-blur-size: 9px;
+  --glow-speed: 1400ms;
+  --glow-offset: 6px;
+  --glow-radius: 16px;
+  position: relative;
+}
+.glow-container {
+  pointer-events: none;
+  position: absolute;
+  inset: calc(var(--glow-offset) / -2);
+  width: calc(100% + var(--glow-offset));
+  height: calc(100% + var(--glow-offset));
+  opacity: 0;
+}
+.glow-blur, .glow-line {
+  width: calc(100% - var(--glow-offset));
+  height: calc(100% - var(--glow-offset));
+  x: calc(var(--glow-offset) / 2);
+  y: calc(var(--glow-offset) / 2);
+  rx: var(--glow-radius);
+  fill: transparent;
+  stroke: black;
+  stroke-width: 5px;
+  stroke-dasharray: var(--glow-line-length) calc(50 - var(--glow-line-length));
+}
+.glow-line {
+  stroke: var(--glow-line-color);
+  stroke-width: var(--glow-line-thickness);
+  filter: drop-shadow(0 0 2px var(--glow-accent-color, #c9a227));
+}
+.glow-blur {
+  filter: blur(var(--glow-blur-size));
+  stroke: var(--glow-blur-color);
+  stroke-width: var(--glow-blur-size);
+}
+.glow:is(:hover, :focus-visible) .glow-blur,
+.glow:is(:hover, :focus-visible) .glow-line {
+  stroke-dashoffset: -80px;
+  transition: stroke-dashoffset var(--glow-speed) ease-in, stroke-dasharray var(--glow-speed) ease-in;
+}
+.glow:is(:hover, :focus-visible) .glow-container {
+  animation: glow-visibility var(--glow-speed) ease-in;
+}
+@keyframes glow-visibility {
+  0%, 100% { opacity: 0; }
+  25%, 75% { opacity: 1; }
+}
+/* --- Shared "form modal" popup — used for Add Mission / Add Objective
+   (previously inline dropdown-style panels that pushed the page content
+   down). Same presentation language as the Relic info popup: dark
+   backdrop blur, centered card, black surface, purple-gold energy
+   border. Each page just needs to wrap its existing form fields in
+   .form-modal-backdrop > .form-modal and add a .form-modal-close
+   button — no field markup needs to change. */
+.form-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: rgba(5, 5, 5, 0.8);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.form-modal {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--tile-bg, #000);
+  border: 1px solid var(--tile-border-purple, rgba(139, 92, 246, 0.4));
+  box-shadow:
+    inset 0 0 0 1px var(--tile-border-gold-hint, rgba(201, 162, 39, 0.12)),
+    0 20px 60px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(139, 92, 246, 0.15);
+  border-radius: 22px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #f1ecfb;
+  text-align: center;
+  margin-bottom: 2px;
+}
+
+.form-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: #8b7faa;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.form-modal-close:hover {
+  background: rgba(168, 85, 247, 0.15);
+  color: #f1ecfb;
+}
+.form-modal-close svg {
+  width: 16px;
+  height: 16px;
 }

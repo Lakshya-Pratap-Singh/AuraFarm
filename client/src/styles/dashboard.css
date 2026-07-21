@@ -144,14 +144,15 @@
 /* ── 4 Stat cards row ───────────────────────────────────────── */
 .db-stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 14px;
   margin-bottom: 20px;
 }
 
 .db-stat-card {
-  background: #13101c;
-  border: 1px solid rgba(168,85,247,0.1);
+  background: var(--tile-bg);
+  border: 1px solid var(--tile-border-purple);
+  box-shadow: inset 0 0 0 1px var(--tile-border-gold-hint);
   border-radius: 16px;
   padding: 18px 20px;
   display: flex;
@@ -159,11 +160,12 @@
   gap: 6px;
   position: relative;
   overflow: hidden;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 .db-stat-card:hover {
-  border-color: rgba(168,85,247,0.22);
-  box-shadow: 0 4px 20px rgba(168,85,247,0.08);
+  border-color: rgba(139,92,246,0.55);
+  box-shadow: inset 0 0 0 1px rgba(201,162,39,0.16), 0 4px 20px rgba(168,85,247,0.14);
+  transform: scale(var(--tile-hover-scale));
 }
 .db-stat-card::before {
   content: '';
@@ -188,10 +190,56 @@
   line-height: 1;
 }
 
+.db-stat-value-of {
+  font-size: 15px;
+  color: #8b7faa;
+  font-weight: 500;
+}
+
 .db-stat-sub {
   font-size: 11.5px;
   color: #8b7faa;
   margin-top: 2px;
+}
+
+/* Relics Collected / Objectives Achieved — small icon badge, right-aligned */
+.db-stat-icon-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: rgba(168,85,247,0.1);
+  color: #a855f7;
+}
+.db-stat-icon-badge svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Recent Achievement — compact tile */
+.db-stat-card--achievement {
+  justify-content: center;
+}
+.db-stat-achievement-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.db-stat-achievement-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(168,85,247,0.5));
+  flex-shrink: 0;
+}
+.db-stat-achievement-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f1ecfb;
+  line-height: 1.25;
 }
 
 /* Aura Level card — badge icon */
@@ -290,14 +338,18 @@
 }
 
 .db-panel {
-  background: #13101c;
-  border: 1px solid rgba(168,85,247,0.1);
+  position: relative;
+  background: var(--tile-bg);
+  border: 1px solid var(--tile-border-purple);
+  box-shadow: inset 0 0 0 1px var(--tile-border-gold-hint);
   border-radius: 16px;
   padding: 20px;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 .db-panel:hover {
-  border-color: rgba(168,85,247,0.18);
+  border-color: rgba(139,92,246,0.6);
+  box-shadow: inset 0 0 0 1px rgba(201,162,39,0.16), 0 4px 20px rgba(168,85,247,0.16);
+  transform: scale(var(--tile-hover-scale));
 }
 
 .db-panel-title {
@@ -534,6 +586,112 @@
   color: #a855f7;
 }
 
+/* ── Aura Overview (redesigned) ───────────────────────────────
+   Big level-XP block on top, 3 compact stat tiles underneath —
+   matches the reference layout (big XP bar + Level/Streak/Progress
+   row), but with Longest Streak / Total XP / % vs yesterday. */
+.db-aura-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.db-aura-xp-block {
+  display: flex;
+  flex-direction: column;
+}
+.db-aura-xp-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8b7faa;
+  margin-bottom: 6px;
+}
+.db-aura-xp-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: #f1ecfb;
+  line-height: 1;
+}
+.db-aura-xp-value-of {
+  font-size: 15px;
+  color: #8b7faa;
+  font-weight: 500;
+}
+.db-aura-subtiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.db-aura-subtile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 8px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(168,85,247,0.08);
+  text-align: center;
+}
+.db-aura-subtile-value {
+  font-size: 17px;
+  font-weight: 700;
+  color: #f1ecfb;
+}
+.db-aura-subtile-value--up { color: #4ade80; }
+.db-aura-subtile-value--down { color: #f87171; }
+.db-aura-subtile-label {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8b7faa;
+}
+
+/* ── Weekly Progress — column chart of daily XP earned ────────── */
+.db-weekly-progress {
+  display: flex;
+  flex-direction: column;
+}
+.db-weekly-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  height: 130px;
+  margin-top: 8px;
+}
+.db-weekly-bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  height: 100%;
+}
+.db-weekly-bar-track {
+  width: 100%;
+  max-width: 22px;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.04);
+  overflow: hidden;
+}
+.db-weekly-bar-fill {
+  width: 100%;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #a855f7, #7c3aed);
+  box-shadow: 0 0 8px rgba(168,85,247,0.5);
+  transition: height 0.8s ease;
+}
+.db-weekly-bar-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #8b7faa;
+}
+
 /* ── Mobile layout ──────────────────────────────────────────── */
 @media (max-width: 767px) {
   .db-page { padding: 0 16px 100px; }
@@ -547,7 +705,7 @@
   .db-hero-title { font-size: 24px; }
 
   .db-stats {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 10px;
   }
 

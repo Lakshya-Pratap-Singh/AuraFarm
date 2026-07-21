@@ -5,6 +5,7 @@
 import { useState, useMemo } from "react";
 import ActivityGrid from "../components/ActivityGrid.jsx";
 import DonutChart from "../components/DonutChart.jsx";
+import GlowTrace from "../components/GlowTrace.jsx";
 import { useBanner, getHeroBackgroundStyle } from "../context/BannerContext.jsx";
 import "../styles/intelligence-aura.css";
 
@@ -93,33 +94,37 @@ function Intelligence({ missions = [] }) {
 
       {/* ── Stat cards ───────────────────────────────────────── */}
       <section className="intel-stats-row" aria-label="Analytics stats">
-        <div className="intel-stat-card intel-stat-card--accent">
+        <div className="intel-stat-card intel-stat-card--accent glow">
           <div className="intel-stat-icon"><FlameIcon /></div>
           <div className="intel-stat-text">
             <span className="intel-stat-value">{analytics.currentStreak}D</span>
             <span className="intel-stat-label">Current Streak</span>
           </div>
+          <GlowTrace />
         </div>
-        <div className="intel-stat-card">
+        <div className="intel-stat-card glow">
           <div className="intel-stat-icon"><TrophyIcon /></div>
           <div className="intel-stat-text">
             <span className="intel-stat-value">{analytics.bestStreak}D</span>
             <span className="intel-stat-label">Best Streak</span>
           </div>
+          <GlowTrace />
         </div>
-        <div className="intel-stat-card">
+        <div className="intel-stat-card glow">
           <div className="intel-stat-icon"><TargetIcon /></div>
           <div className="intel-stat-text">
             <span className="intel-stat-value">{analytics.averageRate}%</span>
             <span className="intel-stat-label">Avg Completion</span>
           </div>
+          <GlowTrace />
         </div>
-        <div className="intel-stat-card">
+        <div className="intel-stat-card glow">
           <div className="intel-stat-icon"><CheckIcon /></div>
           <div className="intel-stat-text">
             <span className="intel-stat-value">{totalCompleted}</span>
             <span className="intel-stat-label">Total Completed</span>
           </div>
+          <GlowTrace />
         </div>
       </section>
 

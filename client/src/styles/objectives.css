@@ -330,8 +330,9 @@ input[type="date"].obj-field-input {
 /* ── Objective card ──────────────────────────────────────── */
 .objective-card-tactical {
   position: relative;
-  background: var(--obj-card);
-  border: 1px solid var(--obj-border);
+  background: var(--tile-bg);
+  border: 1px solid var(--tile-border-purple);
+  box-shadow: inset 0 0 0 1px var(--tile-border-gold-hint);
   border-radius: var(--obj-radius);
   padding: 20px 20px 20px 24px;
   display: flex;
@@ -342,9 +343,9 @@ input[type="date"].obj-field-input {
 }
 
 .objective-card-tactical--active:hover {
-  border-color: rgba(193, 154, 63, 0.4);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(193, 154, 63, 0.08);
-  transform: translateY(-3px);
+  border-color: rgba(139,92,246,0.55);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(201,162,39,0.16);
+  transform: translateY(-3px) scale(var(--tile-hover-scale));
 }
 
 .objective-card-tactical--complete {
@@ -352,8 +353,8 @@ input[type="date"].obj-field-input {
 }
 .objective-card-tactical--complete:hover {
   opacity: 1;
-  border-color: var(--obj-border-strong);
-  transform: translateY(-2px);
+  border-color: rgba(139,92,246,0.45);
+  transform: translateY(-2px) scale(var(--tile-hover-scale));
 }
 
 .obj-card-accent {
