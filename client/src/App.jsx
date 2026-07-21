@@ -105,6 +105,13 @@ function App() {
 
   const activeNav = PATH_TO_NAV[location.pathname] || "Dashboard";
 
+  // Pages don't have their own scroll container — the whole window
+  // scrolls — so without this, navigating to a new page keeps whatever
+  // scroll offset the previous page was at instead of starting at top.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   const handleNavChange = (label) => {
     const path = NAV_TO_PATH[label];
     if (path) navigate(path);
@@ -150,6 +157,7 @@ function App() {
               setMissions={setMissions}
               objectives={objectives}
               setObjectives={setObjectives}
+              onNavigate={handleNavChange}
             />
           </PageTransition>
         </main>

@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useXP } from "../context/XPContext.jsx";
 import { useBanner, getHeroBackgroundStyle } from "../context/BannerContext.jsx";
+import GlowTrace from "../components/GlowTrace.jsx";
 import "../styles/settings-aura.css";
 
 function ChevronRight() {
@@ -114,7 +115,7 @@ function Settings() {
       </div>
 
       {/* ── Profile card ────────────────────────────────────── */}
-      <div className="settings-profile-card">
+      <div className="settings-profile-card glow">
         <div className="settings-avatar">
           {user?.photoURL
             ? <img src={user.photoURL} alt={user.displayName || "Cultivator"} referrerPolicy="no-referrer"/>
@@ -129,6 +130,7 @@ function Settings() {
             Aura Level {level} · {totalXP?.toLocaleString() ?? 0} XP
           </span>
         </div>
+        <GlowTrace />
       </div>
 
       <div className="settings-body">

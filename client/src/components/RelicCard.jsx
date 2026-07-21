@@ -3,6 +3,7 @@
 // Unlocked relics show full artwork with rarity glow.
 
 import { motion } from "framer-motion";
+import GlowTrace from "./GlowTrace.jsx";
 import "../styles/relics.css";
 
 function RelicCard({ relic, onClick }) {
@@ -14,7 +15,7 @@ function RelicCard({ relic, onClick }) {
 
   return (
     <motion.article
-      className={`relic-card ${rarityClass} ${isLocked ? "relic-card--locked" : ""}`}
+      className={`relic-card glow ${rarityClass} ${isLocked ? "relic-card--locked" : ""}`}
       onClick={() => onClick(relic)}
       whileHover={!isLocked ? { scale: 1.05, y: -4 } : { scale: 1.02 }}
       whileTap={{ scale: 0.97 }}
@@ -63,6 +64,7 @@ function RelicCard({ relic, onClick }) {
           </span>
         </div>
       )}
+      <GlowTrace />
     </motion.article>
   );
 }

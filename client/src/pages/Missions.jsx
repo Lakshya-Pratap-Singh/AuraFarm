@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useXP, MISSION_XP_TABLE } from "../context/XPContext.jsx";
 import { useBanner, getHeroBackgroundStyle } from "../context/BannerContext.jsx";
 import useSwipeGesture from "../hooks/useSwipeGesture.js";
@@ -454,99 +455,124 @@ function Missions({ missions, setMissions, objectives = [] }) {
       </div>
 
       {/* ── Add panel ───────────────────────────────────────────── */}
-      {showAdd && (
-        <div className="missions-add-panel">
-          <div className="af-field-group">
-            <label className="af-field-label" htmlFor="af-mission-name">Mission Name</label>
-            <input
-              id="af-mission-name"
-              className="af-field-input"
-              type="text"
-              placeholder="Name your mission…"
-              value={missionInput}
-              onChange={e => setMissionInput(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && handleAddMission()}
-              autoFocus
-            />
-          </div>
+      <AnimatePresence>
+        {showAdd && (
+          <motion.div
+            className="form-modal-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            onClick={() => setShowAdd(false)}
+          >
+            <motion.div
+              className="form-modal"
+              initial={{ opacity: 0, scale: 0.92, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 20 }}
+              transition={{ duration: 0.22, ease: [0.34, 1.56, 0.64, 1] }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button className="form-modal-close" onClick={() => setShowAdd(false)} aria-label="Close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
+                </svg>
+              </button>
+              <div className="form-modal-title">New Mission</div>
 
-          <div className="af-field-row">
-            <div className="af-field-group">
-              <label className="af-field-label">Category</label>
-              <select className="af-field-select" value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}>
-                {Object.entries(CATEGORY_CONFIG).map(([k, v]) => (
-                  <option key={k} value={k}>{v.icon} {v.label}</option>
-                ))}
-              </select>
-            </div>
-            <div className="af-field-group">
-              <label className="af-field-label">Priority</label>
-              <select className="af-field-select" value={selectedPriority} onChange={e => setSelectedPriority(e.target.value)}>
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-              </select>
-            </div>
-          </div>
+              <div className="af-field-group">
+                <label className="af-field-label" htmlFor="af-mission-name">Mission Name</label>
+                <input
+                  id="af-mission-name"
+                  className="af-field-input"
+                  type="text"
+                  placeholder="Name your mission…"
+                  value={missionInput}
+                  onChange={e => setMissionInput(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && handleAddMission()}
+                  autoFocus
+                />
+              </div>
 
-          <div className="af-field-row">
-            <div className="af-field-group">
-              <label className="af-field-label">Difficulty</label>
-              <select className="af-field-select" value={selectedDifficulty} onChange={e => setSelectedDifficulty(e.target.value)}>
-                <option value="Easy">Easy</option>
-                <option value="Normal">Normal</option>
-                <option value="Hard">Hard</option>
-                <option value="Legendary">Legendary</option>
-              </select>
-            </div>
-            <div className="af-field-group">
-              <label className="af-field-label">Repeat</label>
-              <select className="af-field-select" value={selectedRecurrence} onChange={e => setSelectedRecurrence(e.target.value)}>
-                {Object.entries(RECURRENCE_CONFIG).map(([k, v]) => (
-                  <option key={k} value={k}>{v.icon} {v.label}</option>
-                ))}
-              </select>
-            </div>
-          </div>
+              <div className="af-field-row">
+                <div className="af-field-group">
+                  <label className="af-field-label">Category</label>
+                  <select className="af-field-select" value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}>
+                    {Object.entries(CATEGORY_CONFIG).map(([k, v]) => (
+                      <option key={k} value={k}>{v.icon} {v.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="af-field-group">
+                  <label className="af-field-label">Priority</label>
+                  <select className="af-field-select" value={selectedPriority} onChange={e => setSelectedPriority(e.target.value)}>
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                  </select>
+                </div>
+              </div>
 
-          {selectedRecurrence === "custom" && (
-            <div className="af-field-group">
-              <label className="af-field-label">Every how many days?</label>
-              <input
-                className="af-field-input"
-                type="number"
-                min="1" max="365"
-                value={recurrenceDays}
-                onChange={e => setRecurrenceDays(e.target.value)}
-              />
-            </div>
-          )}
+              <div className="af-field-row">
+                <div className="af-field-group">
+                  <label className="af-field-label">Difficulty</label>
+                  <select className="af-field-select" value={selectedDifficulty} onChange={e => setSelectedDifficulty(e.target.value)}>
+                    <option value="Easy">Easy</option>
+                    <option value="Normal">Normal</option>
+                    <option value="Hard">Hard</option>
+                    <option value="Legendary">Legendary</option>
+                  </select>
+                </div>
+                <div className="af-field-group">
+                  <label className="af-field-label">Repeat</label>
+                  <select className="af-field-select" value={selectedRecurrence} onChange={e => setSelectedRecurrence(e.target.value)}>
+                    {Object.entries(RECURRENCE_CONFIG).map(([k, v]) => (
+                      <option key={k} value={k}>{v.icon} {v.label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-          {selectedRecurrence !== "none" && (
-            <div className="mission-recurrence-hint">
-              {RECURRENCE_CONFIG[selectedRecurrence]?.desc}
-              {selectedRecurrence === "custom" && ` — every ${recurrenceDays} day${Number(recurrenceDays) !== 1 ? "s" : ""}`}
-            </div>
-          )}
+              {selectedRecurrence === "custom" && (
+                <div className="af-field-group">
+                  <label className="af-field-label">Every how many days?</label>
+                  <input
+                    className="af-field-input"
+                    type="number"
+                    min="1" max="365"
+                    value={recurrenceDays}
+                    onChange={e => setRecurrenceDays(e.target.value)}
+                  />
+                </div>
+              )}
 
-          {objectives?.length > 0 && (
-            <div className="af-field-group">
-              <label className="af-field-label">Link to Objective</label>
-              <select className="af-field-select" value={selectedObjective} onChange={e => setSelectedObjective(e.target.value)}>
-                <option value="">— None —</option>
-                {objectives.map(o => <option key={o.id} value={o.id}>{o.title}</option>)}
-              </select>
-            </div>
-          )}
+              {selectedRecurrence !== "none" && (
+                <div className="mission-recurrence-hint">
+                  {RECURRENCE_CONFIG[selectedRecurrence]?.desc}
+                  {selectedRecurrence === "custom" && ` — every ${recurrenceDays} day${Number(recurrenceDays) !== 1 ? "s" : ""}`}
+                </div>
+              )}
 
-          <button className="btn-deploy-aura" onClick={handleAddMission} disabled={!missionInput.trim()}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/>
-            </svg>
-            Deploy Mission
-          </button>
-        </div>
-      )}
+              {objectives?.length > 0 && (
+                <div className="af-field-group">
+                  <label className="af-field-label">Link to Objective</label>
+                  <select className="af-field-select" value={selectedObjective} onChange={e => setSelectedObjective(e.target.value)}>
+                    <option value="">— None —</option>
+                    {objectives.map(o => <option key={o.id} value={o.id}>{o.title}</option>)}
+                  </select>
+                </div>
+              )}
+
+              <button className="btn-deploy-aura" onClick={handleAddMission} disabled={!missionInput.trim()}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/>
+                </svg>
+                Deploy Mission
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Category filter pills ─────────────────────────────── */}
       {missions.length > 0 && (

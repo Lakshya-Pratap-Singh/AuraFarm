@@ -1,10 +1,13 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useXP } from "../context/XPContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useBanner, getHeroBackgroundStyle } from "../context/BannerContext.jsx";
-import { computeStreaks } from "../components/ActivityGrid.jsx";
+import { computeStreaks, getLast90Days, recordSnapshot } from "../components/ActivityGrid.jsx";
+import { RELIC_CATALOG, useRelicUnlockState } from "./Relics.jsx";
+import { getRelicImage } from "../data/relicAssets.js";
 import useSwipeGesture from "../hooks/useSwipeGesture.js";
 import CategoryBadge from "../components/common/CategoryBadge.jsx";
+import GlowTrace from "../components/GlowTrace.jsx";
 import "../styles/dashboard.css";
 
 // ── Icons ──────────────────────────────────────────────────────────────────
@@ -72,44 +75,6 @@ function Ring({ size = 58, strokeWidth = 4, pct = 0, color = "#a855f7", classNam
   );
 }
 
-// ── Level badge SVG ────────────────────────────────────────────────────────
-function LevelBadge({ level }) {
-  return (
-    <svg viewBox="0 0 48 48" className="db-stat-level-badge" aria-label={`Level ${level}`}>
-      <defs>
-        <radialGradient id="badge-bg" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="rgba(139,92,246,0.4)" />
-          <stop offset="100%" stopColor="rgba(80,20,160,0.1)" />
-        </radialGradient>
-      </defs>
-      <polygon points="24,4 44,14 44,34 24,44 4,34 4,14" fill="url(#badge-bg)" stroke="#a855f7" strokeWidth="1.5" />
-      <polygon points="24,10 38,18 38,30 24,38 10,30 10,18" fill="rgba(139,92,246,0.15)" stroke="rgba(168,85,247,0.4)" strokeWidth="1" />
-      <text x="24" y="29" textAnchor="middle" fontSize="16" fontWeight="700" fill="#f1ecfb" fontFamily="Inter,sans-serif">{level}</text>
-    </svg>
-  );
-}
-
-// ── Sparkline wave ──────────────────────────────────────────────────────────
-function Sparkline({ xp }) {
-  const w = 160, h = 28;
-  const pts = [0.4, 0.5, 0.45, 0.6, 0.55, 0.65, 0.8].map((y, i) => [
-    (i / 6) * w,
-    h - y * (h - 4) - 2,
-  ]);
-  const d = pts.map((p, i) => `${i === 0 ? "M" : "L"}${p[0]},${p[1]}`).join(" ");
-  return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="db-aura-wave" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="wave-grad" x1="0" x2="1" y1="0" y2="0">
-          <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="#a855f7" stopOpacity="0.8" />
-        </linearGradient>
-      </defs>
-      <path d={d} fill="none" stroke="url(#wave-grad)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 
 // ── Dashboard Mission Row — swipe-fill gesture, no card slide ────────────
 function DashMissionRow({ mission, onComplete, onNavigate }) {
@@ -172,31 +137,80 @@ function DashMissionRow({ mission, onComplete, onNavigate }) {
 }
 
 // ── Dashboard ────────────────────────────────────────────────────────────
-export default function Dashboard({ missions = [], setMissions, onNavigate }) {
-  const { totalXP, xpIntoLevel, xpNeededForNextLevel, level, rankTitle } = useXP();
+export default function Dashboard({ missions = [], objectives = [], setMissions, onNavigate }) {
+  const { totalXP, xpIntoLevel, xpNeededForNextLevel, xpLog } = useXP();
   const { user } = useAuth();
   const { bannerUrl } = useBanner();
 
-  // Compute current streak from stored daily snapshots
-  const currentStreak = useMemo(() => {
+  // Keep the shared 90-day activity log fresh from this page too (not
+  // only when visiting Intelligence), so the streak/relic tiles below
+  // have real data as soon as something's been completed today.
+  useEffect(() => {
+    recordSnapshot(missions);
+  }, [missions]);
+
+  // Current + longest streak, both read from the one real activity log
+  // (this used to read a "daily-snapshots" key nothing ever wrote to,
+  // so the streak tile always showed 0).
+  const { currentStreak, longestStreak } = useMemo(() => {
     try {
-      const raw = localStorage.getItem("daily-snapshots");
-      const days = raw ? JSON.parse(raw) : [];
-      const { current } = computeStreaks(days);
-      return current;
+      const raw = localStorage.getItem("dailywise_activity_log");
+      const log = raw ? JSON.parse(raw) : {};
+      const days = getLast90Days(log);
+      const { current, best } = computeStreaks(days);
+      return { currentStreak: current, longestStreak: best };
     } catch {
-      return 0;
+      return { currentStreak: 0, longestStreak: 0 };
     }
-  }, []);
+  }, [missions]);
 
   // Daily progress: completed missions / total missions
   const completedToday = missions.filter((m) => m.completed).length;
   const totalToday = missions.length;
   const dailyPct = totalToday > 0 ? completedToday / totalToday : 0;
 
+  // Objectives achieved
+  const objectivesAchieved = objectives.filter((o) => o.completed).length;
+
+  // Relics collected — same catalog + unlock engine the Relics page uses
+  const relicUnlockState = useRelicUnlockState();
+  const unlockedRelics = useMemo(
+    () => RELIC_CATALOG.filter((relic) => relicUnlockState[relic.id]?.unlocked),
+    [relicUnlockState]
+  );
+  const totalRelicsCollected = unlockedRelics.length;
+  const totalRelicsInCatalog = RELIC_CATALOG.length;
+  // The app doesn't persist real unlock timestamps yet, so the most
+  // "advanced" unlocked relic (catalog runs common → mythic) stands in
+  // as the recent-achievement highlight.
+  const recentAchievement = unlockedRelics[unlockedRelics.length - 1] || null;
+
   // XP bar
   const xpPct = xpNeededForNextLevel > 0 ? xpIntoLevel / xpNeededForNextLevel : 0;
   const xpToNext = xpNeededForNextLevel - xpIntoLevel;
+
+  // Weekly XP — last 7 days from the daily XP log, oldest first
+  const weeklyXP = useMemo(() => {
+    const out = [];
+    const today = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      out.push({
+        label: d.toLocaleDateString(undefined, { weekday: "short" }).slice(0, 3),
+        xp: xpLog?.[key] || 0,
+      });
+    }
+    return out;
+  }, [xpLog]);
+
+  const todayXP = weeklyXP[weeklyXP.length - 1]?.xp || 0;
+  const yesterdayXP = weeklyXP[weeklyXP.length - 2]?.xp || 0;
+  const xpChangePct = yesterdayXP > 0
+    ? Math.round(((todayXP - yesterdayXP) / yesterdayXP) * 100)
+    : (todayXP > 0 ? 100 : 0);
+  const maxWeeklyXP = Math.max(...weeklyXP.map((d) => d.xp), 1);
 
   // Today's missions — show first 4
   const displayMissions = missions.slice(0, 4);
@@ -238,48 +252,22 @@ export default function Dashboard({ missions = [], setMissions, onNavigate }) {
         </div>
       </section>
 
-      {/* 4 Stat cards */}
+      {/* 5 Stat cards */}
       <section className="db-stats" aria-label="Stats">
-        {/* Aura Level */}
-        <div className="db-stat-card">
-          <div className="db-stat-label">Aura Level</div>
-          <div className="db-stat-level-row">
-            <div>
-              <div className="db-stat-value">{level}</div>
-              <div className="db-stat-rank">{rankTitle || "Elite Cultivator"}</div>
-            </div>
-            <LevelBadge level={level} />
-          </div>
-        </div>
-
-        {/* Aura XP */}
-        <div className="db-stat-card">
-          <div className="db-stat-label">Aura XP</div>
-          <div className="db-stat-value" style={{ fontSize: 24 }}>
-            {xpIntoLevel.toLocaleString()}
-            <span style={{ fontSize: 15, color: "#8b7faa", fontWeight: 500 }}>
-              {" "}/ {xpNeededForNextLevel.toLocaleString()}
-            </span>
-          </div>
-          <div className="db-xp-bar-wrap">
-            <div className="db-xp-bar" style={{ width: `${xpPct * 100}%` }} />
-          </div>
-          <div className="db-stat-sub">+{xpToNext.toLocaleString()} XP to next level</div>
-        </div>
-
-        {/* Current Streak */}
-        <div className="db-stat-card">
-          <div className="db-stat-label">Current Streak</div>
+        {/* Daily Streak */}
+        <div className="db-stat-card glow">
+          <div className="db-stat-label">Daily Streak</div>
           <div className="db-stat-streak-row">
             <span className="db-stat-flame">🔥</span>
             <span className="db-stat-value">{currentStreak} Days</span>
           </div>
           <div className="db-stat-sub">Keep it burning!</div>
+          <GlowTrace />
         </div>
 
-        {/* Daily Progress */}
-        <div className="db-stat-card">
-          <div className="db-stat-label">Daily Progress</div>
+        {/* Progress % (completed / total missions today) */}
+        <div className="db-stat-card glow">
+          <div className="db-stat-label">Progress</div>
           <div className="db-stat-ring-row">
             <div>
               <div className="db-stat-value" style={{ fontSize: 26 }}>
@@ -292,6 +280,55 @@ export default function Dashboard({ missions = [], setMissions, onNavigate }) {
               <div className="db-stat-ring-label">{Math.round(dailyPct * 100)}%</div>
             </div>
           </div>
+          <GlowTrace />
+        </div>
+
+        {/* Total Relics Collected */}
+        <div className="db-stat-card glow">
+          <div className="db-stat-label">Relics Collected</div>
+          <div className="db-stat-level-row">
+            <div>
+              <div className="db-stat-value">{totalRelicsCollected}<span className="db-stat-value-of">/{totalRelicsInCatalog}</span></div>
+              <div className="db-stat-sub">Keep hunting</div>
+            </div>
+            <span className="db-stat-icon-badge"><GemIcon /></span>
+          </div>
+          <GlowTrace />
+        </div>
+
+        {/* Objectives Achieved */}
+        <div className="db-stat-card glow">
+          <div className="db-stat-label">Objectives Achieved</div>
+          <div className="db-stat-level-row">
+            <div>
+              <div className="db-stat-value">{objectivesAchieved}<span className="db-stat-value-of">/{objectives.length}</span></div>
+              <div className="db-stat-sub">Long-term goals</div>
+            </div>
+            <span className="db-stat-icon-badge"><CheckCircle /></span>
+          </div>
+          <GlowTrace />
+        </div>
+
+        {/* Recent Achievement (compact) */}
+        <div className="db-stat-card db-stat-card--achievement glow">
+          <div className="db-stat-label">Recent Achievement</div>
+          {recentAchievement ? (
+            <div className="db-stat-achievement-row">
+              <img
+                src={getRelicImage(recentAchievement.id)}
+                alt={recentAchievement.name}
+                className="db-stat-achievement-icon"
+                onError={(e) => { e.currentTarget.style.display = "none"; }}
+              />
+              <div>
+                <div className="db-stat-achievement-name">{recentAchievement.name}</div>
+                <div className="db-stat-sub">{recentAchievement.rarity}</div>
+              </div>
+            </div>
+          ) : (
+            <div className="db-stat-sub">No relics unlocked yet</div>
+          )}
+          <GlowTrace />
         </div>
       </section>
 
@@ -299,7 +336,7 @@ export default function Dashboard({ missions = [], setMissions, onNavigate }) {
       <section className="db-bottom" aria-label="Dashboard panels">
 
         {/* TODAY'S MISSIONS */}
-        <div className="db-panel">
+        <div className="db-panel glow">
           <div className="db-panel-title">Today's Missions</div>
           <div className="db-mission-list">
             {displayMissions.length === 0 && (
@@ -322,65 +359,62 @@ export default function Dashboard({ missions = [], setMissions, onNavigate }) {
           >
             View All Missions <ArrowRight />
           </button>
+          <GlowTrace />
         </div>
 
         {/* AURA OVERVIEW */}
-        <div className="db-panel">
+        <div className="db-panel glow db-aura-overview">
           <div className="db-panel-title">Aura Overview</div>
-          <div className="db-aura-ring-wrap">
-            <div className="db-aura-ring">
-              <svg width="130" height="130" viewBox="0 0 130 130" style={{ transform: "rotate(-90deg)" }}>
-                <defs>
-                  <linearGradient id="aura-ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#7c3aed" />
-                    <stop offset="60%" stopColor="#a855f7" />
-                    <stop offset="100%" stopColor="#c084fc" />
-                  </linearGradient>
-                </defs>
-                <circle cx="65" cy="65" r="52" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="8" />
-                <circle
-                  cx="65" cy="65" r="52"
-                  fill="none"
-                  stroke="url(#aura-ring-gradient)"
-                  strokeWidth="8"
-                  strokeLinecap="round"
-                  strokeDasharray={2 * Math.PI * 52}
-                  strokeDashoffset={2 * Math.PI * 52 * (1 - Math.min(xpPct + 0.1, 0.98))}
-                  style={{ filter: "drop-shadow(0 0 8px rgba(168,85,247,0.7))", transition: "stroke-dashoffset 1s ease" }}
-                />
-              </svg>
-              <div className="db-aura-ring-center">
-                <span className="db-aura-ring-value">{totalXP.toLocaleString()}</span>
-                <span className="db-aura-ring-sub">Total Aura XP</span>
-              </div>
+
+          <div className="db-aura-xp-block">
+            <div className="db-aura-xp-label">Level Progress</div>
+            <div className="db-aura-xp-value">
+              {xpIntoLevel.toLocaleString()}
+              <span className="db-aura-xp-value-of"> / {xpNeededForNextLevel.toLocaleString()}</span>
             </div>
-            <p className="db-aura-delta">
-              <span>+ 18%</span> from yesterday
-            </p>
-            <Sparkline xp={totalXP} />
+            <div className="db-xp-bar-wrap">
+              <div className="db-xp-bar" style={{ width: `${xpPct * 100}%` }} />
+            </div>
+            <div className="db-stat-sub">+{xpToNext.toLocaleString()} XP to next level</div>
           </div>
+
+          <div className="db-aura-subtiles">
+            <div className="db-aura-subtile">
+              <span className="db-aura-subtile-value">{longestStreak}</span>
+              <span className="db-aura-subtile-label">Longest Streak</span>
+            </div>
+            <div className="db-aura-subtile">
+              <span className="db-aura-subtile-value">{totalXP.toLocaleString()}</span>
+              <span className="db-aura-subtile-label">Total XP</span>
+            </div>
+            <div className="db-aura-subtile">
+              <span className={`db-aura-subtile-value ${xpChangePct >= 0 ? "db-aura-subtile-value--up" : "db-aura-subtile-value--down"}`}>
+                {xpChangePct >= 0 ? "+" : ""}{xpChangePct}%
+              </span>
+              <span className="db-aura-subtile-label">Vs Yesterday</span>
+            </div>
+          </div>
+          <GlowTrace />
         </div>
 
-        {/* RECENT ACHIEVEMENT */}
-        <div className="db-panel">
-          <div className="db-panel-title">Recent Achievement</div>
-          <div className="db-achievement">
-            <div className="db-achievement-badge">
-              <span className="db-achievement-badge-icon">🏆</span>
-            </div>
-            <div className="db-achievement-name">Unstoppable</div>
-            <div className="db-achievement-desc">
-              Maintain a 20+ day streak
-            </div>
-            <div className="db-achievement-xp">+500 XP</div>
-            <button
-              className="db-view-all"
-              style={{ marginTop: 12, justifyContent: "center" }}
-              onClick={() => onNavigate?.("Relics")}
-            >
-              View All Relics <ArrowRight />
-            </button>
+        {/* WEEKLY PROGRESS */}
+        <div className="db-panel glow db-weekly-progress">
+          <div className="db-panel-title">Weekly Progress</div>
+          <div className="db-weekly-chart" role="img" aria-label="XP earned per day this week">
+            {weeklyXP.map((d, i) => (
+              <div className="db-weekly-bar-col" key={i}>
+                <div className="db-weekly-bar-track">
+                  <div
+                    className="db-weekly-bar-fill"
+                    style={{ height: `${Math.max((d.xp / maxWeeklyXP) * 100, d.xp > 0 ? 6 : 2)}%` }}
+                    title={`${d.xp} XP`}
+                  />
+                </div>
+                <span className="db-weekly-bar-label">{d.label}</span>
+              </div>
+            ))}
           </div>
+          <GlowTrace />
         </div>
 
       </section>

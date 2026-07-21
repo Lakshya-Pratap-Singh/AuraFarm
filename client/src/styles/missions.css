@@ -346,8 +346,9 @@
 /* ── Mission card ────────────────────────────────────────── */
 .mission-card-tactial {
   position: relative;
-  background: var(--m-card);
-  border: 1px solid var(--m-border);
+  background: var(--tile-bg);
+  border: 1px solid var(--tile-border-purple);
+  box-shadow: inset 0 0 0 1px var(--tile-border-gold-hint);
   border-radius: var(--m-radius);
   padding: 20px 20px 20px 24px; /* extra left pad for accent bar */
   display: flex;
@@ -360,10 +361,10 @@
 /* Single accent rule: hover glow is always gold, active or completed.
    Completed cards settle — no glow, slightly recessed. */
 .mission-card-tactial--active:hover {
-  border-color: rgba(193, 154, 63, 0.4);
+  border-color: rgba(139,92,246,0.55);
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5),
-              0 0 0 1px rgba(193, 154, 63, 0.08);
-  transform: translateY(-3px);
+              inset 0 0 0 1px rgba(201,162,39,0.16);
+  transform: translateY(-3px) scale(var(--tile-hover-scale));
 }
 
 .mission-card-tactial--completed {
@@ -371,8 +372,8 @@
 }
 .mission-card-tactial--completed:hover {
   opacity: 0.9;
-  border-color: var(--m-border-strong);
-  transform: translateY(-2px);
+  border-color: rgba(139,92,246,0.45);
+  transform: translateY(-2px) scale(var(--tile-hover-scale));
 }
 
 /* ── Single-accent edge bar ──────────────────────────────── */

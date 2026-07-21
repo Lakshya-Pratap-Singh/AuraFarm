@@ -7,6 +7,7 @@ import { MISSION_XP_TABLE } from "../context/XPContext.jsx";
 import useSwipeGesture from "../hooks/useSwipeGesture.js";
 import { useEffect, useState } from "react";
 import CategoryBadge from "./common/CategoryBadge.jsx";
+import GlowTrace from "./GlowTrace.jsx";
 import "../styles/missions.css";
 import "../styles/mission-swipe.css";
 
@@ -83,6 +84,7 @@ function MissionCard({ mission, linkedObjectiveName, onComplete, onDelete }) {
 
   const cardClass = [
     "mission-card-tactial",
+    "glow",
     mission.completed ? "mission-card-tactial--completed" : "mission-card-tactial--active",
     isDragging ? "mission-card-tactial--dragging" : "",
     isDragging ? `mc-swipe-stage--${swipeStage}` : "",
@@ -185,6 +187,7 @@ function MissionCard({ mission, linkedObjectiveName, onComplete, onDelete }) {
           DELETE
         </button>
       </div>
+      <GlowTrace />
     </article>
   );
 }

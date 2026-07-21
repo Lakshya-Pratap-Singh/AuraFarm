@@ -13,6 +13,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 const XP_STORAGE_KEY = "dailywise_xp";
+const XP_LOG_KEY = "dailywise_xp_log";
 const XP_PER_LEVEL = 250;
 
 // Mission XP table — single source of truth per the spec.
@@ -65,10 +66,40 @@ function saveStoredXP(totalXP) {
   }
 }
 
+// Local-time date key (not UTC — avoids a day-shift around midnight),
+// same convention ActivityGrid.jsx uses for its own daily log.
+function formatDateKey(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+// Per-day XP-earned log — powers the Dashboard's Weekly Progress chart
+// and its "% change from yesterday" figure. Keyed by local date, value
+// is the net XP gained that day (mission reopen/undo nets it back down).
+function loadXPLog() {
+  try {
+    const raw = localStorage.getItem(XP_LOG_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveXPLog(log) {
+  try {
+    localStorage.setItem(XP_LOG_KEY, JSON.stringify(log));
+  } catch {
+    // localStorage unavailable — today's log entry just won't persist
+  }
+}
+
 const XPContext = createContext(null);
 
 export function XPProvider({ children }) {
   const [totalXP, setTotalXP] = useState(loadStoredXP);
+  const [xpLog, setXpLog] = useState(loadXPLog);
 
   // Most recent gain/loss event — consumed by XPWidget to trigger the
   // animated "+25 XP" / "-25 XP" popup. `key` changes on every call so
@@ -85,6 +116,12 @@ export function XPProvider({ children }) {
     if (!amount) return;
     setTotalXP((prev) => Math.max(0, prev + amount));
     setLastGain({ amount, key: Date.now() + Math.random() });
+    setXpLog((prev) => {
+      const todayKey = formatDateKey(new Date());
+      const next = { ...prev, [todayKey]: Math.max(0, (prev[todayKey] || 0) + amount) };
+      saveXPLog(next);
+      return next;
+    });
   }, []);
 
   const value = {
@@ -96,6 +133,7 @@ export function XPProvider({ children }) {
     xpPerLevel: XP_PER_LEVEL,
     gainXP,
     lastGain,
+    xpLog,
   };
 
   return <XPContext.Provider value={value}>{children}</XPContext.Provider>;

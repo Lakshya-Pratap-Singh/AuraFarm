@@ -17,7 +17,13 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  border-bottom: 1px solid rgba(139,92,246,0.2);
+}
+.intel-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent 55%, #000000 100%);
 }
 .intel-hero-heading {
   font-family: var(--heading-font);
@@ -48,8 +54,10 @@
 }
 
 .intel-stat-card {
-  background: #120d1a;
-  border: 1px solid rgba(139,92,246,0.2);
+  position: relative;
+  background: var(--tile-bg);
+  border: 1px solid var(--tile-border-purple);
+  box-shadow: inset 0 0 0 1px var(--tile-border-gold-hint);
   border-radius: 16px;
   padding: 18px 16px;
   display: flex;
@@ -58,9 +66,9 @@
   transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
 }
 .intel-stat-card:hover {
-  border-color: rgba(168,85,247,0.4);
-  box-shadow: 0 0 20px rgba(168,85,247,0.14);
-  transform: translateY(-3px);
+  border-color: rgba(139,92,246,0.55);
+  box-shadow: inset 0 0 0 1px rgba(201,162,39,0.16), 0 0 20px rgba(201,162,39,0.18);
+  transform: translateY(-3px) scale(var(--tile-hover-scale));
 }
 .intel-stat-card--accent {
   border-color: rgba(168,85,247,0.35);
