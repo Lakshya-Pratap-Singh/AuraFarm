@@ -399,3 +399,156 @@ button {
   width: 16px;
   height: 16px;
 }
+
+/* --- Add button: expand-to-pill hover effect ---
+   Mirrors the existing .btn-delete-expand pattern (see below) so both
+   "Add" and "Delete" actions share the same interaction language:
+   round icon-only button widens into a pill on hover, the icon slides
+   down, and a label drops in from above. Purple, per the app theme.
+   Unlike delete's static "Delete" label, Add Mission/Add Objective
+   need dynamic text (toggles to "Cancel" while the form is open), so
+   this uses a real <span class="btn-add-expand-label"> child instead
+   of a CSS ::before content string — everything else matches
+   .btn-delete-expand exactly. Used on the Add Mission / Add Objective
+   trigger buttons (.btn-add-mission / .btn-add-objective add this
+   class alongside their own for the onClick wiring). */
+.btn-add-expand {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  color: #a855f7;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 rgba(139, 92, 246, 0);
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  transition: width 0.3s, border-radius 0.3s, background-color 0.3s, box-shadow 0.3s;
+}
+
+.btn-add-expand svg {
+  width: 16px;
+  height: auto;
+  flex-shrink: 0;
+  transition: width 0.3s, transform 0.3s;
+}
+
+.btn-add-expand-label {
+  position: absolute;
+  top: -20px;
+  color: #fff;
+  font-family: var(--af-font-mono, 'JetBrains Mono', monospace);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-size: 2px;
+  opacity: 0;
+  transition: font-size 0.3s, transform 0.3s, opacity 0.3s;
+  pointer-events: none;
+}
+
+.btn-add-expand:hover {
+  width: 180px;
+  border-radius: 50px;
+  background-color: #8b5cf6;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+}
+.btn-add-expand:hover svg {
+  width: 44px;
+  transform: translateY(60%);
+}
+.btn-add-expand:hover .btn-add-expand-label {
+  font-size: 13px;
+  opacity: 1;
+  transform: translateY(30px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-add-expand,
+  .btn-add-expand svg,
+  .btn-add-expand-label {
+    transition: none;
+  }
+}
+
+/* --- Delete button: expand-to-pill hover effect ---
+   Adapted from a reference "expanding delete button": round icon-only
+   button widens into a pill on hover, the icon slides down, and a
+   "Delete" label drops in from above. Recolored purple to match the
+   app theme (reference used red). Used on the Objective/Mission
+   card delete buttons (.btn-delete-obj / .mc-aura-delete) — each of
+   those files adds this shared class alongside their own for the
+   onClick/aria-label wiring.
+   Note: both delete buttons live inside a card with `overflow: hidden`
+   (used elsewhere for accent-bar/swipe-fill clipping), so the 140px
+   expanded width could get visually clipped on narrower cards — if
+   that happens, ping so it can be resized or repositioned. */
+.btn-delete-expand {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  color: #a855f7;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 rgba(139, 92, 246, 0);
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  transition: width 0.3s, border-radius 0.3s, background-color 0.3s, box-shadow 0.3s;
+}
+
+.btn-delete-expand svg {
+  width: 12px;
+  height: auto;
+  flex-shrink: 0;
+  transition: width 0.3s, transform 0.3s;
+}
+
+.btn-delete-expand::before {
+  position: absolute;
+  top: -20px;
+  content: "Delete";
+  color: #fff;
+  font-family: var(--af-font-mono, 'JetBrains Mono', monospace);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  font-size: 2px;
+  opacity: 0;
+  transition: font-size 0.3s, transform 0.3s, opacity 0.3s;
+}
+
+.btn-delete-expand:hover {
+  width: 140px;
+  border-radius: 50px;
+  background-color: #8b5cf6;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+}
+.btn-delete-expand:hover svg {
+  width: 50px;
+  transform: translateY(60%);
+}
+.btn-delete-expand:hover::before {
+  font-size: 13px;
+  opacity: 1;
+  transform: translateY(30px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-delete-expand,
+  .btn-delete-expand svg,
+  .btn-delete-expand::before {
+    transition: none;
+  }
+}

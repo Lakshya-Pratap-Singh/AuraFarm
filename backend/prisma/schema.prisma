@@ -40,6 +40,16 @@ enum ActivityType {
   XP_REVOKED
 }
 
+enum NotificationType {
+  MISSION_REMINDER
+  ACHIEVEMENT_UNLOCK
+  STREAK_WARNING
+  OBJECTIVE_PROGRESS
+  DAILY_RESET
+  WEEKLY_REPORT
+  SYSTEM
+}
+
 model User {
   id           String         @id @default(cuid())
   email        String         @unique
@@ -54,6 +64,10 @@ model User {
   missions     Mission[]
   xpEvents     XPEvent[]
   activityLogs ActivityEvent[]
+  
+  notifications Notification[]
+  notificationTemplates NotificationTemplate[]
+  devices UserDevice[]
 }
 
 model Objective {
@@ -114,4 +128,51 @@ model ActivityEvent {
   user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   mission      Mission?    @relation(fields: [missionId], references: [id], onDelete: SetNull)
   objective    Objective?  @relation(fields: [objectiveId], references: [id], onDelete: SetNull)
+}
+model Notification {
+  id          String @id @default(cuid())
+
+  userId      String
+  user        User @relation(fields: [userId], references: [id])
+
+  title       String
+  message     String
+
+  type        NotificationType
+
+  isRead      Boolean @default(false)
+
+  createdAt   DateTime @default(now())
+}
+
+model NotificationTemplate {
+  id          String @id @default(cuid())
+
+  userId      String
+  user        User @relation(fields: [userId], references: [id])
+
+  name        String
+
+  message     String
+
+  type        NotificationType
+
+  isDefault   Boolean @default(false)
+
+  createdAt   DateTime @default(now())
+}
+
+model UserDevice {
+  id          String @id @default(cuid())
+
+  userId      String
+  user        User @relation(fields: [userId], references: [id])
+
+  deviceToken String
+
+  deviceType  String
+
+  createdAt   DateTime @default(now())
+
+  updatedAt   DateTime @updatedAt
 }

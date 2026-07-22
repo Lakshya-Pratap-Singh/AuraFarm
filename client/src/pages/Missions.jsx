@@ -279,7 +279,7 @@ function MissionCard({ mission, onComplete, onDelete, onEdit }) {
           </div>
         ) : null}
         <button
-          className="mc-aura-delete"
+          className="mc-aura-delete btn-delete-expand"
           onClick={e => { e.stopPropagation(); onDelete(mission.id); }}
           aria-label="Delete mission"
         >
@@ -446,11 +446,15 @@ function Missions({ missions, setMissions, objectives = [] }) {
           <div className="missions-section-title">Today's Missions</div>
           <div className="missions-count-badge">{missions.length} mission{missions.length !== 1 ? "s" : ""}</div>
         </div>
-        <button className="btn-add-mission" onClick={() => setShowAdd(v => !v)}>
+        <button
+          className="btn-add-mission btn-add-expand"
+          onClick={() => setShowAdd(v => !v)}
+          aria-label={showAdd ? "Cancel" : "Add Mission"}
+        >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M12 5v14M5 12h14" strokeLinecap="round"/>
           </svg>
-          {showAdd ? "Cancel" : "Add Mission"}
+          <span className="btn-add-expand-label">{showAdd ? "Cancel" : "Add Mission"}</span>
         </button>
       </div>
 

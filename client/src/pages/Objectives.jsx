@@ -134,9 +134,13 @@ function Objectives({ objectives, setObjectives, missions }) {
       {/* ── Toolbar ─────────────────────────────────────────────── */}
       <div className="obj-toolbar">
         <span className="obj-section-title">Active Objectives — {objectives.length} logged</span>
-        <button className="btn-add-objective" onClick={() => setShowAdd((v) => !v)}>
+        <button
+          className="btn-add-objective btn-add-expand"
+          onClick={() => setShowAdd((v) => !v)}
+          aria-label={showAdd ? "Cancel" : "Add Objective"}
+        >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12h14" strokeLinecap="round"/></svg>
-          {showAdd ? "Cancel" : "Add Objective"}
+          <span className="btn-add-expand-label">{showAdd ? "Cancel" : "Add Objective"}</span>
         </button>
       </div>
 
@@ -230,7 +234,7 @@ function Objectives({ objectives, setObjectives, missions }) {
                 <div className="obj-card-right">
                   <span className={`obj-card-pct ${isComplete ? "obj-card-pct--complete" : ""}`}>{progress}%</span>
                   <span className="obj-card-missions">{total} mission{total !== 1 ? "s" : ""}</span>
-                  <button className="btn-delete-obj" onClick={() => handleDelete(objective.id)} aria-label="Delete objective">
+                  <button className="btn-delete-obj btn-delete-expand" onClick={() => handleDelete(objective.id)} aria-label="Delete objective">
                     <TrashIcon />
                   </button>
                 </div>

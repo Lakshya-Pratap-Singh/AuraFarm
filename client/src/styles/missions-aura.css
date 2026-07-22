@@ -140,32 +140,9 @@
 }
 
 /* ── Add Mission Button ──────────────────────────────────────── */
-.btn-add-mission {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  min-height: 44px;
-  border-radius: 10px;
-  background: var(--af-purple-dim);
-  border: 1px solid var(--af-purple-bright);
-  color: var(--af-purple-bright);
-  font-family: var(--af-font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
-}
-.btn-add-mission svg { width: 14px; height: 14px; }
-.btn-add-mission:hover {
-  background: rgba(168,85,247,0.2);
-  box-shadow: 0 0 18px rgba(168,85,247,0.35);
-  transform: translateY(-1px);
-}
-.btn-add-mission:active { transform: scale(0.97); }
-.btn-add-mission:disabled { opacity: 0.3; cursor: not-allowed; }
+/* .btn-add-mission was a text pill with a hover glow — replaced by the
+   shared .btn-circle-expand style (circle → pill on hover), defined
+   once in index.css and reused by both Missions and Objectives. */
 
 /* ── Add Mission Panel ───────────────────────────────────────── */
 .missions-add-panel {
@@ -238,11 +215,12 @@
 
 .btn-deploy-aura {
   display: inline-flex;
+  align-self: center;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 13px 24px;
-  min-height: 44px;
+  padding: 10px 20px;
+  min-height: 38px;
   border-radius: 10px;
   background: linear-gradient(135deg, var(--af-violet), var(--af-purple));
   border: 1px solid var(--af-purple-bright);
@@ -485,22 +463,11 @@
 }
 .mc-aura-completed-badge svg { width: 14px; height: 14px; }
 
-.mc-aura-delete {
-  width: 30px;
-  height: 30px;
-  border-radius: 6px;
-  background: transparent;
-  border: 1px solid rgba(239,68,68,0.2);
-  color: #ef4444;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  opacity: 0.6;
-  transition: opacity 0.2s, background 0.2s;
-}
-.mc-aura-delete:hover { opacity: 1; background: rgba(239,68,68,0.1); }
-.mc-aura-delete svg { width: 13px; height: 13px; }
+/* Appearance now lives in the shared .btn-delete-expand rule
+   (index.css) — this class is kept only as the onClick/aria-label
+   hook, and as the useSwipeGesture ignoreSelector match, in
+   Missions.jsx. */
+
 
 /* Completion burst */
 .mc-celebrate {
