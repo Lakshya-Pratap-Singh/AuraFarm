@@ -7,6 +7,7 @@ import { RELIC_CATALOG, useRelicUnlockState } from "./Relics.jsx";
 import { getRelicImage } from "../data/relicAssets.js";
 import useSwipeGesture from "../hooks/useSwipeGesture.js";
 import CategoryBadge from "../components/common/CategoryBadge.jsx";
+import StreakLogo from "../components/common/StreakLogo.jsx";
 import GlowTrace from "../components/GlowTrace.jsx";
 import "../styles/dashboard.css";
 
@@ -121,7 +122,7 @@ function DashMissionRow({ mission, onComplete, onNavigate }) {
       </span>
       <div className="db-mission-info">
         <div className="db-mission-title">{mission.title}</div>
-        <div className="db-mission-sub"><CategoryBadge category={mission.category || "others"} size="xs" /></div>
+        <div className="db-mission-sub"><CategoryBadge category={mission.category || "others"} size="xs" showIcon={false} /></div>
       </div>
       {isLeftDrag && leftPct > 0 ? (
         <span className="db-mission-arrow-hint" aria-hidden="true">←</span>
@@ -258,7 +259,7 @@ export default function Dashboard({ missions = [], objectives = [], setMissions,
         <div className="db-stat-card glow">
           <div className="db-stat-label">Daily Streak</div>
           <div className="db-stat-streak-row">
-            <span className="db-stat-flame">🔥</span>
+            <StreakLogo className="db-stat-streak-logo" size={32} />
             <span className="db-stat-value">{currentStreak} Days</span>
           </div>
           <div className="db-stat-sub">Keep it burning!</div>

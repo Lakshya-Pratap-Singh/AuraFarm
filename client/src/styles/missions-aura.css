@@ -324,14 +324,14 @@
 /* Category icon circle */
 .mc-aura-icon {
   flex-shrink: 0;
-  width: 52px;
-  height: 52px;
+  width: 80px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--af-purple-bright);
 }
-.mc-aura-icon svg, .mc-aura-icon img, .mc-aura-icon span { width: 34px; height: 34px; }
+.mc-aura-icon svg, .mc-aura-icon img, .mc-aura-icon span { width: 65px; height: 65px; }
 
 /* Card body */
 .mc-aura-body {
@@ -503,6 +503,14 @@
   letter-spacing: 0.12em;
   color: var(--af-text-faint);
   text-transform: uppercase;
+}
+.mf-stat-value-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.mf-stat-value-row .mf-stat-value {
+  margin: 0;
 }
 .mf-stat-value {
   font-family: var(--af-font-mono);

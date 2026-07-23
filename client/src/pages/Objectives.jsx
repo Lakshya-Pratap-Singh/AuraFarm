@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useBanner, getHeroBackgroundStyle } from "../context/BannerContext.jsx";
 import GlowTrace from "../components/GlowTrace.jsx";
+import handleLiquidCursor from "../hooks/handleLiquidCursor.js";
 import "../styles/objectives-aura.css";
 
 function getObjectiveStats(objectives, missions) {
@@ -137,8 +138,21 @@ function Objectives({ objectives, setObjectives, missions }) {
         <button
           className="btn-add-objective btn-add-expand"
           onClick={() => setShowAdd((v) => !v)}
+          onMouseMove={handleLiquidCursor}
           aria-label={showAdd ? "Cancel" : "Add Objective"}
         >
+          <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
+            <filter id="btn-liquid-goo">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
+              <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -10" result="goo" />
+              <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+            </filter>
+          </svg>
+          <span className="btn-liquid" aria-hidden="true">
+            <span className="btn-liquid-blob btn-liquid-blob--a" />
+            <span className="btn-liquid-blob btn-liquid-blob--b" />
+            <span className="btn-liquid-cursor" />
+          </span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12h14" strokeLinecap="round"/></svg>
           <span className="btn-add-expand-label">{showAdd ? "Cancel" : "Add Objective"}</span>
         </button>

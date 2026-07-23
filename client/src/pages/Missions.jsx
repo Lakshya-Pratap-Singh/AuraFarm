@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useXP, MISSION_XP_TABLE } from "../context/XPContext.jsx";
 import { useBanner, getHeroBackgroundStyle } from "../context/BannerContext.jsx";
 import useSwipeGesture from "../hooks/useSwipeGesture.js";
+import handleLiquidCursor from "../hooks/handleLiquidCursor.js";
 import { buildNewMission } from "../hooks/useMissionReset.js";
 import CategoryBadge from "../components/common/CategoryBadge.jsx";
+import StreakLogo from "../components/common/StreakLogo.jsx";
 import "../styles/missions-aura.css";
 
 // ─── Config ───────────────────────────────────────────────────────────────
@@ -260,7 +262,7 @@ function MissionCard({ mission, onComplete, onDelete, onEdit }) {
           )}
         </div>
         <div className="mc-aura-badges">
-          <CategoryBadge category={mission.category} size="xs" />
+          <CategoryBadge category={mission.category} size="xs" showIcon={false} />
           <span className={`mc-badge ${priorityCfg.badgeClass}`}>{priorityCfg.label}</span>
           <span className={`mc-badge ${difficultyCfg.badgeClass}`}>{difficultyCfg.label}</span>
           <span className="mc-badge mc-badge--xp">+{xpReward} XP</span>
@@ -449,8 +451,21 @@ function Missions({ missions, setMissions, objectives = [] }) {
         <button
           className="btn-add-mission btn-add-expand"
           onClick={() => setShowAdd(v => !v)}
+          onMouseMove={handleLiquidCursor}
           aria-label={showAdd ? "Cancel" : "Add Mission"}
         >
+          <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
+            <filter id="btn-liquid-goo">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
+              <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -10" result="goo" />
+              <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+            </filter>
+          </svg>
+          <span className="btn-liquid" aria-hidden="true">
+            <span className="btn-liquid-blob btn-liquid-blob--a" />
+            <span className="btn-liquid-blob btn-liquid-blob--b" />
+            <span className="btn-liquid-cursor" />
+          </span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M12 5v14M5 12h14" strokeLinecap="round"/>
           </svg>
@@ -633,7 +648,10 @@ function Missions({ missions, setMissions, objectives = [] }) {
       <div className="missions-footer-stats">
         <div className="mf-stat">
           <span className="mf-stat-label">Mission Streak</span>
-          <span className="mf-stat-value">{currentStreak ?? 0}</span>
+          <div className="mf-stat-value-row">
+            <StreakLogo className="mf-stat-streak-logo" size={26} />
+            <span className="mf-stat-value">{currentStreak ?? 0}</span>
+          </div>
           <span className="mf-stat-sub">Days</span>
         </div>
         <div className="mf-stat">

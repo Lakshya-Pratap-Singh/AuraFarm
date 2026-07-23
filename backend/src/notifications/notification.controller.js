@@ -1,4 +1,5 @@
 import prisma from "../config/prisma.js";
+import { createNotification } from "./notification.service.js";
 
 export const getNotifications = async (req, res) => {
   try {
@@ -11,11 +12,10 @@ export const getNotifications = async (req, res) => {
       },
     });
 
-    res.status(200).json(notifications);
+    return res.status(200).json(notifications);
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to fetch notifications",
-      error: error.message,
+    return res.status(500).json({
+      message: error.message,
     });
   }
 };
@@ -33,11 +33,10 @@ export const markAsRead = async (req, res) => {
       },
     });
 
-    res.status(200).json(notification);
+    return res.status(200).json(notification);
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to mark notification as read",
-      error: error.message,
+    return res.status(500).json({
+      message: error.message,
     });
   }
 };
@@ -52,13 +51,12 @@ export const deleteNotification = async (req, res) => {
       },
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Notification deleted",
     });
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to delete notification",
-      error: error.message,
+    return res.status(500).json({
+      message: error.message,
     });
   }
 };
@@ -76,11 +74,10 @@ export const createTemplate = async (req, res) => {
       },
     });
 
-    res.status(201).json(template);
+    return res.status(201).json(template);
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to create template",
-      error: error.message,
+    return res.status(500).json({
+      message: error.message,
     });
   }
 };
@@ -96,11 +93,27 @@ export const getTemplates = async (req, res) => {
       },
     });
 
-    res.status(200).json(templates);
+    return res.status(200).json(templates);
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to fetch templates",
-      error: error.message,
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+export const createTestNotification = async (req, res) => {
+  try {
+    const notification = await createNotification(
+      req.user.id,
+      "Test Notification",
+      "AuraFarm notification system is working.",
+      "SYSTEM"
+    );
+
+    return res.status(201).json(notification);
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
     });
   }
 };

@@ -6,14 +6,11 @@ import { useState, useMemo } from "react";
 import ActivityGrid from "../components/ActivityGrid.jsx";
 import DonutChart from "../components/DonutChart.jsx";
 import GlowTrace from "../components/GlowTrace.jsx";
+import StreakLogo from "../components/common/StreakLogo.jsx";
 import { useBanner, getHeroBackgroundStyle } from "../context/BannerContext.jsx";
 import "../styles/intelligence-aura.css";
 
-const FlameIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-    <path d="M12 2c1 3-3 4.5-3 8a3 3 0 0 0 6 0c0-1.2-.6-2-1-3 2 .5 4 3 4 6a6 6 0 1 1-12 0c0-4 3-6 4-7 .5-1 1.5-2.5 2-4z" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
+const FlameIcon = () => <StreakLogo size={28} />;
 const TrophyIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
     <path d="M8 4h8v5a4 4 0 0 1-8 0V4z" strokeLinecap="round" strokeLinejoin="round"/>
@@ -95,7 +92,7 @@ function Intelligence({ missions = [] }) {
       {/* ── Stat cards ───────────────────────────────────────── */}
       <section className="intel-stats-row" aria-label="Analytics stats">
         <div className="intel-stat-card intel-stat-card--accent glow">
-          <div className="intel-stat-icon"><FlameIcon /></div>
+          <StreakLogo className="intel-stat-streak-logo" size={28} />
           <div className="intel-stat-text">
             <span className="intel-stat-value">{analytics.currentStreak}D</span>
             <span className="intel-stat-label">Current Streak</span>
@@ -103,7 +100,7 @@ function Intelligence({ missions = [] }) {
           <GlowTrace />
         </div>
         <div className="intel-stat-card glow">
-          <div className="intel-stat-icon"><TrophyIcon /></div>
+          <StreakLogo className="intel-stat-streak-logo" size={28} />
           <div className="intel-stat-text">
             <span className="intel-stat-value">{analytics.bestStreak}D</span>
             <span className="intel-stat-label">Best Streak</span>

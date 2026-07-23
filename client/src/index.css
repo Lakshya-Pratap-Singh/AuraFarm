@@ -441,6 +441,8 @@ button {
 .btn-add-expand-label {
   position: absolute;
   top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
   color: #fff;
   font-family: var(--af-font-mono, 'JetBrains Mono', monospace);
   font-weight: 600;
@@ -449,6 +451,7 @@ button {
   white-space: nowrap;
   font-size: 2px;
   opacity: 0;
+  z-index: 2;
   transition: font-size 0.3s, transform 0.3s, opacity 0.3s;
   pointer-events: none;
 }
@@ -466,14 +469,88 @@ button {
 .btn-add-expand:hover .btn-add-expand-label {
   font-size: 13px;
   opacity: 1;
-  transform: translateY(30px);
+  transform: translateX(-50%) translateY(30px);
+}
+
+/* Liquid blobs — two soft purple/gold blobs drift and merge inside
+   the pill on their own (the "gooey" look comes from blurring them
+   then sharpening the alpha back up via feColorMatrix, so touching
+   blobs fuse into one shape instead of just overlapping). A third
+   blob follows the cursor and only shows up on hover — .btn-liquid-x
+   / .btn-liquid-y are set from JS (see the buttons' onMouseMove in
+   Missions.jsx / Objectives.jsx). Icon/label sit above all of this
+   at z-index: 2. */
+.btn-liquid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  filter: url(#btn-liquid-goo);
+  pointer-events: none;
+}
+.btn-liquid-blob {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(216, 180, 254, 0.95), rgba(139, 92, 246, 0.35) 65%, transparent 78%);
+}
+.btn-liquid-blob--a {
+  width: 30px;
+  height: 30px;
+  top: 6px;
+  left: 6px;
+  animation: btn-liquid-drift-a 5s ease-in-out infinite;
+}
+.btn-liquid-blob--b {
+  width: 22px;
+  height: 22px;
+  bottom: 6px;
+  left: 10px;
+  background: radial-gradient(circle, rgba(240, 196, 25, 0.85), rgba(201, 162, 39, 0.3) 65%, transparent 78%);
+  animation: btn-liquid-drift-b 6.5s ease-in-out infinite;
+}
+.btn-liquid-cursor {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  position: absolute;
+  left: var(--btn-liquid-x, 50%);
+  top: var(--btn-liquid-y, 50%);
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95), rgba(216, 180, 254, 0.5) 60%, transparent 78%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.btn-add-expand:hover .btn-liquid-cursor {
+  opacity: 1;
+}
+
+.btn-add-expand svg {
+  position: relative;
+  z-index: 2;
+}
+
+/* Idle drift — plays even with no cursor nearby, so the pill never
+   looks static; cursor movement adds the extra highlight blob on
+   top, it doesn't replace this ambient motion. */
+@keyframes btn-liquid-drift-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  30%      { transform: translate(70px, 4px) scale(1.2); }
+  65%      { transform: translate(120px, -6px) scale(0.85); }
+}
+@keyframes btn-liquid-drift-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  40%      { transform: translate(90px, -6px) scale(1.15); }
+  75%      { transform: translate(50px, 8px) scale(0.9); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .btn-add-expand,
   .btn-add-expand svg,
-  .btn-add-expand-label {
+  .btn-add-expand-label,
+  .btn-liquid-blob,
+  .btn-liquid-cursor {
     transition: none;
+    animation: none;
   }
 }
 

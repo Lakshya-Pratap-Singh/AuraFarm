@@ -4,7 +4,8 @@
 //   xs  — 14px sigil only (filter pills, inline text badges)
 //   sm  — 18px sigil + small label (mission card badges, dropdowns)
 //   md  — 24px sigil + label  (section headers, mission forms)
-//   lg  — 36px sigil + label  (profile, objective cards, intelligence)
+//   lg  — 65px sigil + label  (Dashboard's compact mission row, ~73px tall)
+//   xl  — 80px sigil + label  (Missions page's mission row, ~89px tall)
 //
 // The SVG is loaded as a regular <img> so Vite's asset pipeline handles
 // it at build time. Replacing the SVG file on disk is all that's needed
@@ -14,6 +15,7 @@
 //   <CategoryBadge category="physical" />
 //   <CategoryBadge category="Learning" size="lg" />
 //   <CategoryBadge category="FINANCE"  size="xs" showLabel={false} />
+//   <CategoryBadge category="Learning" size="xs" showIcon={false} />  — text-only badge
 
 import { getCategoryAsset } from "../../data/categoryAssets.js";
 import "./CategoryBadge.css";
@@ -22,13 +24,15 @@ const SIZE_MAP = {
   xs: { img: 14, fontSize: "8.5px",  gap: "4px",  padding: "2px 6px"  },
   sm: { img: 16, fontSize: "9.5px",  gap: "5px",  padding: "3px 8px"  },
   md: { img: 24, fontSize: "11px",   gap: "6px",  padding: "6px 12px" },
-  lg: { img: 34, fontSize: "12.5px", gap: "8px",  padding: "8px 14px" },
+  lg: { img: 65, fontSize: "12.5px", gap: "8px",  padding: "8px 14px" },
+  xl: { img: 80, fontSize: "13px",   gap: "9px",  padding: "9px 16px" },
 };
 
 function CategoryBadge({
   category,
   size        = "sm",
   showLabel   = true,
+  showIcon    = true,
   className   = "",
   onClick,
 }) {
@@ -52,20 +56,22 @@ function CategoryBadge({
       onKeyDown={onClick ? (e) => { if (e.key === "Enter" || e.key === " ") onClick(e); } : undefined}
       aria-label={`Category: ${asset.label}`}
     >
-      <img
-        src={asset.src}
-        alt=""
-        aria-hidden="true"
-        className="cat-badge-sigil"
-        width={sz.img}
-        height={sz.img}
-        style={{
-          width:  sz.img,
-          height: sz.img,
-          filter: `drop-shadow(0 0 3px ${asset.color}88)`,
-        }}
-        onError={(e) => { e.currentTarget.style.display = "none"; }}
-      />
+      {showIcon && (
+        <img
+          src={asset.src}
+          alt=""
+          aria-hidden="true"
+          className="cat-badge-sigil"
+          width={sz.img}
+          height={sz.img}
+          style={{
+            width:  sz.img,
+            height: sz.img,
+            filter: `drop-shadow(0 0 3px ${asset.color}88)`,
+          }}
+          onError={(e) => { e.currentTarget.style.display = "none"; }}
+        />
+      )}
       {showLabel && (
         <span
           className="cat-badge-label"

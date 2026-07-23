@@ -7,11 +7,14 @@ import {
   deleteNotification,
   createTemplate,
   getTemplates,
+  createTestNotification,
 } from "./notification.controller.js";
 
 const router = express.Router();
 
 router.get("/", protect, getNotifications);
+
+router.post("/test", protect, createTestNotification);
 
 router.patch("/:id/read", protect, markAsRead);
 
