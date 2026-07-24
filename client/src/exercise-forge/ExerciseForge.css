@@ -1,0 +1,148 @@
+/*
+  ExerciseForge.css
+  ------------------------------------------------
+  Per-component CSS token file, following this project's existing
+  convention (per-component CSS token files, no shared utility imports
+  between page-level files, CSS-only animations unless Framer Motion is
+  explicitly opted into — this file uses CSS-only transitions for the
+  hover/select states and doesn't reach for Framer Motion since nothing
+  here needs spring physics or gesture-driven motion).
+
+  Tokens are scoped with an --ef- prefix so they can't collide with any
+  other component's token file — adjust the palette values below to
+  match the real global purple/violet AuraFarm tokens once this page
+  gets the re-skin pass.
+*/
+
+.exercise-forge {
+  --ef-bg: #0d0b16;
+  --ef-panel: rgba(255, 255, 255, 0.04);
+  --ef-border: rgba(139, 92, 246, 0.25);
+  --ef-primary: #8b5cf6;
+  --ef-primary-bright: #a78bfa;
+  --ef-text: #eae7f5;
+  --ef-text-dim: #948da8;
+
+  min-height: 100%;
+  padding: 20px 16px 60px;
+  color: var(--ef-text);
+  background: radial-gradient(circle at 20% -10%, rgba(139, 92, 246, 0.16), transparent 45%), var(--ef-bg);
+}
+
+.exercise-forge-header { margin-bottom: 18px; }
+.exercise-forge-title { font-size: 22px; font-weight: 800; margin: 0; }
+.exercise-forge-sub { font-size: 13px; color: var(--ef-text-dim); margin: 4px 0 0; }
+
+.exercise-forge-body { display: flex; flex-direction: column; gap: 20px; }
+.exercise-forge-loading { font-size: 13px; color: var(--ef-text-dim); padding: 20px; text-align: center; }
+
+/* --- 3D canvas --- */
+.body3d-canvas-wrap {
+  width: 100%;
+  height: 360px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--ef-panel);
+  border: 1px solid var(--ef-border);
+}
+.body3d-tooltip {
+  background: rgba(10, 8, 20, 0.9);
+  border: 1px solid var(--ef-border);
+  color: var(--ef-text);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* --- 2D fallback map --- */
+.muscle-map-fallback {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  background: var(--ef-panel);
+  border: 1px solid var(--ef-border);
+  border-radius: 16px;
+  padding: 16px;
+}
+.muscle-map-view { text-align: center; flex: 1; max-width: 160px; }
+.muscle-map-view-label {
+  font-size: 11px;
+  color: var(--ef-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+.muscle-map-svg { width: 100%; height: auto; }
+.body-outline { fill: rgba(255, 255, 255, 0.03); stroke: rgba(255, 255, 255, 0.12); stroke-width: 1; }
+.muscle-region {
+  fill: #3d3456;
+  stroke: rgba(255, 255, 255, 0.15);
+  stroke-width: 0.5;
+  cursor: pointer;
+  transition: fill 0.15s ease; /* CSS-only animation, no Framer Motion needed here */
+}
+.muscle-region[data-hovered="true"] { fill: var(--ef-primary); }
+.muscle-region[data-selected="true"] { fill: var(--ef-primary-bright); }
+
+/* --- Resource panel --- */
+.muscle-resource-panel { display: flex; flex-direction: column; gap: 14px; }
+
+.filter-row { display: flex; gap: 8px; }
+.filter-chip {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--ef-text-dim);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.filter-chip.active {
+  background: linear-gradient(135deg, var(--ef-primary), var(--ef-primary-bright));
+  color: #fff;
+  border-color: transparent;
+}
+
+.resource-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+.resource-card {
+  background: var(--ef-panel);
+  border: 1px solid var(--ef-border);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.resource-card-media { width: 100%; height: 120px; object-fit: cover; border-radius: 10px; background: rgba(255, 255, 255, 0.04); }
+.resource-card-title { font-weight: 700; font-size: 14px; }
+.resource-card-meta { display: flex; gap: 8px; font-size: 11px; color: var(--ef-text-dim); }
+.resource-card-description { font-size: 12.5px; color: var(--ef-text-dim); line-height: 1.5; margin: 0; }
+.resource-card-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.resource-card-actions button {
+  font-size: 11.5px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ef-text);
+  cursor: pointer;
+}
+.resource-card-actions button:hover { border-color: var(--ef-primary); }
+
+.resource-empty-state { grid-column: 1 / -1; text-align: center; padding: 30px; color: var(--ef-text-dim); font-size: 13px; }
+
+/* --- Mobile-first breakpoints --- */
+@media (max-width: 480px) {
+  .body3d-canvas-wrap { height: 280px; }
+  .muscle-map-fallback { flex-direction: row; padding: 10px; }
+  .resource-card-grid { grid-template-columns: 1fr; }
+}
