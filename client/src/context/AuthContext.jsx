@@ -27,6 +27,7 @@ function mapFirebaseUser(firebaseUser) {
     displayName: firebaseUser.displayName,
     email: firebaseUser.email,
     photoURL: firebaseUser.photoURL,
+    createdAt: firebaseUser.metadata?.creationTime ?? null,
   };
 }
 
