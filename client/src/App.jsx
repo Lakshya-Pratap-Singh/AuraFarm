@@ -50,6 +50,7 @@ const NAV_TO_PATH = {
   "Intelligence": "/intelligence",
   "Stats":        "/intelligence",
   "Relics":       "/relics",
+  "Profile":      "/profile",
   "Settings":     "/settings",
 };
 
@@ -59,6 +60,7 @@ const PATH_TO_NAV = {
   "/objectives":   "Objectives",
   "/intelligence": "Intelligence",
   "/relics":       "Relics",
+  "/profile":      "Profile",
   "/settings":     "Settings",
 };
 

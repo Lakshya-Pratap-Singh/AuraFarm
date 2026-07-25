@@ -1,5 +1,22 @@
+/**
+ * PATCHED VERSION of your real src/controllers/missionController.js.
+ * ------------------------------------------------
+ * Only change: the three literal enum-value strings that need to match
+ * the renamed enums (see prisma/migrations/.../migration.sql):
+ *   "MEDIUM"/"NORMAL"/"LEARNING" -> "Medium"/"Normal"/"Learning"
+ *   xpAmount lookup table keys EASY/NORMAL/HARD/LEGENDARY -> Easy/Normal/Hard/Legendary
+ * (the XP amounts themselves — 10/25/50/100 — are unchanged, they
+ * already matched the frontend's MISSION_XP_TABLE).
+ *
+ * NOTE: an earlier version of this patch also called createNotification()
+ * from ../notifications/notification.service.js, mirroring what looked
+ * like an existing integration in the uploaded backend.zip. Confirmed
+ * that notifications feature isn't actually built yet in the real
+ * working repo, so that call (and its import) has been removed here —
+ * mission completion doesn't depend on it either way.
+ */
+
 import { PrismaClient } from "@prisma/client";
-import { createNotification } from "../notifications/notification.service.js";
 
 const prisma = new PrismaClient();
 
@@ -35,9 +52,11 @@ export const createMission = async (req, res, next) => {
         userId: req.user.id,
         title,
         objectiveId: objectiveId || null,
-        priority: priority || "MEDIUM",
-        difficulty: difficulty || "NORMAL",
-        category: category || "LEARNING",
+        // --- CHANGED: Title Case to match the renamed enums ---
+        priority: priority || "Medium",
+        difficulty: difficulty || "Normal",
+        category: category || "Learning",
+        // --- end changed block ---
       },
       include: { objective: true },
     });
@@ -116,12 +135,15 @@ export const toggleMissionCompletion = async (req, res, next) => {
       include: { objective: true },
     });
 
+    // --- CHANGED: Title Case keys to match the renamed Difficulty enum.
+    // Amounts (10/25/50/100) were already correct — only the keys changed.
     const xpAmount = {
-      EASY: 10,
-      NORMAL: 25,
-      HARD: 50,
-      LEGENDARY: 100,
+      Easy: 10,
+      Normal: 25,
+      Hard: 50,
+      Legendary: 100,
     }[updatedMission.difficulty];
+    // --- end changed block ---
 
     if (nextCompleted && xpAmount) {
       await prisma.$transaction([
@@ -153,12 +175,6 @@ export const toggleMissionCompletion = async (req, res, next) => {
           },
         },
       });
-      await createNotification(
-        req.user.id,
-        "Mission Completed",
-        `${updatedMission.title} completed successfully. +${xpAmount} XP earned.`,
-        "MISSION_REMINDER"
-      );
     } else if (!nextCompleted && xpAmount) {
       await prisma.activityEvent.create({
         data: {

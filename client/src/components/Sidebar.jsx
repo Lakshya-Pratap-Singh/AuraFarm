@@ -237,6 +237,14 @@ function Sidebar({ activeNav, onNavChange, onCollapseChange }) {
 
         {menuOpen && (
           <div className="sb-footer-menu" role="menu">
+            <button
+              className="sb-footer-menu-item"
+              onClick={() => { onNavChange('Profile'); setMenuOpen(false) }}
+              role="menuitem"
+            >
+              <span className="sb-item-icon">{icons.user}</span>
+              {!isCollapsed && 'View Profile'}
+            </button>
             <button className="sb-footer-menu-item" onClick={logout} role="menuitem">
               <LogoutIcon />
               {!isCollapsed && 'Log out'}

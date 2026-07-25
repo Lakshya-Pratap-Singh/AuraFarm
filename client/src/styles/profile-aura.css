@@ -1,0 +1,463 @@
+/* AURAFARM — profile-aura.css */
+
+.profile-page {
+  background: transparent;
+  min-height: 100vh;
+  padding: 0 0 80px;
+  color: #f1ecfb;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Hero ────────────────────────────────────────────────────── */
+.profile-hero {
+  position: relative;
+  padding: 36px 32px 28px;
+  overflow: hidden;
+  background: var(--hero-bg-glow-1), var(--hero-bg-glow-2), var(--hero-bg-base);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.profile-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent 55%, #000000 100%);
+}
+.profile-hero-heading {
+  font-family: var(--heading-font);
+  font-size: clamp(2.8rem, 8vw, 5rem);
+  line-height: 1;
+  background: var(--heading-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: var(--heading-glow);
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+.profile-hero-sub {
+  font-size: 13.5px;
+  color: #a89cc8;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Body ────────────────────────────────────────────────────── */
+.profile-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px 24px 0;
+}
+
+/* ── Top row: bio card + level card ─────────────────────────── */
+.profile-top-row {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.profile-bio-card,
+.profile-level-card {
+  position: relative;
+  background: var(--tile-bg, #000);
+  border: 1px solid var(--tile-border-purple, rgba(139,92,246,0.38));
+  box-shadow: inset 0 0 0 1px var(--tile-border-gold-hint, rgba(201,162,39,0.12));
+  border-radius: 18px;
+  padding: 22px 24px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+}
+.profile-bio-card:hover,
+.profile-level-card:hover {
+  border-color: rgba(139,92,246,0.6);
+  box-shadow: inset 0 0 0 1px rgba(201,162,39,0.18), 0 0 24px rgba(168,85,247,0.14);
+}
+
+.profile-bio-card {
+  display: flex;
+  gap: 18px;
+}
+
+.profile-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.profile-avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, rgba(139,92,246,0.25), rgba(0,0,0,0.6));
+  border: 2px solid rgba(168,85,247,0.5);
+  box-shadow: 0 0 22px rgba(168,85,247,0.35);
+}
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.profile-avatar svg {
+  width: 40px;
+  height: 40px;
+  color: #a855f7;
+}
+.profile-avatar-level {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 26px;
+  height: 26px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #5b21b6, #a855f7);
+  border: 1px solid #c9a227;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(168,85,247,0.6);
+}
+
+.profile-bio-main { flex: 1; min-width: 0; }
+.profile-bio-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.profile-bio-name {
+  font-size: 19px;
+  font-weight: 700;
+  color: #f1ecfb;
+}
+.profile-rank-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #a855f7;
+  background: rgba(139,92,246,0.14);
+  border: 1px solid rgba(168,85,247,0.35);
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+.profile-bio-tagline {
+  font-size: 12.5px;
+  color: #a89cc8;
+  margin: 6px 0 14px;
+}
+
+.profile-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 20px;
+}
+.profile-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.profile-meta-row svg {
+  width: 14px;
+  height: 14px;
+  color: #8b7faa;
+  flex-shrink: 0;
+}
+.profile-meta-label {
+  color: #8b7faa;
+  min-width: 84px;
+}
+.profile-meta-value {
+  color: #e4dbf7;
+  font-weight: 600;
+}
+
+/* ── Level card ──────────────────────────────────────────────── */
+.profile-level-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.profile-level-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8b7faa;
+}
+.profile-level-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.profile-level-number {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1;
+  color: #f1ecfb;
+}
+.profile-level-rank {
+  font-size: 13px;
+  font-weight: 600;
+  color: #a855f7;
+  margin-top: 2px;
+}
+.profile-level-badge {
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+}
+.profile-xp-bar-wrap {
+  width: 100%;
+  height: 8px;
+  border-radius: 5px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+  margin-top: 4px;
+}
+.profile-xp-bar {
+  height: 100%;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
+  box-shadow: 0 0 10px rgba(168,85,247,0.6);
+  transition: width 0.8s ease;
+}
+.profile-xp-text {
+  font-size: 12px;
+  color: #cfc4e8;
+}
+.profile-xp-sub {
+  font-size: 11px;
+  color: #8b7faa;
+}
+
+/* ── Stat row (5 tiles) ──────────────────────────────────────── */
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+}
+.profile-stat-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--tile-bg, #000);
+  border: 1px solid var(--tile-border-purple, rgba(139,92,246,0.38));
+  box-shadow: inset 0 0 0 1px var(--tile-border-gold-hint, rgba(201,162,39,0.12));
+  border-radius: 14px;
+  padding: 14px 14px;
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+}
+.profile-stat-card:hover {
+  border-color: rgba(139,92,246,0.6);
+  box-shadow: inset 0 0 0 1px rgba(201,162,39,0.18), 0 0 20px rgba(168,85,247,0.16);
+  transform: scale(1.03);
+}
+.profile-stat-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: rgba(139,92,246,0.12);
+  color: #a855f7;
+  font-size: 16px;
+}
+.profile-stat-icon svg { width: 17px; height: 17px; }
+.profile-stat-text { min-width: 0; }
+.profile-stat-value {
+  font-size: 17px;
+  font-weight: 700;
+  color: #f1ecfb;
+  line-height: 1.15;
+}
+.profile-stat-label {
+  font-size: 10px;
+  color: #8b7faa;
+  white-space: nowrap;
+}
+
+/* ── Section headers ─────────────────────────────────────────── */
+.profile-section {
+  background: var(--tile-bg, #000);
+  border: 1px solid var(--tile-border-purple, rgba(139,92,246,0.38));
+  box-shadow: inset 0 0 0 1px var(--tile-border-gold-hint, rgba(201,162,39,0.12));
+  border-radius: 18px;
+  padding: 22px 24px;
+}
+.profile-section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+.profile-section-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #f1ecfb;
+}
+.profile-section-sub {
+  font-size: 12px;
+  color: #8b7faa;
+  margin-top: 4px;
+}
+.profile-section-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #a855f7;
+  background: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.profile-section-link:hover { color: #c084fc; }
+.profile-section-link svg { width: 13px; height: 13px; }
+
+/* Reuses .relics-grid / .relic-card from relics.css (pulled in via
+   RelicCard.jsx's own import) so the cards look identical to the
+   Relics page. */
+
+/* ── Achievements ────────────────────────────────────────────── */
+.profile-achievement-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.profile-achievement-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.profile-achievement-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(139,92,246,0.1);
+}
+.profile-achievement-icon img { width: 100%; height: 100%; object-fit: contain; }
+.profile-achievement-main { flex: 1; min-width: 0; }
+.profile-achievement-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #f1ecfb;
+}
+.profile-achievement-desc {
+  font-size: 11.5px;
+  color: #8b7faa;
+  margin-top: 2px;
+}
+.profile-achievement-progress-track {
+  width: 100%;
+  height: 5px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.06);
+  margin-top: 6px;
+  overflow: hidden;
+}
+.profile-achievement-progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
+}
+.profile-achievement-status {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #4ade80;
+  white-space: nowrap;
+}
+.profile-achievement-status svg { width: 15px; height: 15px; }
+.profile-achievement-status--progress {
+  color: #8b7faa;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Quote footer ────────────────────────────────────────────── */
+.profile-quote {
+  position: relative;
+  text-align: center;
+  padding: 36px 28px;
+  border-radius: 18px;
+  background: linear-gradient(160deg, rgba(91,33,182,0.14), rgba(0,0,0,0.6));
+  border: 1px solid rgba(139,92,246,0.25);
+  overflow: hidden;
+}
+.profile-quote-mark {
+  font-family: Georgia, serif;
+  font-size: 44px;
+  color: rgba(168,85,247,0.4);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.profile-quote-text {
+  font-size: 16px;
+  font-style: italic;
+  color: #e4dbf7;
+  line-height: 1.6;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.profile-version {
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: #5e5571;
+  margin: 28px 0 0;
+}
+
+/* ── Mobile ──────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .profile-hero { padding: 24px 16px 20px; }
+  .profile-body { padding: 16px 16px 0; gap: 16px; }
+
+  .profile-top-row { grid-template-columns: 1fr; }
+  .profile-bio-card { flex-direction: column; align-items: flex-start; }
+  .profile-meta-grid { grid-template-columns: 1fr; }
+
+  .profile-stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .profile-stat-card:nth-child(5) { grid-column: 1 / -1; }
+}
