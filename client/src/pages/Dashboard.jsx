@@ -93,7 +93,7 @@ function DashMissionRow({ mission, onComplete, onNavigate }) {
   return (
     <div
       ref={trackRef}
-      className={`db-mission-row ${!done ? "db-mission-row--active" : ""} ${isDragging ? "db-mission-row--dragging" : ""}`}
+      className={`db-mission-row ${!done ? "db-mission-row--active" : "db-mission-row--done"} ${isDragging ? "db-mission-row--dragging" : ""}`}
       {...handlers}
       style={{ position: "relative", overflow: "hidden" }}
     >
@@ -213,8 +213,13 @@ export default function Dashboard({ missions = [], objectives = [], setMissions,
     : (todayXP > 0 ? 100 : 0);
   const maxWeeklyXP = Math.max(...weeklyXP.map((d) => d.xp), 1);
 
-  // Today's missions — show first 4
-  const displayMissions = missions.slice(0, 4);
+  // Today's missions — incomplete first (so finishing one visibly
+  // sends it to the bottom of the list), all missions shown; the list
+  // itself scrolls (see .db-mission-list) rather than truncating.
+  const displayMissions = useMemo(
+    () => [...missions].sort((a, b) => Number(a.completed) - Number(b.completed)),
+    [missions]
+  );
 
   const handleCompleteMission = (id) => {
     if (!setMissions) return;

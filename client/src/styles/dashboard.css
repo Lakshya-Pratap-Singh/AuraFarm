@@ -363,9 +363,24 @@
 
 /* ── Today's Missions panel ─────────────────────────────────── */
 .db-mission-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: 72px; /* pinned to match .db-mission-row exactly — see below */
   gap: 6px;
+  max-height: calc(3 * 72px + 2 * 6px); /* exactly 3 rows visible, 1×3 grid */
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139,92,246,0.35) transparent;
+  padding-right: 2px; /* keep the scrollbar off the row content */
+}
+.db-mission-list::-webkit-scrollbar { width: 5px; }
+.db-mission-list::-webkit-scrollbar-track { background: transparent; }
+.db-mission-list::-webkit-scrollbar-thumb {
+  background: rgba(139,92,246,0.35);
+  border-radius: 3px;
+}
+.db-mission-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(139,92,246,0.55);
 }
 
 .db-mission-row {
@@ -373,14 +388,23 @@
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
+  height: 72px; /* = .db-mission-category's 52px + this row's 10px×2 padding,
+                    box-sizing:border-box — keep these three numbers in sync
+                    if the icon size or padding ever changes */
   border-radius: 10px;
   background: rgba(255,255,255,0.02);
   border: 1px solid rgba(255,255,255,0.04);
-  transition: background 0.18s ease, border-color 0.18s ease;
+  transition: background 0.18s ease, border-color 0.18s ease, opacity 0.25s ease;
 }
 .db-mission-row:hover {
   background: rgba(139,92,246,0.07);
   border-color: rgba(168,85,247,0.14);
+}
+
+/* Completed rows sink to the bottom (see the sort in Dashboard.jsx)
+   and read as visually "done" — dimmed, no active tint. */
+.db-mission-row--done {
+  opacity: 0.55;
 }
 
 /* Active/in-progress row — purple tint like the mockup's "Morning Meditation 50%>" */
