@@ -93,7 +93,7 @@
 .intel-stat-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 
 .intel-stat-value {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Orbitron', monospace;
   font-size: 22px;
   font-weight: 700;
   color: #a855f7;
@@ -175,9 +175,10 @@
   margin-bottom: 20px;
 }
 .intel-trend-title {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--ag-font-display, 'Orbitron', sans-serif);
   font-size: 11px;
-  letter-spacing: 0.14em;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   color: #a89cc8;
   text-transform: uppercase;
 }

@@ -35,7 +35,7 @@
   min-height: 100vh;
   padding: 0 0 100px;
   color: #f1ecfb;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Cormorant Garamond', serif;
 }
 
 /* ── Hero ───────────────────────────────────────────────────── */
@@ -69,7 +69,7 @@
   z-index: 1;
 }
 .relics-hero-sub {
-  font-size: 13.5px;
+  font-size: clamp(15.5px, 1.2vw + 12px, 18px);
   color: #a89cc8;
   position: relative;
   z-index: 1;
@@ -124,9 +124,9 @@
 }
 
 .relics-section-title {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--ag-font-display, 'Orbitron', sans-serif);
   font-size: 11px;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   font-weight: 700;
 }
@@ -259,9 +259,10 @@
 .relic-card--mythic .relic-card-icon::after    { background: radial-gradient(circle, var(--relic-mythic-glow), transparent 70%); }
 
 .relic-card-name {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--aura-font-relic, 'Uncial Antiqua', serif);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.01em;
   color: #f1ecfb;
   line-height: 1.35;
 }
@@ -370,15 +371,18 @@
 .relic-modal--mythic    .relic-modal-rarity { color: var(--relic-mythic-color);    border-color: var(--relic-mythic-border);    background: rgba(255,255,255,0.06); }
 
 .relic-modal-name {
-  font-family: 'Inter', sans-serif;
-  font-size: 20px;
+  font-family: var(--aura-font-relic, 'Uncial Antiqua', serif);
+  font-size: 21px;
   font-weight: 700;
+  letter-spacing: 0.01em;
   color: #f1ecfb;
   margin: 0;
 }
 
 .relic-modal-desc {
-  font-size: 13.5px;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: clamp(15.5px, 1.2vw + 12px, 18px);
   color: #a89cc8;
   line-height: 1.6;
   margin: 0;
@@ -475,16 +479,19 @@
 .relic-unlock-icon img { width: 100%; height: 100%; object-fit: contain; }
 
 .relic-unlock-name {
-  font-family: 'Inter', sans-serif;
-  font-size: 20px;
+  font-family: var(--aura-font-relic, 'Uncial Antiqua', serif);
+  font-size: 21px;
   font-weight: 700;
+  letter-spacing: 0.01em;
   color: #f1ecfb;
   margin: 0;
   text-shadow: 0 0 20px rgba(168,85,247,0.4);
 }
 
 .relic-unlock-desc {
-  font-size: 13px;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: clamp(15px, 1.1vw + 11.5px, 17px);
   color: #a89cc8;
   line-height: 1.55;
   margin: 0;

@@ -11,7 +11,7 @@
   min-height: 100vh;
   background: transparent;
   color: #f1ecfb;
-  font-family: var(--aura-font-body, 'Inter', sans-serif);
+  font-family: var(--aura-font-body, 'Cormorant Garamond', serif);
   padding: 0 24px 40px;
   position: relative;
   z-index: 1;
@@ -135,7 +135,8 @@
 }
 
 .db-hero-sub {
-  font-size: 13px;
+  font-family: "Cormorant Garamond",sans-serif;
+  font-size: clamp(13.5px, 1.2vw + 12px, 14.5px);
   color: rgba(241,236,251,0.72);
   line-height: 1.5;
   margin: 0;
@@ -176,6 +177,7 @@
 }
 
 .db-stat-label {
+  font-family: "Orbitron", sans-serif;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -184,6 +186,7 @@
 }
 
 .db-stat-value {
+  font-family: 'Orbitron', monospace;
   font-size: 30px;
   font-weight: 700;
   color: #f1ecfb;
@@ -191,13 +194,14 @@
 }
 
 .db-stat-value-of {
+  font-family: 'Orbitron', monospace;
   font-size: 15px;
   color: #8b7faa;
   font-weight: 500;
 }
 
 .db-stat-sub {
-  font-size: 11.5px;
+  font-size: clamp(13px, 0.6vw + 11px, 14.5px);
   color: #8b7faa;
   margin-top: 2px;
 }
@@ -236,10 +240,13 @@
   flex-shrink: 0;
 }
 .db-stat-achievement-name {
+  font-family: var(--aura-font-relic, 'Uncial Antiqua', serif);
   font-size: 14px;
   font-weight: 700;
-  color: #f1ecfb;
+  color: #cbd1ca;
   line-height: 1.25;
+  
+  
 }
 
 /* Aura Level card — badge icon */
@@ -353,6 +360,7 @@
 }
 
 .db-panel-title {
+  font-family: var(--ag-font-display, 'Orbitron', sans-serif);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -448,15 +456,16 @@
   min-width: 0;
 }
 .db-mission-title {
+  font-family: 'Orbitron', monospace;
   font-size: 12.5px;
-  font-weight: 500;
-  color: #f1ecfb;
+  font-weight: 700;
+  color: #bababa;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .db-mission-sub {
-  font-size: 10.5px;
+  font-size: clamp(12px, 0.5vw + 10px, 13.5px);
   color: #6b5f8a;
   margin-top: 1px;
 }
@@ -621,7 +630,7 @@
   color: #f1ecfb;
 }
 .db-achievement-desc {
-  font-size: 11.5px;
+  font-size: clamp(13.5px, 0.7vw + 11px, 15px);
   color: #8b7faa;
   line-height: 1.4;
 }
@@ -645,6 +654,7 @@
   flex-direction: column;
 }
 .db-aura-xp-label {
+  font-family: 'Orbitron', monospace;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -653,6 +663,7 @@
   margin-bottom: 6px;
 }
 .db-aura-xp-value {
+  font-family: 'Orbitron', monospace;
   font-size: 26px;
   font-weight: 700;
   color: #f1ecfb;
@@ -679,9 +690,11 @@
   text-align: center;
 }
 .db-aura-subtile-value {
+
   font-size: 17px;
   font-weight: 700;
   color: #f1ecfb;
+  font-family: 'Orbitron', monospace;
 }
 .db-aura-subtile-value--up { color: #4ade80; }
 .db-aura-subtile-value--down { color: #f87171; }
@@ -691,6 +704,7 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #8b7faa;
+  font-family: 'Menrope', monospace;
 }
 
 /* ── Weekly Progress — column chart of daily XP earned ────────── */

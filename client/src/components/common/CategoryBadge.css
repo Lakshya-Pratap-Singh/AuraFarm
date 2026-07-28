@@ -27,6 +27,8 @@
 
 /* Label */
 .cat-badge-label {
+  font-family: 'Orbitron', serif;
+  font-size: 7px;
   line-height: 1;
 }
 

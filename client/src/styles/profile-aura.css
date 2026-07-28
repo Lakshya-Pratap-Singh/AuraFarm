@@ -137,7 +137,8 @@
   flex-wrap: wrap;
 }
 .profile-bio-name {
-  font-size: 19px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
   font-weight: 700;
   color: #f1ecfb;
 }
@@ -154,9 +155,11 @@
   padding: 3px 8px;
 }
 .profile-bio-tagline {
-  font-size: 12.5px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: medium;
   color: #a89cc8;
   margin: 6px 0 14px;
+  font-style: italic;
 }
 
 .profile-meta-grid {
@@ -167,10 +170,12 @@
 .profile-meta-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 20px;
   font-size: 12px;
+  font-family:'Orbitron', monospace;
 }
 .profile-meta-row svg {
+
   width: 14px;
   height: 14px;
   color: #8b7faa;
@@ -287,8 +292,9 @@
 .profile-stat-value {
   font-size: 17px;
   font-weight: 700;
-  color: #f1ecfb;
+  color: #a855f7;
   line-height: 1.15;
+  font-family: 'Orbitron', Serif;
 }
 .profile-stat-label {
   font-size: 10px;
@@ -312,7 +318,7 @@
   gap: 12px;
 }
 .profile-section-title {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--ag-font-display, 'Orbitron', sans-serif);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.1em;

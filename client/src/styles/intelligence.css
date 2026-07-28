@@ -149,7 +149,7 @@
 }
 
 .intel-stat-value {
-  font-family: var(--intel-font-mono);
+  font-family: 'Orbitron', sans-serif;
   font-size: 22px;
   font-weight: 700;
   color: var(--intel-gold-bright);

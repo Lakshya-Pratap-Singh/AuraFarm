@@ -161,7 +161,7 @@ function Profile({ missions = [], objectives = [], onNavigate }) {
               <div className="profile-meta-grid">
                 <div className="profile-meta-row">
                   <CalendarIcon />
-                  <span className="profile-meta-label">Member Since</span>
+                  <span className="profile-meta-label">Joined</span>
                   <span className="profile-meta-value">{memberSinceLabel}</span>
                 </div>
                 <div className="profile-meta-row">

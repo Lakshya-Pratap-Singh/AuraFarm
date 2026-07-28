@@ -265,7 +265,7 @@ export default function Dashboard({ missions = [], objectives = [], setMissions,
           <div className="db-stat-label">Daily Streak</div>
           <div className="db-stat-streak-row">
             <StreakLogo className="db-stat-streak-logo" size={32} />
-            <span className="db-stat-value">{currentStreak} Days</span>
+            <span className="db-stat-value">{currentStreak}D</span>
           </div>
           <div className="db-stat-sub">Keep it burning!</div>
           <GlowTrace />
@@ -304,7 +304,7 @@ export default function Dashboard({ missions = [], objectives = [], setMissions,
 
         {/* Objectives Achieved */}
         <div className="db-stat-card glow">
-          <div className="db-stat-label">Objectives Achieved</div>
+          <div className="db-stat-label">Objectives</div>
           <div className="db-stat-level-row">
             <div>
               <div className="db-stat-value">{objectivesAchieved}<span className="db-stat-value-of">/{objectives.length}</span></div>
@@ -317,7 +317,7 @@ export default function Dashboard({ missions = [], objectives = [], setMissions,
 
         {/* Recent Achievement (compact) */}
         <div className="db-stat-card db-stat-card--achievement glow">
-          <div className="db-stat-label">Recent Achievement</div>
+          <div className="db-stat-label">Recent Relics</div>
           {recentAchievement ? (
             <div className="db-stat-achievement-row">
               <img

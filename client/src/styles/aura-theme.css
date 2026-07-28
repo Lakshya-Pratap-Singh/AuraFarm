@@ -41,7 +41,9 @@
      Grotesk are, per the rest of the app, but Cinzel is new). */
   --aura-font-display: "Cinzel", serif; /* logo-style headings (H1/H2) */
   --aura-font-sharp: "Orbitron", sans-serif; /* H3 — sharp angular, keeps the sci-fi sans for THIS one level only */
-  --aura-font-body: "Inter", sans-serif;
+  --aura-font-relic: "Uncial Antiqua", serif; /* relic names specifically — one step more ornate than the display headings */
+  --aura-font-bold: "Manrope", sans-serif; /* mission/objective names & other bold content */
+  --aura-font-body: "Cormorant Garamond", serif;
   --aura-font-mono: "JetBrains Mono", monospace;
 
   /* --- Shape --- */

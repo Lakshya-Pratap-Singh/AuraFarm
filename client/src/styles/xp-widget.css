@@ -23,7 +23,7 @@
   --xp-text-muted: #94A3B8;
 
   --xp-font-display: 'Orbitron', sans-serif;
-  --xp-font-body:    'Inter', sans-serif;
+  --xp-font-body:    'Cormorant Garamond', serif;
   --xp-font-mono:    'JetBrains Mono', monospace;
 
   --xp-radius: 16px;
@@ -103,7 +103,7 @@
 }
 
 .xp-badge-level {
-  font-family: var(--xp-font-display);
+  font-family: var(--xp-font-mono);
   font-size: 28px;
   font-weight: 700;
   line-height: 1;

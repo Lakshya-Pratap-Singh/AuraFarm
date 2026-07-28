@@ -1,4 +1,4 @@
-import streakLogoSrc from "../../assets/logos/streak-logo-cleaned.png";
+import streakLogoSrc from "../../assets/logos/streak-logo-centered.png";
 import "./StreakLogo.css";
 
 function StreakLogo({ className = "", size = 32, alt = "Streak logo" }) {

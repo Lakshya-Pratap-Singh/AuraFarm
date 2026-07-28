@@ -5,7 +5,7 @@
   min-height: 100vh;
   padding: 0 0 80px;
   color: #f1ecfb;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Cormorant Garamond', serif;
 }
 
 .obj-hero {
@@ -38,7 +38,7 @@
   z-index: 1;
 }
 .obj-hero-sub {
-  font-size: 13.5px;
+  font-size: clamp(15.5px, 1.2vw + 12px, 18px);
   color: #a89cc8;
   position: relative;
   z-index: 1;
@@ -71,20 +71,26 @@
 }
 .obj-stat-info { display: flex; flex-direction: column; gap: 4px; }
 .obj-stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
   letter-spacing: 0.14em;
   color: #5e5571;
   text-transform: uppercase;
 }
 .obj-stat-value {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Orbitron', monospace;
   font-size: 28px;
   font-weight: 700;
   color: #a855f7;
   text-shadow: 0 0 12px rgba(168,85,247,0.5);
 }
-.obj-stat-sub { font-size: 10px; color: #5e5571; }
+.obj-stat-sub { 
+  font-family: 'Orbitron', monospace;
+  font-size: 8px;
+  color: #5e5571;
+  text-transform: uppercase;
+  
+ }
 .obj-stat-icon {
   width: 36px; height: 36px;
   border-radius: 10px;
@@ -106,9 +112,10 @@
   flex-wrap: wrap;
 }
 .obj-section-title {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--ag-font-display, 'Orbitron', sans-serif);
   font-size: 11px;
-  letter-spacing: 0.14em;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   color: #5e5571;
   text-transform: uppercase;
 }
@@ -147,8 +154,8 @@
   border: 1px solid rgba(139,92,246,0.2);
   border-radius: 8px;
   color: #f1ecfb;
-  font-family: 'Inter', sans-serif;
-  font-size: 13.5px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(14.5px, 0.4vw + 13px, 15.5px);
   padding: 11px 14px;
   outline: none;
   min-height: 44px;
@@ -242,8 +249,9 @@
 
 .obj-card-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
 .obj-card-title {
+  font-family: 'Orbitron', sans-serif;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: #f1ecfb;
   white-space: nowrap;
   overflow: hidden;
@@ -312,7 +320,7 @@
 }
 .obj-empty-icon { width: 64px; height: 64px; color: #8b5cf6; opacity: 0.4; }
 .obj-empty-title { font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.1em; color: #a89cc8; }
-.obj-empty-sub { font-size: 12px; color: #5e5571; }
+.obj-empty-sub { font-size: clamp(13.5px, 0.6vw + 11px, 15px); color: #5e5571; }
 
 /* ── Bottom quote banner ─────────────────────────────────────── */
 .obj-quote-banner {
@@ -322,8 +330,8 @@
   border-radius: 16px;
   padding: 24px;
   text-align: center;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(16px, 1.2vw + 12.5px, 18.5px);
   font-style: italic;
   color: #c4b5fd;
   line-height: 1.7;

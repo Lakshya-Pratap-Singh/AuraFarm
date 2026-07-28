@@ -18,7 +18,7 @@
 }
 
 .donut-title {
-  font-family: var(--intel-font-display, "Space Grotesk", sans-serif);
+  font-family: var(--ag-font-display, "Orbitron", sans-serif);
   font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
