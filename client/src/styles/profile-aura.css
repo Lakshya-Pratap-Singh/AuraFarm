@@ -197,7 +197,7 @@
   gap: 10px;
 }
 .profile-level-label {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Orbitron', serif;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -211,6 +211,7 @@
   gap: 12px;
 }
 .profile-level-number {
+  font-family: 'Orbitron', monospace;
   font-size: 34px;
   font-weight: 700;
   line-height: 1;
@@ -243,6 +244,7 @@
   transition: width 0.8s ease;
 }
 .profile-xp-text {
+  font-family: 'Orbitron', serif;
   font-size: 12px;
   color: #cfc4e8;
 }
