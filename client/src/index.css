@@ -63,6 +63,51 @@
   --tile-border-gold-hint: rgba(201, 162, 39, 0.12);
   --tile-hover-scale: 1.03;
 
+  /* --- Glassmorphism tile treatment (Dashboard tiles only) ---
+     Frosted-glass surface used by .db-stat-card / .db-panel: mostly
+     the dark nebula backdrop showing through a blur, with only a
+     faint white glow tucked into the top-left corner and an equally
+     faint violet glow bottom-right — subtle accents, not a bright
+     fill. Colors sampled from the reference glass-tile mockup: the
+     glass itself stays dark/translucent, cool lavender hairline
+     border (~#c4b5fd), soft white corner catch-light at low opacity,
+     faint violet glow (~#8b5cf6) opposite it. */
+  --glass-tile-bg:
+    radial-gradient(160px 160px at 0% 0%, rgba(255, 255, 255, 0.09) 0%, transparent 65%),
+    radial-gradient(180px 180px at 100% 100%, rgba(139, 92, 246, 0.10) 0%, transparent 70%),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.015) 45%, rgba(139, 92, 246, 0.035) 100%);
+  --glass-tile-bg-hover:
+    radial-gradient(170px 170px at 0% 0%, rgba(255, 255, 255, 0.13) 0%, transparent 65%),
+    radial-gradient(190px 190px at 100% 100%, rgba(139, 92, 246, 0.15) 0%, transparent 70%),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.065) 0%, rgba(255, 255, 255, 0.025) 45%, rgba(139, 92, 246, 0.05) 100%);
+  --glass-tile-blur: blur(20px) saturate(120%);
+  --glass-tile-border: rgba(196, 181, 253, 0.22);
+  --glass-tile-border-hover: rgba(196, 181, 253, 0.38);
+
+  /* All four corners get a soft catch-light (not just a diagonal
+     pair) — top-left brightest/whitest as the primary light source,
+     the other three corners a touch dimmer and warmed slightly
+     toward violet, matching the reference image's evenly-lit glass
+     corners. Combined with the outer ambient drop shadow and a
+     hairline top-edge sheen. */
+  --glass-tile-shadow:
+    0 8px 28px rgba(5, 2, 14, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 10px 10px 22px -16px rgba(255, 255, 255, 0.16),
+    inset -10px 10px 22px -16px rgba(255, 255, 255, 0.11),
+    inset 10px -10px 22px -16px rgba(255, 255, 255, 0.09),
+    inset -10px -10px 22px -16px rgba(139, 92, 246, 0.14),
+    inset 0 -20px 30px -22px rgba(139, 92, 246, 0.06);
+  --glass-tile-shadow-hover:
+    0 12px 36px rgba(139, 92, 246, 0.14),
+    0 8px 28px rgba(5, 2, 14, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 10px 10px 22px -16px rgba(255, 255, 255, 0.24),
+    inset -10px 10px 22px -16px rgba(255, 255, 255, 0.17),
+    inset 10px -10px 22px -16px rgba(255, 255, 255, 0.14),
+    inset -10px -10px 22px -16px rgba(139, 92, 246, 0.22),
+    inset 0 -20px 30px -22px rgba(139, 92, 246, 0.1);
+
   /* --- Shared animated tile border (ancient purple-gold-brown) ---
      Used by the ::before/::after ring on every tile (stat cards,
      objective/mission/relic cards, glass cards, settings panel).

@@ -50,6 +50,14 @@
   --aura-radius-card: 18px; /* per spec — all cards use this exactly */
   --aura-radius-sm: 10px;
   --aura-radius-pill: 999px;
+
+  /* Glassmorphism tile tokens (--tile-bg, --tile-border-purple,
+     --tile-border-gold-hint, --tile-hover-scale, --tile-blur,
+     --tile-shadow) are defined in index.css, NOT here — index.css
+     loads after this file in the actual import order (App.jsx pulls
+     in this file, then main.jsx imports index.css afterward), so a
+     duplicate definition here would silently lose to that one. Edit
+     the block in index.css's :root instead. */
 }
 
 /* ── Body backdrop — pure black base + floating particles + slow aura

@@ -12,7 +12,7 @@
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--gc-border, rgba(255, 255, 255, 0.08));
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease-out;
   will-change: auto;
 }
 
@@ -32,43 +32,53 @@
   color: var(--m-text, #f1e9d8);
 }
 
-/* AuraFarm theme — dark fantasy neon purple. Spec calls for an exact
-   18px radius (overriding .gc-root's 16px default) and a hover state
-   with three simultaneous effects: border glow intensifies, the card
-   lifts, and "energy travels across edges" — the last one is a spinning
-   conic-gradient pseudo-element, mostly transparent except one bright
-   arc, paused by default and only spun up on hover for performance. */
+/* AuraFarm theme — premium smoked glass (VisionOS / Arc / Riot client /
+   Diablo IV). Exact 18px radius per spec (overriding .gc-root's 16px
+   default). Border is metallic (titanium/gunmetal), never a glowing
+   purple line — the purple lives entirely in the ambient bloom cast
+   from underneath the card via box-shadow, plus a soft top reflection
+   and a faint corner sheen, both static (no spin/animation cost). */
 .gc-theme-aura {
   border-radius: var(--aura-radius-card, 18px);
-  background: var(--tile-bg, #000);
-  border-color: rgba(139, 92, 246, 0.38);
-  box-shadow: inset 0 0 0 1px rgba(201, 162, 39, 0.12);
+  /* background-color is the hard guarantee: even if --tile-bg / --aura-glass-base
+     fail to resolve for any reason, this still paints an opaque near-black,
+     never transparent/white. The sheen is a SEPARATE layer (background-image)
+     so its own var() can't take the base color down with it. */
+  background-color: var(--tile-bg, var(--aura-glass-base, #0d0c15));
+  background-image: var(--aura-glass-fill, none);
+  backdrop-filter: blur(var(--aura-glass-blur, 22px)) saturate(var(--aura-glass-saturate, 150%));
+  -webkit-backdrop-filter: blur(var(--aura-glass-blur, 22px)) saturate(var(--aura-glass-saturate, 150%));
+  border-color: var(--aura-metal-border, rgba(210, 205, 222, 0.1));
+  box-shadow:
+    var(--aura-shadow-elevate, 0 14px 38px rgba(0, 0, 0, 0.6)),
+    0 0 34px var(--aura-glow-under, rgba(149, 75, 248, 0.16)),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 0 0 1px rgba(201, 162, 39, 0.05);
   color: var(--aura-text, #f1ecfb);
   overflow: hidden;
 }
 
+/* Soft top reflection — the "premium glass sheen" */
 .gc-theme-aura::before {
   content: "";
   position: absolute;
-  inset: -1px;
+  inset: 0;
   border-radius: inherit;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0%,
-    var(--aura-purple-bright, #a855f7) 9%,
-    #c9a227 11%,
-    transparent 20%
-  );
-  opacity: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, transparent 26%);
+  opacity: 0.9;
   pointer-events: none;
-  animation: gc-aura-border-spin 3.5s linear infinite;
-  animation-play-state: paused;
-  transition: opacity 0.3s ease;
 }
 
-@keyframes gc-aura-border-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+/* Faint corner highlight, upper-left, very subtle */
+.gc-theme-aura::after {
+  content: "";
+  position: absolute;
+  top: -25%;
+  left: -15%;
+  width: 55%;
+  height: 55%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05), transparent 70%);
+  pointer-events: none;
 }
 
 /* Active/pressed feedback shared across themes — transform/opacity only */
@@ -86,18 +96,14 @@
     box-shadow: inset 0 0 0 1px rgba(201, 162, 39, 0.18), 0 0 32px rgba(139, 92, 246, 0.18);
   }
   .gc-theme-aura:hover {
-    transform: translateY(-4px) scale(var(--tile-hover-scale, 1.03));
-    border-color: rgba(139, 92, 246, 0.75);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(201, 162, 39, 0.18), 0 0 30px rgba(139, 92, 246, 0.35);
+    transform: translateY(-4px);
+    border-color: var(--aura-metal-border-strong, rgba(220, 216, 232, 0.18));
+    box-shadow:
+      var(--aura-shadow-elevate-hover),
+      0 0 46px var(--aura-glow-under-strong, rgba(168, 85, 247, 0.4)),
+      inset 0 1px 0 rgba(255, 255, 255, 0.09);
   }
   .gc-theme-aura:hover::before {
-    opacity: 0.85;
-    animation-play-state: running;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .gc-theme-aura::before {
-    animation: none;
+    opacity: 1;
   }
 }

@@ -151,28 +151,45 @@
 }
 
 .db-stat-card {
-  background: var(--tile-bg);
-  border: 1px solid var(--tile-border-purple);
-  box-shadow: inset 0 0 0 1px var(--tile-border-gold-hint);
-  border-radius: 16px;
+  background: var(--glass-tile-bg);
+  backdrop-filter: var(--glass-tile-blur);
+  -webkit-backdrop-filter: var(--glass-tile-blur);
+  border: 1px solid var(--glass-tile-border);
+  box-shadow: var(--glass-tile-shadow);
+  border-radius: 20px;
   padding: 18px 20px;
   display: flex;
   flex-direction: column;
   gap: 6px;
   position: relative;
   overflow: hidden;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.2s ease;
 }
 .db-stat-card:hover {
-  border-color: rgba(139,92,246,0.55);
-  box-shadow: inset 0 0 0 1px rgba(201,162,39,0.16), 0 4px 20px rgba(168,85,247,0.14);
+  background: var(--glass-tile-bg-hover);
+  border-color: var(--glass-tile-border-hover);
+  box-shadow: var(--glass-tile-shadow-hover);
   transform: scale(var(--tile-hover-scale));
 }
+/* Corner highlight ring — a soft white glow hugging the top-left
+   border and a faint violet one hugging the bottom-right, layered
+   on top of the corner glows already baked into --glass-tile-bg. */
 .db-stat-card::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(168,85,247,0.04) 0%, transparent 60%);
+  border-radius: inherit;
+  box-shadow:
+    inset 10px 10px 22px -16px rgba(255, 255, 255, 0.18),
+    inset -10px -10px 22px -16px rgba(139, 92, 246, 0.14);
+  pointer-events: none;
+}
+.db-stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 12%; right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent);
   pointer-events: none;
 }
 
@@ -346,17 +363,42 @@
 
 .db-panel {
   position: relative;
-  background: var(--tile-bg);
-  border: 1px solid var(--tile-border-purple);
-  box-shadow: inset 0 0 0 1px var(--tile-border-gold-hint);
-  border-radius: 16px;
+  background: var(--glass-tile-bg);
+  backdrop-filter: var(--glass-tile-blur);
+  -webkit-backdrop-filter: var(--glass-tile-blur);
+  border: 1px solid var(--glass-tile-border);
+  box-shadow: var(--glass-tile-shadow);
+  border-radius: 20px;
   padding: 20px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.2s ease;
 }
 .db-panel:hover {
-  border-color: rgba(139,92,246,0.6);
-  box-shadow: inset 0 0 0 1px rgba(201,162,39,0.16), 0 4px 20px rgba(168,85,247,0.16);
+  background: var(--glass-tile-bg-hover);
+  border-color: var(--glass-tile-border-hover);
+  box-shadow: var(--glass-tile-shadow-hover);
   transform: scale(var(--tile-hover-scale));
+}
+/* Thin bright line tracing the top edge — matches .db-stat-card::after */
+.db-panel::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent);
+  pointer-events: none;
+}
+/* Corner highlight ring — same treatment as .db-stat-card::before:
+   faint white catch-light on the top-left edge, faint violet on bottom-right */
+.db-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 10px 10px 24px -16px rgba(255, 255, 255, 0.18),
+    inset -10px -10px 24px -16px rgba(139, 92, 246, 0.14);
+  pointer-events: none;
 }
 
 .db-panel-title {

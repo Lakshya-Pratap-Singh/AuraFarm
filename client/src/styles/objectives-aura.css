@@ -53,20 +53,24 @@
 }
 .obj-stat-card {
   position: relative;
-  background: var(--tile-bg);
-  border: 1px solid var(--tile-border-purple);
-  box-shadow: inset 0 0 0 1px var(--tile-border-gold-hint);
+  background: var(--glass-tile-bg);
+  backdrop-filter: var(--glass-tile-blur);
+  -webkit-backdrop-filter: var(--glass-tile-blur);
+  border: 1px solid var(--glass-tile-border);
+  box-shadow: var(--glass-tile-shadow);
   border-radius: 16px;
   padding: 18px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+  overflow: hidden;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s, transform 0.25s;
 }
 .obj-stat-card:hover {
-  border-color: rgba(139,92,246,0.55);
-  box-shadow: inset 0 0 0 1px rgba(201,162,39,0.16), 0 0 20px rgba(168,85,247,0.16);
+  background: var(--glass-tile-bg-hover);
+  border-color: var(--glass-tile-border-hover);
+  box-shadow: var(--glass-tile-shadow-hover);
   transform: scale(var(--tile-hover-scale));
 }
 .obj-stat-info { display: flex; flex-direction: column; gap: 4px; }
@@ -210,12 +214,14 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  background: var(--tile-bg, #000);
-  border: 1px solid var(--tile-border-purple, rgba(139,92,246,0.38));
-  box-shadow: inset 0 0 0 1px var(--tile-border-gold-hint, rgba(201,162,39,0.12));
+  background: var(--glass-tile-bg);
+  backdrop-filter: var(--glass-tile-blur);
+  -webkit-backdrop-filter: var(--glass-tile-blur);
+  border: 1px solid var(--glass-tile-border);
+  box-shadow: var(--glass-tile-shadow);
   border-radius: 16px;
   padding: 18px 20px;
-  transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s, transform 0.2s;
   position: relative;
   overflow: hidden;
 }
@@ -229,8 +235,9 @@
   border-radius: 3px 0 0 3px;
 }
 .obj-card-aura:hover {
-  border-color: rgba(139,92,246,0.6);
-  box-shadow: inset 0 0 0 1px rgba(201,162,39,0.18), 0 0 20px rgba(168,85,247,0.16);
+  background: var(--glass-tile-bg-hover);
+  border-color: var(--glass-tile-border-hover);
+  box-shadow: var(--glass-tile-shadow-hover);
   transform: translateY(-2px) scale(var(--tile-hover-scale, 1.03));
 }
 .obj-card-aura--complete { opacity: 0.7; }

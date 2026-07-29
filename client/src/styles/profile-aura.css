@@ -64,17 +64,21 @@
 .profile-bio-card,
 .profile-level-card {
   position: relative;
-  background: var(--tile-bg, #000);
-  border: 1px solid var(--tile-border-purple, rgba(139,92,246,0.38));
-  box-shadow: inset 0 0 0 1px var(--tile-border-gold-hint, rgba(201,162,39,0.12));
+  background: var(--glass-tile-bg);
+  backdrop-filter: var(--glass-tile-blur);
+  -webkit-backdrop-filter: var(--glass-tile-blur);
+  border: 1px solid var(--glass-tile-border);
+  box-shadow: var(--glass-tile-shadow);
   border-radius: 18px;
   padding: 22px 24px;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.2s ease;
 }
 .profile-bio-card:hover,
 .profile-level-card:hover {
-  border-color: rgba(139,92,246,0.6);
-  box-shadow: inset 0 0 0 1px rgba(201,162,39,0.18), 0 0 24px rgba(168,85,247,0.14);
+  background: var(--glass-tile-bg-hover);
+  border-color: var(--glass-tile-border-hover);
+  box-shadow: var(--glass-tile-shadow-hover);
 }
 
 .profile-bio-card {
@@ -264,17 +268,20 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: var(--tile-bg, #000);
-  border: 1px solid var(--tile-border-purple, rgba(139,92,246,0.38));
-  box-shadow: inset 0 0 0 1px var(--tile-border-gold-hint, rgba(201,162,39,0.12));
+  background: var(--glass-tile-bg);
+  backdrop-filter: var(--glass-tile-blur);
+  -webkit-backdrop-filter: var(--glass-tile-blur);
+  border: 1px solid var(--glass-tile-border);
+  box-shadow: var(--glass-tile-shadow);
   border-radius: 14px;
   padding: 14px 14px;
   overflow: hidden;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.2s ease;
 }
 .profile-stat-card:hover {
-  border-color: rgba(139,92,246,0.6);
-  box-shadow: inset 0 0 0 1px rgba(201,162,39,0.18), 0 0 20px rgba(168,85,247,0.16);
+  background: var(--glass-tile-bg-hover);
+  border-color: var(--glass-tile-border-hover);
+  box-shadow: var(--glass-tile-shadow-hover);
   transform: scale(1.03);
 }
 .profile-stat-icon {
@@ -306,9 +313,11 @@
 
 /* ── Section headers ─────────────────────────────────────────── */
 .profile-section {
-  background: var(--tile-bg, #000);
-  border: 1px solid var(--tile-border-purple, rgba(139,92,246,0.38));
-  box-shadow: inset 0 0 0 1px var(--tile-border-gold-hint, rgba(201,162,39,0.12));
+  background: var(--glass-tile-bg);
+  backdrop-filter: var(--glass-tile-blur);
+  -webkit-backdrop-filter: var(--glass-tile-blur);
+  border: 1px solid var(--glass-tile-border);
+  box-shadow: var(--glass-tile-shadow);
   border-radius: 18px;
   padding: 22px 24px;
 }
