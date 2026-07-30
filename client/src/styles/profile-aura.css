@@ -71,7 +71,6 @@
   box-shadow: var(--glass-tile-shadow);
   border-radius: 18px;
   padding: 22px 24px;
-  overflow: hidden;
   transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.2s ease;
 }
 .profile-bio-card:hover,
