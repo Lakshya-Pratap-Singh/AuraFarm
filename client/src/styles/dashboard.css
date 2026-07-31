@@ -171,6 +171,19 @@
   box-shadow: var(--glass-tile-shadow-hover);
   transform: scale(var(--tile-hover-scale));
 }
+/* Corner highlight ring — a soft white glow hugging the top-left
+   border and a faint violet one hugging the bottom-right, layered
+   on top of the corner glows already baked into --glass-tile-bg. */
+.db-stat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 10px 10px 22px -16px rgba(255, 255, 255, 0.18),
+    inset -10px -10px 22px -16px rgba(139, 92, 246, 0.14);
+  pointer-events: none;
+}
 .db-stat-card::after {
   content: '';
   position: absolute;
@@ -227,44 +240,30 @@
   height: 20px;
 }
 
-/* Add Mission — mobile-only stat-grid shortcut (see @media block below
-   for its grid placement). Hidden entirely on desktop/tablet, where it
-   isn't needed since the "Today's Missions" panel's "View All Missions"
-   / the Missions page itself already provide the add-mission flow. */
-.db-stat-add-mission-btn {
-  display: none;
-  flex-direction: column;
-  align-items: center;
+/* Recent Achievement — compact tile */
+.db-stat-card--achievement {
   justify-content: center;
-  gap: 6px;
-  background: var(--glass-tile-bg);
-  backdrop-filter: var(--glass-tile-blur);
-  -webkit-backdrop-filter: var(--glass-tile-blur);
-  border: 1px solid var(--glass-tile-border);
-  box-shadow: var(--glass-tile-shadow);
-  border-radius: 20px;
-  color: #a855f7;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  line-height: 1.25;
-  text-transform: uppercase;
-  text-align: center;
-  padding: 8px 4px;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.15s ease;
 }
-.db-stat-add-mission-btn svg {
-  width: 22px;
-  height: 22px;
+.db-stat-achievement-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.db-stat-achievement-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(168,85,247,0.5));
   flex-shrink: 0;
 }
-.db-stat-add-mission-btn:hover,
-.db-stat-add-mission-btn:active {
-  background: var(--glass-tile-bg-hover);
-  border-color: var(--glass-tile-border-hover);
-  box-shadow: var(--glass-tile-shadow-hover);
-  transform: scale(0.97);
+.db-stat-achievement-name {
+  font-family: var(--aura-font-relic, 'Uncial Antiqua', serif);
+  font-size: 14px;
+  font-weight: 700;
+  color: #cbd1ca;
+  line-height: 1.25;
+  
+  
 }
 
 /* Aura Level card — badge icon */
@@ -357,54 +356,135 @@
 /* ── Bottom 3-column row ────────────────────────────────────── */
 .db-bottom {
   display: grid;
-  grid-template-columns: 1fr 0.85fr 0.85fr;
+  grid-template-columns: 1fr 1.7fr;
   gap: 14px;
   align-items: stretch;
 }
 
-/* Aura Overview + Weekly Progress stacked in one column so their
-   combined height (2 panels + gap) matches Missions / Recent Relics.
-   .db-bottom's align-items:stretch gives this wrapper the full row
-   height; flex:1 on its two panel children splits that height evenly
-   between them, so all three columns' bottoms land at the same line. */
-.db-bottom-stack {
-  display: flex;
-  flex-direction: column;
+/* Right column: Recent Relics (+ mobile Add Mission button) fixed at
+   140px on top, Aura Overview + Weekly Progress row fills whatever
+   space is left below — stretch on .db-bottom means this wrapper's
+   total height always matches Today's Missions, so the bottom row's
+   1fr auto-solves to (missions height − 140px − gap). */
+.db-bottom-right {
+  display: grid;
+  grid-template-rows: 140px 1fr;
   gap: 14px;
 }
-.db-bottom-stack .db-panel {
-  flex: 1 1 0;
-  min-height: 0;
-  justify-content: center;
+.db-bottom-right-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
 }
 
-/* Recent Relics — long panel (was a small stat tile), centered content
-   so it reads well at whatever height Missions/the stack end up at */
-.db-recent-relics {
+/* Recent Relics — 70% wide by default (desktop) so the compact
+   Add Mission icon button (.db-relics-add-btn) sits beside it;
+   the labeled mobile version of Add Mission lives in db-stats
+   instead — see the (max-width: 767px) block, where Relics goes
+   back to 100% and this button is hidden. */
+.db-relics-wrap {
   display: flex;
-  flex-direction: column;
-}
-.db-recent-relics-body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   gap: 14px;
-  text-align: center;
+  height: 100%;
 }
-.db-recent-relics-icon {
-  width: 110px;
-  height: 110px;
+.db-recent-relics {
+  flex: 0 0 70%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
+}
+.db-recent-relics .db-panel-title {
+  margin-bottom: 4px;
+}
+.db-relics-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.db-relics-icon {
+  width: 68px;
+  height: 68px;
   object-fit: contain;
-  filter: drop-shadow(0 0 20px rgba(168,85,247,0.55));
+  filter: drop-shadow(0 0 10px rgba(168,85,247,0.55));
+  flex-shrink: 0;
 }
-.db-recent-relics-name {
+.db-relics-name {
   font-family: var(--aura-font-relic, 'Uncial Antiqua', serif);
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: #cbd1ca;
   line-height: 1.3;
+}
+
+/* Compact icon-only Add Mission button, desktop only — sits in the
+   remaining ~30% beside Recent Relics. Hidden on mobile (see the
+   (max-width: 767px) block), where the labeled version in db-stats
+   is used instead. */
+.db-relics-add-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--glass-tile-bg);
+  backdrop-filter: var(--glass-tile-blur);
+  -webkit-backdrop-filter: var(--glass-tile-blur);
+  border: 1px solid var(--glass-tile-border);
+  box-shadow: var(--glass-tile-shadow);
+  border-radius: 16px;
+  color: #a855f7;
+  cursor: pointer;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.2s ease;
+}
+.db-relics-add-btn svg {
+  width: 26px;
+  height: 26px;
+  stroke: #a855f7;
+}
+.db-relics-add-btn:hover,
+.db-relics-add-btn:active {
+  background: var(--glass-tile-bg-hover);
+  border-color: var(--glass-tile-border-hover);
+  box-shadow: var(--glass-tile-shadow-hover);
+  transform: scale(var(--tile-hover-scale));
+}
+
+/* Add Mission (labeled) — mobile-only shortcut that sits in the
+   db-stats row (hidden on desktop, where the compact icon-only
+   version beside Recent Relics is used instead — see
+   .db-relics-add-btn above). */
+.db-stat-add-mission-btn {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--glass-tile-bg);
+  backdrop-filter: var(--glass-tile-blur);
+  -webkit-backdrop-filter: var(--glass-tile-blur);
+  border: 1px solid var(--glass-tile-border);
+  box-shadow: var(--glass-tile-shadow);
+  border-radius: 16px;
+  color: #cbb8fa;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1.3;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.2s ease;
+}
+.db-stat-add-mission-btn svg {
+  width: 22px;
+  height: 22px;
+  stroke: #a855f7;
+}
+.db-stat-add-mission-btn:hover,
+.db-stat-add-mission-btn:active {
+  background: var(--glass-tile-bg-hover);
+  border-color: var(--glass-tile-border-hover);
+  box-shadow: var(--glass-tile-shadow-hover);
 }
 
 .db-panel {
@@ -416,6 +496,7 @@
   box-shadow: var(--glass-tile-shadow);
   border-radius: 20px;
   padding: 20px;
+  overflow: hidden;
   transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.2s ease;
 }
 .db-panel:hover {
@@ -431,6 +512,18 @@
   top: 0; left: 10%; right: 10%;
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent);
+  pointer-events: none;
+}
+/* Corner highlight ring — same treatment as .db-stat-card::before:
+   faint white catch-light on the top-left edge, faint violet on bottom-right */
+.db-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 10px 10px 24px -16px rgba(255, 255, 255, 0.18),
+    inset -10px -10px 24px -16px rgba(139, 92, 246, 0.14);
   pointer-events: none;
 }
 
@@ -841,49 +934,64 @@
   .db-stats {
     display: grid;
     grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: auto auto auto;
     gap: 10px;
   }
-
-  /* Daily Streak + Progress: 70% width, left column, stacked rows 1 & 2 */
-  .db-stat-streak {
-    grid-column: 1 / 8;
-    grid-row: 1;
-  }
-  .db-stat-progress {
-    grid-column: 1 / 8;
-    grid-row: 2;
-  }
-
-  /* Add Mission: remaining 30% on the right, spanning both of those rows
-     so it sits directly beside/in front of the Daily Streak tile */
+  .db-stat-streak { grid-column: 1 / 8; grid-row: 1; }
+  .db-stat-progress { grid-column: 1 / 8; grid-row: 2; }
+  .db-stat-relics { grid-column: 1 / 6; grid-row: 3; }
+  .db-stat-objectives { grid-column: 6 / 11; grid-row: 3; }
   .db-stat-add-mission-btn {
-    display: flex;
     grid-column: 8 / 11;
-    grid-row: 1 / 3;
+    grid-row: 1 / span 2;
+    gap: 10px;
   }
-
-  /* Relics Collected + Objectives: 2-col / 1-row pair */
-  .db-stat-relics {
-    grid-column: 1 / 6;
-    grid-row: 3;
+  .db-stat-add-mission-btn svg {
+    width: 26px;
+    height: 26px;
   }
-  .db-stat-objectives {
-    grid-column: 6 / 11;
-    grid-row: 3;
+  .db-stat-add-mission-btn span {
+    font-size: 12px;
+    letter-spacing: 0.06em;
   }
 
   .db-bottom {
     grid-template-columns: 1fr;
     gap: 14px;
   }
+  /* Flatten both wrappers so every panel becomes a direct grid item of
+     .db-bottom and can be reordered together: db-stats (separate
+     section, already first in the DOM) → Recent Relics+Add Mission →
+     Missions → Aura Overview → Weekly Progress (bar chart). */
+  .db-bottom-right {
+    display: contents;
+  }
+  .db-bottom-right-top {
+    display: contents;
+  }
+  .db-relics-wrap {
+    order: 1;
+    height: 140px;
+  }
+  .db-missions-panel {
+    order: 2;
+  }
+  .db-aura-overview {
+    order: 3;
+  }
+  .db-weekly-progress {
+    order: 4;
+  }
 
-  /* On mobile db-bottom is a single column, so Missions / Recent Relics /
-     the stack are already stacked naturally — undo the desktop equal-
-     height split so Aura Overview + Weekly Progress just take their own
-     natural height instead of being forced to share one row's height. */
-  .db-bottom-stack .db-panel {
-    flex: none;
-    justify-content: flex-start;
+  .db-recent-relics {
+    flex: 1 1 100%;
+    min-height: 120px;
+  }
+  .db-relics-add-btn {
+    display: none;
+  }
+  .db-stat-add-mission-btn {
+    display: flex;
   }
 
   .db-mission-list {
