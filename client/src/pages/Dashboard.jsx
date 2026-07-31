@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useXP } from "../context/XPContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useBanner, getHeroBackgroundStyle } from "../context/BannerContext.jsx";
@@ -145,6 +146,24 @@ function DashMissionRow({ mission, onComplete, onNavigate }) {
 }
 
 // ── Dashboard ────────────────────────────────────────────────────────────
+// Recent Relics slideshow — cycles through every unlocked relic, tinting
+// name + glow per rarity tier (mirrors the tokens in styles/relics.css).
+const RELIC_ROTATE_MS = 2800;
+const RARITY_COLOR = {
+  Common: "#8b5cf6",
+  Rare: "#a855f7",
+  Epic: "#c084fc",
+  Legendary: "#fabb32",
+  Mythic: "#f8fafc",
+};
+const RARITY_GLOW = {
+  Common: "rgba(139,92,246,0.55)",
+  Rare: "rgba(168,85,247,0.55)",
+  Epic: "rgba(192,132,252,0.55)",
+  Legendary: "rgba(250,189,50,0.55)",
+  Mythic: "rgba(255,255,255,0.55)",
+};
+
 export default function Dashboard({ missions = [], objectives = [], setMissions, onNavigate }) {
   const { totalXP, xpIntoLevel, xpNeededForNextLevel, xpLog } = useXP();
   const { user } = useAuth();
@@ -188,10 +207,21 @@ export default function Dashboard({ missions = [], objectives = [], setMissions,
   );
   const totalRelicsCollected = unlockedRelics.length;
   const totalRelicsInCatalog = RELIC_CATALOG.length;
-  // The app doesn't persist real unlock timestamps yet, so the most
-  // "advanced" unlocked relic (catalog runs common → mythic) stands in
-  // as the recent-achievement highlight.
-  const recentAchievement = unlockedRelics[unlockedRelics.length - 1] || null;
+
+  // Recent Relics slideshow — loops through every unlocked relic (catalog
+  // order, common → mythic) a few seconds at a time. Paused on hover.
+  const [relicIndex, setRelicIndex] = useState(0);
+  const [relicPaused, setRelicPaused] = useState(false);
+  useEffect(() => {
+    if (unlockedRelics.length <= 1 || relicPaused) return;
+    const timer = setInterval(() => {
+      setRelicIndex((i) => (i + 1) % unlockedRelics.length);
+    }, RELIC_ROTATE_MS);
+    return () => clearInterval(timer);
+  }, [unlockedRelics.length, relicPaused]);
+  const showcaseRelic = unlockedRelics.length > 0
+    ? unlockedRelics[relicIndex % unlockedRelics.length]
+    : null;
 
   // XP bar
   const xpPct = xpNeededForNextLevel > 0 ? xpIntoLevel / xpNeededForNextLevel : 0;
@@ -374,21 +404,50 @@ export default function Dashboard({ missions = [], objectives = [], setMissions,
 
           {/* RECENT RELICS (+ mobile Add Mission shortcut) */}
           <div className="db-relics-wrap">
-            <div className="db-panel glow db-recent-relics">
+            <div
+              className="db-panel glow db-recent-relics"
+              onMouseEnter={() => setRelicPaused(true)}
+              onMouseLeave={() => setRelicPaused(false)}
+            >
               <div className="db-panel-title">Recent Relics</div>
-              {recentAchievement ? (
-                <div className="db-relics-row">
-                  <img
-                    src={getRelicImage(recentAchievement.id)}
-                    alt={recentAchievement.name}
-                    className="db-relics-icon"
-                    onError={(e) => { e.currentTarget.style.display = "none"; }}
-                  />
-                  <div>
-                    <div className="db-relics-name">{recentAchievement.name}</div>
-                    <div className="db-stat-sub">{recentAchievement.rarity}</div>
-                  </div>
-                </div>
+              {showcaseRelic ? (
+                <>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={showcaseRelic.id}
+                      className="db-relics-row"
+                      initial={{ opacity: 0, x: 26, scale: 0.94, filter: "blur(6px)" }}
+                      animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, x: -26, scale: 0.94, filter: "blur(6px)" }}
+                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      <img
+                        src={getRelicImage(showcaseRelic.id)}
+                        alt={showcaseRelic.name}
+                        className="db-relics-icon"
+                        style={{ filter: `drop-shadow(0 0 10px ${RARITY_GLOW[showcaseRelic.rarity] || "rgba(168,85,247,0.55)"})` }}
+                        onError={(e) => { e.currentTarget.style.display = "none"; }}
+                      />
+                      <div>
+                        <div
+                          className="db-relics-name"
+                          style={{ color: RARITY_COLOR[showcaseRelic.rarity] || undefined }}
+                        >
+                          {showcaseRelic.name}
+                        </div>
+                        <div className="db-stat-sub">{showcaseRelic.rarity}</div>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                  {unlockedRelics.length > 1 && (
+                    <div className="db-relics-progress" key={`${showcaseRelic.id}-bar`}>
+                      <div
+                        className="db-relics-progress-fill"
+                        style={{ animationDuration: `${RELIC_ROTATE_MS}ms`, animationPlayState: relicPaused ? "paused" : "running" }}
+                      />
+                    </div>
+                  )}
+                </>
               ) : (
                 <div className="db-stat-sub">No relics unlocked yet</div>
               )}

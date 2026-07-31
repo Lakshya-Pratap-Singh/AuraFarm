@@ -415,6 +415,32 @@
   font-weight: 700;
   color: #cbd1ca;
   line-height: 1.3;
+  transition: color 0.4s ease;
+}
+
+/* Slideshow progress indicator — thin bar that fills over one relic's
+   dwell time, remounted (via React key) each time the relic changes so
+   the animation restarts cleanly instead of jumping back to 0%. */
+.db-relics-progress {
+  width: 100%;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(168, 85, 247, 0.15);
+  overflow: hidden;
+  margin-top: 10px;
+}
+.db-relics-progress-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #a855f7, #c084fc);
+  animation-name: db-relics-progress-fill;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+@keyframes db-relics-progress-fill {
+  from { width: 0%; }
+  to { width: 100%; }
 }
 
 /* Compact icon-only Add Mission button, desktop only — sits in the
