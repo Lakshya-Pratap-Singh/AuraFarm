@@ -260,22 +260,23 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  background: var(--tile-bg, #000);
-  backdrop-filter: blur(var(--tile-blur, 18px));
-  -webkit-backdrop-filter: blur(var(--tile-blur, 18px));
-  border: 1px solid var(--tile-border-purple, rgba(139,92,246,0.38));
-  box-shadow: inset 0 0 0 1px var(--tile-border-gold-hint, rgba(201,162,39,0.12)), var(--tile-shadow, 0 8px 28px rgba(0,0,0,0.38));
+  background: var(--glass-tile-bg);
+  backdrop-filter: var(--glass-tile-blur);
+  -webkit-backdrop-filter: var(--glass-tile-blur);
+  border: 1px solid var(--glass-tile-border);
+  box-shadow: var(--glass-tile-shadow);
   border-radius: 16px;
   padding: 14px 16px;
   overflow: hidden;
   touch-action: pan-y;
   user-select: none;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.18s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.18s ease;
 }
 
 .mc-aura--active:hover {
-  border-color: rgba(139,92,246,0.6);
-  box-shadow: inset 0 0 0 1px rgba(201,162,39,0.18), 0 0 20px rgba(168,85,247,0.18);
+  background: var(--glass-tile-bg-hover);
+  border-color: var(--glass-tile-border-hover);
+  box-shadow: var(--glass-tile-shadow-hover);
   transform: scale(var(--tile-hover-scale, 1.03));
 }
 
@@ -327,7 +328,7 @@
   50%      { box-shadow: 0 0 14px var(--af-purple-glow); }
 }
 
-/* Category icon circle */
+/* Category icon circle — tappable to open the full-size zoom view */
 .mc-aura-icon {
   flex-shrink: 0;
   width: 80px;
@@ -336,8 +337,36 @@
   align-items: center;
   justify-content: center;
   color: var(--af-purple-bright);
+  cursor: pointer;
+  transition: transform 0.18s ease;
+}
+.mc-aura-icon:hover,
+.mc-aura-icon:active {
+  transform: scale(1.08);
 }
 .mc-aura-icon svg, .mc-aura-icon img, .mc-aura-icon span { width: 65px; height: 65px; }
+
+/* ── Mission icon zoom lightbox (profile-pic style) ──────────────
+   Full-size category art on a dark blurred backdrop — no card,
+   no border, tap anywhere to dismiss. */
+.mc-icon-zoom-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 2, 14, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+.mc-icon-zoom-img {
+  width: min(62vw, 320px);
+  height: min(62vw, 320px);
+  object-fit: contain;
+  pointer-events: none; /* click always falls through to the backdrop */
+}
 
 /* Card body */
 .mc-aura-body {
@@ -495,13 +524,24 @@
 }
 
 .mf-stat {
-  background: var(--af-card);
-  border: 1px solid var(--af-border);
+  position: relative;
+  background: var(--glass-tile-bg);
+  backdrop-filter: var(--glass-tile-blur);
+  -webkit-backdrop-filter: var(--glass-tile-blur);
+  border: 1px solid var(--glass-tile-border);
+  box-shadow: var(--glass-tile-shadow);
   border-radius: 14px;
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.2s ease;
+}
+.mf-stat:hover {
+  background: var(--glass-tile-bg-hover);
+  border-color: var(--glass-tile-border-hover);
+  box-shadow: var(--glass-tile-shadow-hover);
+  transform: translateY(-3px) scale(var(--tile-hover-scale));
 }
 .mf-stat-label {
   font-family: var(--af-font-mono);

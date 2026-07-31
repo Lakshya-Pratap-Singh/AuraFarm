@@ -7,6 +7,7 @@ import handleLiquidCursor from "../hooks/handleLiquidCursor.js";
 import { buildNewMission } from "../hooks/useMissionReset.js";
 import CategoryBadge from "../components/common/CategoryBadge.jsx";
 import StreakLogo from "../components/common/StreakLogo.jsx";
+import { getCategoryAsset } from "../data/categoryAssets.js";
 import "../styles/missions-aura.css";
 
 // ─── Config ───────────────────────────────────────────────────────────────
@@ -187,7 +188,7 @@ function EditModal({ mission, objectives, onSave, onClose }) {
 }
 
 // ─── Single Mission Card ──────────────────────────────────────────────────
-function MissionCard({ mission, onComplete, onDelete, onEdit }) {
+function MissionCard({ mission, onComplete, onDelete, onEdit, onIconClick }) {
   const xpReward     = MISSION_XP_TABLE?.[mission.difficulty] ?? 80;
   const priorityCfg  = PRIORITY_CONFIG[mission.priority]   || PRIORITY_CONFIG.Medium;
   const difficultyCfg= DIFFICULTY_CONFIG[mission.difficulty]|| DIFFICULTY_CONFIG.Normal;
@@ -246,8 +247,12 @@ function MissionCard({ mission, onComplete, onDelete, onEdit }) {
         </div>
       )}
 
-      {/* Category sigil via CategoryBadge */}
-      <div className="mc-aura-icon">
+      {/* Category sigil via CategoryBadge — tap to view full-size,
+          social-app-style (see mc-icon-zoom-* at the bottom of the page) */}
+      <div
+        className="mc-aura-icon"
+        onClick={(e) => { e.stopPropagation(); onIconClick?.(mission.category); }}
+      >
         <CategoryBadge category={mission.category} size="lg" showLabel={false} />
       </div>
 
@@ -332,6 +337,7 @@ function computeStats(missions) {
 function Missions({ missions, setMissions, objectives = [] }) {
   const [showAdd,       setShowAdd]       = useState(false);
   const [editingMission,setEditingMission]= useState(null);
+  const [zoomedCategory, setZoomedCategory] = useState(null);
   const [categoryFilter,setCategoryFilter]= useState(null);
 
   // Add form state
@@ -625,6 +631,7 @@ function Missions({ missions, setMissions, objectives = [] }) {
                   onComplete={handleComplete}
                   onDelete={handleDelete}
                   onEdit={setEditingMission}
+                  onIconClick={setZoomedCategory}
                 />
               ))}
             </>
@@ -637,6 +644,7 @@ function Missions({ missions, setMissions, objectives = [] }) {
                   onComplete={handleComplete}
                   onDelete={handleDelete}
                   onEdit={setEditingMission}
+                  onIconClick={setZoomedCategory}
                 />
               ))}
             </>
@@ -675,6 +683,34 @@ function Missions({ missions, setMissions, objectives = [] }) {
           onClose={() => setEditingMission(null)}
         />
       )}
+
+      {/* ── Mission icon zoom — tap a mission's category sigil to pop it
+          up full-size, social-app profile-picture style: just the art,
+          no card/border chrome, dark backdrop, tap anywhere to close. ── */}
+      <AnimatePresence>
+        {zoomedCategory && (
+          <motion.div
+            key="mc-icon-zoom"
+            className="mc-icon-zoom-backdrop"
+            onClick={() => setZoomedCategory(null)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
+          >
+            <motion.img
+              src={getCategoryAsset(zoomedCategory).src}
+              alt=""
+              className="mc-icon-zoom-img"
+              style={{ filter: `drop-shadow(0 0 40px ${getCategoryAsset(zoomedCategory).color}66)` }}
+              initial={{ scale: 0.3, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.3, opacity: 0 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

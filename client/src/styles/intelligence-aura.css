@@ -129,11 +129,21 @@
   margin-bottom: 24px;
 }
 
-/* Override the gold ActivityGrid card chrome to purple */
+/* Activity grid card — same glass-tile chrome as .intel-stat-card /
+   dashboard's .db-panel, replacing the old flat dark card. */
 .intel-grid-section .activity-grid-card {
-  background: #120d1a;
-  border-color: rgba(139,92,246,0.2);
-  box-shadow: inset 0 1px 0 rgba(168,85,247,0.06);
+  background: var(--glass-tile-bg);
+  backdrop-filter: var(--glass-tile-blur);
+  -webkit-backdrop-filter: var(--glass-tile-blur);
+  border: 1px solid var(--glass-tile-border);
+  box-shadow: var(--glass-tile-shadow);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.2s ease;
+}
+.intel-grid-section .activity-grid-card:hover {
+  background: var(--glass-tile-bg-hover);
+  border-color: var(--glass-tile-border-hover);
+  box-shadow: var(--glass-tile-shadow-hover);
+  transform: translateY(-3px) scale(var(--tile-hover-scale));
 }
 .intel-grid-section .ag-title { color: #a89cc8; }
 .intel-grid-section .ag-title-icon { color: #a855f7; }
@@ -146,10 +156,21 @@
   padding: 0 24px;
 }
 
-/* Override donut card to purple theme */
+/* Donut card — same glass-tile chrome as .intel-stat-card / dashboard's
+   .db-panel, replacing the old flat dark card. */
 .intel-breakdown-row .donut-card {
-  background: #120d1a;
-  border-color: rgba(139,92,246,0.2);
+  background: var(--glass-tile-bg);
+  backdrop-filter: var(--glass-tile-blur);
+  -webkit-backdrop-filter: var(--glass-tile-blur);
+  border: 1px solid var(--glass-tile-border);
+  box-shadow: var(--glass-tile-shadow);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.2s ease;
+}
+.intel-breakdown-row .donut-card:hover {
+  background: var(--glass-tile-bg-hover);
+  border-color: var(--glass-tile-border-hover);
+  box-shadow: var(--glass-tile-shadow-hover);
+  transform: translateY(-3px) scale(var(--tile-hover-scale));
 }
 .intel-breakdown-row .donut-title { color: #a89cc8; }
 .intel-breakdown-row .donut-center-value {
@@ -167,10 +188,21 @@
   margin-top: 16px;
 }
 .intel-trend-card {
-  background: #120d1a;
-  border: 1px solid rgba(139,92,246,0.2);
+  position: relative;
+  background: var(--glass-tile-bg);
+  backdrop-filter: var(--glass-tile-blur);
+  -webkit-backdrop-filter: var(--glass-tile-blur);
+  border: 1px solid var(--glass-tile-border);
+  box-shadow: var(--glass-tile-shadow);
   border-radius: 16px;
   padding: 22px 24px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.2s ease;
+}
+.intel-trend-card:hover {
+  background: var(--glass-tile-bg-hover);
+  border-color: var(--glass-tile-border-hover);
+  box-shadow: var(--glass-tile-shadow-hover);
+  transform: translateY(-3px) scale(var(--tile-hover-scale));
 }
 .intel-trend-header {
   display: flex;
