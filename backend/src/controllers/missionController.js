@@ -17,6 +17,7 @@
  */
 
 import { PrismaClient } from "@prisma/client";
+import { createNotification } from "../notifications/notification.service.js";
 
 const prisma = new PrismaClient();
 
@@ -175,6 +176,13 @@ export const toggleMissionCompletion = async (req, res, next) => {
           },
         },
       });
+
+      createNotification(req.user.id, {
+        title: "Mission Complete",
+        message: `"${updatedMission.title}" is complete. +${xpAmount} XP.`,
+        type: "SYSTEM",
+        data: { missionTitle: updatedMission.title, xpEarned: xpAmount },
+      }).catch((error) => console.error("[missionController] notification failed", error.message));
     } else if (!nextCompleted && xpAmount) {
       await prisma.activityEvent.create({
         data: {
