@@ -10,6 +10,7 @@ import useSwipeGesture from "../hooks/useSwipeGesture.js";
 import CategoryBadge from "../components/common/CategoryBadge.jsx";
 import StreakLogo from "../components/common/StreakLogo.jsx";
 import GlowTrace from "../components/GlowTrace.jsx";
+import { apiClient } from "../api/client.js";
 import "../styles/dashboard.css";
 
 // ── Icons ──────────────────────────────────────────────────────────────────
@@ -168,6 +169,12 @@ export default function Dashboard({ missions = [], objectives = [], setMissions,
   const { totalXP, xpIntoLevel, xpNeededForNextLevel, xpLog } = useXP();
   const { user } = useAuth();
   const { bannerUrl } = useBanner();
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([
+    { id: 1, title: "Mission reminder", message: "Your next mission is waiting.", unread: true },
+    { id: 2, title: "Streak check-in", message: "Keep your streak alive today.", unread: false },
+  ]);
 
   // Keep the shared 90-day activity log fresh from this page too (not
   // only when visiting Intelligence), so the streak/relic tiles below
@@ -175,6 +182,19 @@ export default function Dashboard({ missions = [], objectives = [], setMissions,
   useEffect(() => {
     recordSnapshot(missions);
   }, [missions]);
+
+  useEffect(() => {
+    const loadNotifications = async () => {
+      try {
+        const data = await apiClient.get("/notifications/unread-count");
+        setUnreadCount(data?.count || 0);
+      } catch (error) {
+        console.warn("Notification count unavailable", error.message);
+      }
+    };
+
+    loadNotifications();
+  }, []);
 
   // Current + longest streak, both read from the one real activity log
   // (this used to read a "daily-snapshots" key nothing ever wrote to,
@@ -275,17 +295,48 @@ export default function Dashboard({ missions = [], objectives = [], setMissions,
           <span className="db-topbar-xp-icon"><GemIcon /></span>
           {totalXP.toLocaleString()}
         </div>
-        <button className="db-topbar-bell" aria-label="Notifications">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-          </svg>
-          <span className="db-topbar-bell-dot" />
-        </button>
+        <div className="db-topbar-bell-wrap">
+          <button
+            className="db-topbar-bell"
+            aria-label="Notifications"
+            onClick={() => setShowNotifications((v) => !v)}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+            {unreadCount > 0 && <span className="db-topbar-bell-dot" />}
+          </button>
+
+          {showNotifications && (
+            <div className="db-notification-panel">
+              <div className="db-notification-panel-header">
+                <strong>Notifications</strong>
+                <span>{unreadCount} new</span>
+              </div>
+              <div className="db-notification-list">
+                {notifications.map((item) => (
+                  <div key={item.id} className={`db-notification-item ${item.unread ? "is-unread" : ""}`}>
+                    <div className="db-notification-title">{item.title}</div>
+                    <div className="db-notification-message">{item.message}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Hero banner */}
-      <section className="db-hero" aria-label="Hero" style={getHeroBackgroundStyle(bannerUrl)}>
+      <motion.section
+        className="db-hero"
+        aria-label="Hero"
+        style={getHeroBackgroundStyle(bannerUrl)}
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
         <div className="db-hero-content">
           <h1 className="db-hero-title">Become What<br />You Dreamt For.</h1>
           <p className="db-hero-sub">
@@ -293,10 +344,17 @@ export default function Dashboard({ missions = [], objectives = [], setMissions,
             the person you want to become tomorrow.
           </p>
         </div>
-      </section>
+      </motion.section>
 
       {/* 5 Stat cards */}
-      <section className="db-stats" aria-label="Stats">
+      <motion.section
+        className="db-stats"
+        aria-label="Stats"
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
         {/* Daily Streak */}
         <div className="db-stat-card db-stat-streak glow">
           <div className="db-stat-label">Daily Streak</div>
@@ -364,10 +422,17 @@ export default function Dashboard({ missions = [], objectives = [], setMissions,
           </div>
           <GlowTrace />
         </div>
-      </section>
+      </motion.section>
 
       {/* Bottom: Missions | (Aura Overview + Weekly Progress row, Recent Relics below) */}
-      <section className="db-bottom" aria-label="Dashboard panels">
+      <motion.section
+        className="db-bottom"
+        aria-label="Dashboard panels"
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
 
         {/* TODAY'S MISSIONS */}
         <div className="db-panel glow db-missions-panel">
@@ -527,7 +592,7 @@ export default function Dashboard({ missions = [], objectives = [], setMissions,
           </div>
         </div>
 
-      </section>
+      </motion.section>
     </div>
   );
 }

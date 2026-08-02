@@ -423,17 +423,30 @@ function Missions({ missions, setMissions, objectives = [] }) {
     <div className="missions-page">
 
       {/* ── Hero ─────────────────────────────────────────────────── */}
-      <div className="missions-hero" style={getHeroBackgroundStyle(bannerUrl)}>
+      <motion.div
+        className="missions-hero"
+        style={getHeroBackgroundStyle(bannerUrl)}
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
         <h1 className="missions-hero-heading">Missions</h1>
         <p className="missions-hero-sub">Complete missions. Earn Aura XP. Forge your legacy.</p>
         <p className="mc-swipe-instructions">
           <span>→ Swipe right to complete</span>
           <span>← Swipe left to edit</span>
         </p>
-      </div>
+      </motion.div>
 
       {/* ── Stats bar ───────────────────────────────────────────── */}
-      <div className="missions-stats-bar">
+      <motion.div
+        className="missions-stats-bar"
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
         <div className="missions-stat">
           <span className="missions-stat-value">{stats.rate}%</span>
           <span className="missions-stat-label">Completion</span>
@@ -446,7 +459,7 @@ function Missions({ missions, setMissions, objectives = [] }) {
           <span className="missions-stat-value">{stats.completed}</span>
           <span className="missions-stat-label">Done</span>
         </div>
-      </div>
+      </motion.div>
 
       {/* ── Toolbar ─────────────────────────────────────────────── */}
       <div className="missions-toolbar">
@@ -622,7 +635,13 @@ function Missions({ missions, setMissions, objectives = [] }) {
           <p className="missions-empty-sub">Deploy your first mission to begin building your aura.</p>
         </div>
       ) : (
-        <div className="mission-list-aura">
+        <motion.div
+          className="mission-list-aura"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        >
           {activeMissions.length > 0 && (
             <>
               <div className="mc-list-section-label">Active</div>
@@ -649,11 +668,17 @@ function Missions({ missions, setMissions, objectives = [] }) {
               ))}
             </>
           )}
-        </div>
+        </motion.div>
       )}
 
       {/* ── Footer stats ─────────────────────────────────────── */}
-      <div className="missions-footer-stats">
+      <motion.div
+        className="missions-footer-stats"
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
         <div className="mf-stat">
           <span className="mf-stat-label">Mission Streak</span>
           <div className="mf-stat-value-row">
@@ -672,7 +697,7 @@ function Missions({ missions, setMissions, objectives = [] }) {
           <span className="mf-stat-value">{stats.completed}</span>
           <span className="mf-stat-sub">of {stats.total} total</span>
         </div>
-      </div>
+      </motion.div>
 
       {/* ── Edit modal ───────────────────────────────────────── */}
       {editingMission && (
