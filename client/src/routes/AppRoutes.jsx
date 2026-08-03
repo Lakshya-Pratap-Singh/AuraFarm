@@ -6,6 +6,7 @@ import Objectives from "../pages/Objectives";
 import Intelligence from "../pages/Intelligence";
 import Relics from "../pages/Relics";
 import Settings from "../pages/Settings";
+import NotificationPreferencesPage from "../pages/NotificationPreferencesPage.jsx";
 import Profile from "../pages/Profile";
 import Login from "../pages/Login.jsx";
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
@@ -23,6 +24,7 @@ function AppRoutes({ missions, setMissions, objectives, setObjectives, onNavigat
       <Route path="/relics" element={<ProtectedRoute><Relics missions={missions} objectives={objectives} /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile missions={missions} objectives={objectives} onNavigate={onNavigate} /></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+      <Route path="/notifications" element={<ProtectedRoute><NotificationPreferencesPage /></ProtectedRoute>} />
     </Routes>
   );
 }

@@ -3,6 +3,7 @@
 // be persisted to localStorage if you want persistence later).
 
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useXP } from "../context/XPContext.jsx";
 import { useBanner, getHeroBackgroundStyle } from "../context/BannerContext.jsx";
@@ -67,6 +68,7 @@ function SettingsRow({ icon, title, sub, right, onClick, danger }) {
 
 function Settings() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const { level, totalXP } = useXP();
   const { bannerUrl, isCustom, persistError, setCustomBanner, resetToDefaultBanner } = useBanner();
 
@@ -204,6 +206,12 @@ function Settings() {
               title="Push Notifications"
               sub="Daily mission reminders"
               right={<Toggle on={notifications} onToggle={() => setNotifications((v) => !v)} />}
+            />
+            <SettingsRow
+              icon={<BellIcon />}
+              title="Notification Preferences"
+              sub="Channels, quiet hours, custom reminders"
+              onClick={() => navigate("/notifications")}
             />
             <SettingsRow
               icon={<ZapIcon />}

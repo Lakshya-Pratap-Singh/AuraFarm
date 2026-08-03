@@ -1,19 +1,17 @@
 /**
  * PATCHED VERSION of your real src/controllers/missionController.js.
  * ------------------------------------------------
- * Only change: the three literal enum-value strings that need to match
- * the renamed enums (see prisma/migrations/.../migration.sql):
+ * Enum-value string fix: the three literal enum-value strings that need
+ * to match the renamed enums (see prisma/migrations/.../migration.sql):
  *   "MEDIUM"/"NORMAL"/"LEARNING" -> "Medium"/"Normal"/"Learning"
  *   xpAmount lookup table keys EASY/NORMAL/HARD/LEGENDARY -> Easy/Normal/Hard/Legendary
  * (the XP amounts themselves — 10/25/50/100 — are unchanged, they
  * already matched the frontend's MISSION_XP_TABLE).
  *
- * NOTE: an earlier version of this patch also called createNotification()
- * from ../notifications/notification.service.js, mirroring what looked
- * like an existing integration in the uploaded backend.zip. Confirmed
- * that notifications feature isn't actually built yet in the real
- * working repo, so that call (and its import) has been removed here —
- * mission completion doesn't depend on it either way.
+ * Also fires a MISSION_COMPLETED notification via createNotification()
+ * (fire-and-forget, never blocks the response) — the first concrete
+ * example of a module calling the notification service instead of
+ * writing to the Notification table directly.
  */
 
 import { PrismaClient } from "@prisma/client";
@@ -180,7 +178,7 @@ export const toggleMissionCompletion = async (req, res, next) => {
       createNotification(req.user.id, {
         title: "Mission Complete",
         message: `"${updatedMission.title}" is complete. +${xpAmount} XP.`,
-        type: "SYSTEM",
+        type: "MISSION_COMPLETED",
         data: { missionTitle: updatedMission.title, xpEarned: xpAmount },
       }).catch((error) => console.error("[missionController] notification failed", error.message));
     } else if (!nextCompleted && xpAmount) {

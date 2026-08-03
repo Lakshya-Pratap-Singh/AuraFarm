@@ -4,6 +4,7 @@ import Sidebar from "./components/Sidebar";
 import BottomNav from "./components/BottomNav";
 import AppRoutes from "./routes/AppRoutes";
 import RankUpOverlay from "./components/RankUpOverlay";
+import NotificationBell from "./components/NotificationBell";
 import PageTransition from "./components/PageTransition";
 import { RelicUnlockProvider } from "./components/RelicUnlockOverlay";
 import useBreakpoint from "./hooks/useBreakpoint";
@@ -165,6 +166,7 @@ function App() {
         </main>
 
         <RankUpOverlay />
+        <NotificationBell />
         {/* RelicUnlockOverlay is rendered by RelicUnlockProvider above */}
       </div>
     </RelicUnlockProvider>

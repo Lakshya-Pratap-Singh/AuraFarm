@@ -1,59 +1,82 @@
+/**
+ * notification.email.js
+ * ------------------------------------------------
+ * Thin Nodemailer wrapper. Reads SMTP config from env — works with
+ * Gmail/SendGrid/Mailgun/Resend's SMTP relay/etc, anything that speaks
+ * standard SMTP. No provider-specific SDK, so swapping providers is an
+ * env var change, not a code change.
+ *
+ * Required env vars (see .env.example):
+ *   SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM
+ *
+ * If SMTP_HOST is unset, send() logs and no-ops instead of throwing —
+ * so local dev / environments without email configured don't crash the
+ * rest of the notification pipeline (in-app notifications still work).
+ */
+
+import nodemailer from "nodemailer";
 import { renderEmailTemplate } from "./notification.templates.js";
 
 let transporter = null;
-let missingConfigLogged = false;
+let loggedMissingConfig = false;
 
-async function getTransporter() {
+function getTransporter() {
   if (transporter) return transporter;
 
   const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env;
-  if (!SMTP_HOST) {
-    if (!missingConfigLogged) {
-      console.info("[notifications] SMTP not configured; skipping email delivery");
-      missingConfigLogged = true;
-    }
-    return null;
-  }
+  if (!SMTP_HOST) return null;
 
-  try {
-    const nodemailer = await import("nodemailer");
-    transporter = nodemailer.default.createTransport({
-      host: SMTP_HOST,
-      port: Number(SMTP_PORT || 587),
-      secure: false,
-      auth: {
-        user: SMTP_USER,
-        pass: SMTP_PASS,
-      },
-    });
-  } catch (error) {
-    if (!missingConfigLogged) {
-      console.info("[notifications] nodemailer unavailable; skipping email delivery");
-      missingConfigLogged = true;
-    }
-    return null;
-  }
+  transporter = nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: Number(SMTP_PORT) || 587,
+    secure: Number(SMTP_PORT) === 465,
+    auth: SMTP_USER
+      ? {
+          user: SMTP_USER,
+          pass: SMTP_PASS,
+        }
+      : undefined,
+  });
 
   return transporter;
 }
 
-export async function sendEmailNotification({ to, title, message, type = "SYSTEM" }) {
-  if (!to) return { status: "skipped", reason: "no-recipient" };
+/**
+ * Sends an email for a given NotificationType using the matching
+ * template. Returns { sent: boolean, error?: string } rather than
+ * throwing, so callers (the dispatcher) can log a NotificationLog row
+ * either way without a try/catch at every call site.
+ */
+export async function sendEmail({ to, type, data = {} }) {
+  if (!to) {
+    return { sent: false, error: "Missing recipient email" };
+  }
 
-  const transport = await getTransporter();
-  if (!transport) return { status: "skipped", reason: "smtp-not-configured" };
+  const client = getTransporter();
+  if (!client) {
+    if (!loggedMissingConfig) {
+      console.warn(
+        "[notification.email] SMTP_HOST not set — skipping email send. " +
+          "Set SMTP_HOST/SMTP_PORT/SMTP_USER/SMTP_PASS/SMTP_FROM in .env to enable email delivery."
+      );
+      loggedMissingConfig = true;
+    }
+    return { sent: false, error: "Email transport not configured" };
+  }
 
   try {
-    const html = renderEmailTemplate({ title, message, type });
-    await transport.sendMail({
+    const { subject, html } = renderEmailTemplate(type, data);
+
+    await client.sendMail({
       from: process.env.SMTP_FROM || "AuraFarm <no-reply@aurafarm.app>",
       to,
-      subject: title,
+      subject,
       html,
     });
 
-    return { status: "sent" };
+    return { sent: true };
   } catch (error) {
-    return { status: "failed", error: error.message };
+    console.error("[notification.email] send failed:", error.message);
+    return { sent: false, error: error.message };
   }
 }

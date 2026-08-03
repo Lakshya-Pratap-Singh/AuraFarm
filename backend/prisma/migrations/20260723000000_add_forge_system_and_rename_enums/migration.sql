@@ -1,195 +1,153 @@
 -- =====================================================================
--- add_forge_system_and_rename_enums
+-- add_notification_system
 -- ---------------------------------------------------------------------
--- HAND-WRITTEN, not `prisma migrate dev`'s auto-diff output. Reason:
--- Prisma's auto-diff for a changed enum VALUE (not a new enum) generates
--- a DROP + CREATE of the enum type, which is destructive to any existing
--- rows using the old values. `ALTER TYPE ... RENAME VALUE` instead keeps
--- the same underlying enum OID and just relabels it — existing rows
--- automatically read back with the new label, and any column DEFAULT
--- referencing the old label is automatically repointed by Postgres too.
+-- HAND-WRITTEN, same reason as 20260723000000_add_forge_system_and_
+-- rename_enums: adding values to an EXISTING enum (NotificationType)
+-- has to go through `ALTER TYPE ... ADD VALUE`, which `prisma migrate
+-- dev`'s auto-diff does not reliably generate on its own for enums with
+-- existing rows. Everything else here (new enums, new columns, new
+-- tables) is safe as a normal auto-diff too, but is included by hand
+-- for one consistent, reviewable migration.
 --
 -- HOW TO APPLY:
---   1. Do NOT run `prisma migrate dev` for this change (it would try to
---      auto-generate the destructive version). Instead:
---   2. Copy this file's content into a new migration folder yourself
---      (or use `prisma migrate dev --create-only --name
---      add_forge_system_and_rename_enums` and REPLACE the generated
---      migration.sql with this file's content before running
---      `prisma migrate dev` to apply it).
---   3. If your Postgres version is older than 12, split the
---      `ALTER TYPE ... ADD VALUE` statements (for ActivityType's new
---      MISSION_FORGED) into their own migration that runs and commits
---      BEFORE this one — Postgres <12 doesn't allow using a
---      freshly-added enum value in the same transaction it was added in.
---      (Postgres 12+, which this schema already targets, allows it.)
+--   1. Do NOT run `prisma migrate dev` and let it auto-generate this.
+--      Instead run `prisma migrate dev --create-only --name
+--      add_notification_system`, then replace the generated
+--      migration.sql with this file's content, then run
+--      `prisma migrate dev` to apply it (or `prisma migrate deploy`
+--      in production).
+--   2. Postgres <12: split step 1 (ADD VALUE) into its own migration
+--      that is applied and committed before the rest — see the same
+--      note in the forge-system migration. Postgres 12+ can run it
+--      all in one transaction.
 -- =====================================================================
 
 -- ---------------------------------------------------------------------
--- 1. Rename existing enum values to Title Case (matches Missions.jsx)
+-- 1. New values on the existing NotificationType enum
 -- ---------------------------------------------------------------------
 
-ALTER TYPE "Priority" RENAME VALUE 'LOW' TO 'Low';
-ALTER TYPE "Priority" RENAME VALUE 'MEDIUM' TO 'Medium';
-ALTER TYPE "Priority" RENAME VALUE 'HIGH' TO 'High';
-
-ALTER TYPE "Difficulty" RENAME VALUE 'EASY' TO 'Easy';
-ALTER TYPE "Difficulty" RENAME VALUE 'NORMAL' TO 'Normal';
-ALTER TYPE "Difficulty" RENAME VALUE 'HARD' TO 'Hard';
-ALTER TYPE "Difficulty" RENAME VALUE 'LEGENDARY' TO 'Legendary';
-
-ALTER TYPE "Category" RENAME VALUE 'PHYSICAL' TO 'Physical';
-ALTER TYPE "Category" RENAME VALUE 'MENTAL' TO 'Mental';
-ALTER TYPE "Category" RENAME VALUE 'CAREER' TO 'Career';
-ALTER TYPE "Category" RENAME VALUE 'LEARNING' TO 'Learning';
-ALTER TYPE "Category" RENAME VALUE 'HEALTH' TO 'Health';
+ALTER TYPE "NotificationType" ADD VALUE IF NOT EXISTS 'MISSION_DUE_SOON' BEFORE 'ACHIEVEMENT_UNLOCK';
+ALTER TYPE "NotificationType" ADD VALUE IF NOT EXISTS 'MISSION_COMPLETED' AFTER 'MISSION_DUE_SOON';
 
 -- ---------------------------------------------------------------------
--- 2. New value on the existing ActivityType enum
+-- 2. New enums
 -- ---------------------------------------------------------------------
 
-ALTER TYPE "ActivityType" ADD VALUE 'MISSION_FORGED';
+CREATE TYPE "NotificationChannel" AS ENUM ('APP', 'EMAIL', 'PUSH');
+
+CREATE TYPE "NotificationPriority" AS ENUM ('LOW', 'NORMAL', 'HIGH');
+
+CREATE TYPE "NotificationDeliveryStatus" AS ENUM ('PENDING', 'SENT', 'FAILED', 'SKIPPED');
 
 -- ---------------------------------------------------------------------
--- 3. New enums for the Forge/Resource/Mission system
+-- 3. Notification: new columns
 -- ---------------------------------------------------------------------
 
-CREATE TYPE "Role" AS ENUM ('USER', 'MODERATOR', 'ADMIN');
+ALTER TABLE "Notification"
+  ADD COLUMN "channel" "NotificationChannel" NOT NULL DEFAULT 'APP',
+  ADD COLUMN "priority" "NotificationPriority" NOT NULL DEFAULT 'NORMAL',
+  ADD COLUMN "scheduledFor" TIMESTAMP(3),
+  ADD COLUMN "deliveredAt" TIMESTAMP(3);
 
-CREATE TYPE "SuperCategory" AS ENUM ('PHYSICAL', 'MENTAL', 'CAREER', 'FINANCIAL', 'CREATIVE', 'SOCIAL', 'LIFESTYLE');
+CREATE INDEX "Notification_userId_isRead_idx" ON "Notification"("userId", "isRead");
+CREATE INDEX "Notification_userId_createdAt_idx" ON "Notification"("userId", "createdAt");
+CREATE INDEX "Notification_scheduledFor_idx" ON "Notification"("scheduledFor");
 
-CREATE TYPE "ResourceType" AS ENUM ('EXERCISE', 'ARTICLE', 'BOOK', 'VIDEO', 'PDF', 'EXTERNAL_LINK', 'TEMPLATE', 'OTHER');
-
-CREATE TYPE "DifficultyLevel" AS ENUM ('BEGINNER', 'INTERMEDIATE', 'ADVANCED');
-
-CREATE TYPE "SubmissionStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'CHANGES_REQUESTED');
-
--- ---------------------------------------------------------------------
--- 4. New columns on existing tables (all nullable or defaulted —
---    zero backfill required, every existing row gets a valid value)
--- ---------------------------------------------------------------------
-
-ALTER TABLE "User" ADD COLUMN "firebaseUid" TEXT;
-ALTER TABLE "User" ADD COLUMN "role" "Role" NOT NULL DEFAULT 'USER';
-CREATE UNIQUE INDEX "User_firebaseUid_key" ON "User"("firebaseUid");
-
-ALTER TABLE "Objective" ADD COLUMN "superCategory" "SuperCategory";
-ALTER TABLE "Objective" ADD COLUMN "objectiveType" TEXT;
-ALTER TABLE "Objective" ADD COLUMN "progressBreakdown" JSONB;
-
-ALTER TABLE "Mission" ADD COLUMN "forgedFromResourceId" TEXT;
-ALTER TABLE "Mission" ADD COLUMN "forgeParams" JSONB;
+-- Existing FK had no explicit onDelete behavior (defaulted to RESTRICT).
+-- Switch to CASCADE so deleting a User doesn't get blocked by their
+-- own notification history.
+ALTER TABLE "Notification" DROP CONSTRAINT IF EXISTS "Notification_userId_fkey";
+ALTER TABLE "Notification"
+  ADD CONSTRAINT "Notification_userId_fkey"
+  FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- ---------------------------------------------------------------------
--- 5. New tables
+-- 4. NotificationTemplate: new column + updatedAt + index
 -- ---------------------------------------------------------------------
 
-CREATE TABLE "Forge" (
-    "id" TEXT NOT NULL,
-    "key" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "superCategory" "SuperCategory" NOT NULL,
-    "description" TEXT,
-    "icon" TEXT,
-    "order" INTEGER NOT NULL DEFAULT 0,
-    "active" BOOLEAN NOT NULL DEFAULT true,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+ALTER TABLE "NotificationTemplate"
+  ADD COLUMN "title" TEXT,
+  ADD COLUMN "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
 
-    CONSTRAINT "Forge_pkey" PRIMARY KEY ("id")
+CREATE INDEX "NotificationTemplate_userId_type_idx" ON "NotificationTemplate"("userId", "type");
+
+ALTER TABLE "NotificationTemplate" DROP CONSTRAINT IF EXISTS "NotificationTemplate_userId_fkey";
+ALTER TABLE "NotificationTemplate"
+  ADD CONSTRAINT "NotificationTemplate_userId_fkey"
+  FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- ---------------------------------------------------------------------
+-- 5. UserDevice: new column, unique token, index
+-- ---------------------------------------------------------------------
+
+ALTER TABLE "UserDevice"
+  ADD COLUMN "active" BOOLEAN NOT NULL DEFAULT true;
+
+-- If duplicate deviceToken rows already exist, this will fail — clean
+-- them up (keep the newest per token) before applying in that case:
+--   DELETE FROM "UserDevice" a USING "UserDevice" b
+--   WHERE a.id < b.id AND a."deviceToken" = b."deviceToken";
+CREATE UNIQUE INDEX "UserDevice_deviceToken_key" ON "UserDevice"("deviceToken");
+CREATE INDEX "UserDevice_userId_active_idx" ON "UserDevice"("userId", "active");
+
+ALTER TABLE "UserDevice" DROP CONSTRAINT IF EXISTS "UserDevice_userId_fkey";
+ALTER TABLE "UserDevice"
+  ADD CONSTRAINT "UserDevice_userId_fkey"
+  FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- ---------------------------------------------------------------------
+-- 6. New table: NotificationPreference (one row per user, created lazily)
+-- ---------------------------------------------------------------------
+
+CREATE TABLE "NotificationPreference" (
+  "id" TEXT NOT NULL,
+  "userId" TEXT NOT NULL,
+
+  "appEnabled" BOOLEAN NOT NULL DEFAULT true,
+  "emailEnabled" BOOLEAN NOT NULL DEFAULT true,
+  "pushEnabled" BOOLEAN NOT NULL DEFAULT false,
+
+  "missionReminders" BOOLEAN NOT NULL DEFAULT true,
+  "achievementAlerts" BOOLEAN NOT NULL DEFAULT true,
+  "weeklyReport" BOOLEAN NOT NULL DEFAULT true,
+  "dailySummary" BOOLEAN NOT NULL DEFAULT true,
+  "streakWarnings" BOOLEAN NOT NULL DEFAULT true,
+
+  "reminderTime" TEXT,
+  "quietHoursStart" TEXT,
+  "quietHoursEnd" TEXT,
+  "timezone" TEXT NOT NULL DEFAULT 'UTC',
+
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TIMESTAMP(3) NOT NULL,
+
+  CONSTRAINT "NotificationPreference_pkey" PRIMARY KEY ("id")
 );
-CREATE UNIQUE INDEX "Forge_key_key" ON "Forge"("key");
-CREATE INDEX "Forge_superCategory_idx" ON "Forge"("superCategory");
 
-CREATE TABLE "Resource" (
-    "id" TEXT NOT NULL,
-    "forgeId" TEXT NOT NULL,
-    "title" TEXT NOT NULL,
-    "description" TEXT,
-    "resourceType" "ResourceType" NOT NULL,
-    "difficulty" "DifficultyLevel" NOT NULL DEFAULT 'BEGINNER',
-    "gifUrl" TEXT,
-    "videoUrl" TEXT,
-    "pdfUrl" TEXT,
-    "externalUrl" TEXT,
-    "muscleGroup" TEXT,
-    "equipment" TEXT,
-    "tags" TEXT[] DEFAULT ARRAY[]::TEXT[],
-    "verified" BOOLEAN NOT NULL DEFAULT false,
-    "submittedBy" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+CREATE UNIQUE INDEX "NotificationPreference_userId_key" ON "NotificationPreference"("userId");
 
-    CONSTRAINT "Resource_pkey" PRIMARY KEY ("id")
-);
-CREATE INDEX "Resource_forgeId_idx" ON "Resource"("forgeId");
-CREATE INDEX "Resource_muscleGroup_idx" ON "Resource"("muscleGroup");
-CREATE INDEX "Resource_verified_idx" ON "Resource"("verified");
-
-CREATE TABLE "SavedResource" (
-    "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "resourceId" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "SavedResource_pkey" PRIMARY KEY ("id")
-);
-CREATE UNIQUE INDEX "SavedResource_userId_resourceId_key" ON "SavedResource"("userId", "resourceId");
-
-CREATE TABLE "ResourceMission" (
-    "id" TEXT NOT NULL,
-    "resourceId" TEXT NOT NULL,
-    "missionId" TEXT NOT NULL,
-    "objectiveId" TEXT,
-    "userId" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "ResourceMission_pkey" PRIMARY KEY ("id")
-);
-CREATE UNIQUE INDEX "ResourceMission_missionId_key" ON "ResourceMission"("missionId");
-CREATE INDEX "ResourceMission_objectiveId_idx" ON "ResourceMission"("objectiveId");
-CREATE INDEX "ResourceMission_resourceId_idx" ON "ResourceMission"("resourceId");
-
-CREATE TABLE "ResourceSubmission" (
-    "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "resourceId" TEXT,
-    "title" TEXT NOT NULL,
-    "description" TEXT,
-    "forgeId" TEXT NOT NULL,
-    "tags" TEXT[] DEFAULT ARRAY[]::TEXT[],
-    "gifUrl" TEXT,
-    "videoUrl" TEXT,
-    "pdfUrl" TEXT,
-    "externalUrl" TEXT,
-    "status" "SubmissionStatus" NOT NULL DEFAULT 'PENDING',
-    "reviewNotes" TEXT,
-    "reviewedBy" TEXT,
-    "reviewedAt" TIMESTAMP(3),
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "ResourceSubmission_pkey" PRIMARY KEY ("id")
-);
-CREATE INDEX "ResourceSubmission_status_idx" ON "ResourceSubmission"("status");
-CREATE INDEX "ResourceSubmission_userId_idx" ON "ResourceSubmission"("userId");
+ALTER TABLE "NotificationPreference"
+  ADD CONSTRAINT "NotificationPreference_userId_fkey"
+  FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- ---------------------------------------------------------------------
--- 6. Foreign keys
+-- 7. New table: NotificationLog (per-channel delivery audit trail)
 -- ---------------------------------------------------------------------
 
-ALTER TABLE "Mission" ADD CONSTRAINT "Mission_forgedFromResourceId_fkey" FOREIGN KEY ("forgedFromResourceId") REFERENCES "Resource"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+CREATE TABLE "NotificationLog" (
+  "id" TEXT NOT NULL,
+  "notificationId" TEXT NOT NULL,
+  "channel" "NotificationChannel" NOT NULL,
+  "status" "NotificationDeliveryStatus" NOT NULL DEFAULT 'PENDING',
+  "error" TEXT,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-ALTER TABLE "Resource" ADD CONSTRAINT "Resource_forgeId_fkey" FOREIGN KEY ("forgeId") REFERENCES "Forge"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-ALTER TABLE "Resource" ADD CONSTRAINT "Resource_submittedBy_fkey" FOREIGN KEY ("submittedBy") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+  CONSTRAINT "NotificationLog_pkey" PRIMARY KEY ("id")
+);
 
-ALTER TABLE "SavedResource" ADD CONSTRAINT "SavedResource_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-ALTER TABLE "SavedResource" ADD CONSTRAINT "SavedResource_resourceId_fkey" FOREIGN KEY ("resourceId") REFERENCES "Resource"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+CREATE INDEX "NotificationLog_notificationId_idx" ON "NotificationLog"("notificationId");
+CREATE INDEX "NotificationLog_channel_status_idx" ON "NotificationLog"("channel", "status");
 
-ALTER TABLE "ResourceMission" ADD CONSTRAINT "ResourceMission_resourceId_fkey" FOREIGN KEY ("resourceId") REFERENCES "Resource"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-ALTER TABLE "ResourceMission" ADD CONSTRAINT "ResourceMission_missionId_fkey" FOREIGN KEY ("missionId") REFERENCES "Mission"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-ALTER TABLE "ResourceMission" ADD CONSTRAINT "ResourceMission_objectiveId_fkey" FOREIGN KEY ("objectiveId") REFERENCES "Objective"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-ALTER TABLE "ResourceMission" ADD CONSTRAINT "ResourceMission_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
-ALTER TABLE "ResourceSubmission" ADD CONSTRAINT "ResourceSubmission_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-ALTER TABLE "ResourceSubmission" ADD CONSTRAINT "ResourceSubmission_resourceId_fkey" FOREIGN KEY ("resourceId") REFERENCES "Resource"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "NotificationLog"
+  ADD CONSTRAINT "NotificationLog_notificationId_fkey"
+  FOREIGN KEY ("notificationId") REFERENCES "Notification"("id") ON DELETE CASCADE ON UPDATE CASCADE;

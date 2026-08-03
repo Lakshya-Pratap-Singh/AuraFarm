@@ -1,15 +1,18 @@
 import * as notificationService from "./notification.service.js";
 import { registerDevice, unregisterDevice } from "./notification.push.js";
-import { NOTIFICATION_TYPES, DEFAULT_PREFERENCES } from "./notification.utils.js";
+import { NOTIFICATION_TYPES } from "./notification.utils.js";
 
 function handleError(res, error) {
   const knownNotFound = /not found/i.test(error.message);
   return res.status(knownNotFound ? 404 : 500).json({ message: error.message });
 }
 
+// ── Notifications ──────────────────────────────────────────────────────
+
 export const getNotifications = async (req, res) => {
   try {
     const { type, unreadOnly, cursor, limit } = req.query;
+
     if (type && !NOTIFICATION_TYPES.includes(type)) {
       return res.status(400).json({ message: `Invalid type: ${type}` });
     }
@@ -38,8 +41,8 @@ export const getUnreadCount = async (req, res) => {
 
 export const markAsRead = async (req, res) => {
   try {
-    const result = await notificationService.markAsRead(req.user.id, req.params.id);
-    return res.status(200).json(result);
+    const notification = await notificationService.markAsRead(req.user.id, req.params.id);
+    return res.status(200).json(notification);
   } catch (error) {
     return handleError(res, error);
   }
@@ -72,14 +75,33 @@ export const clearAllNotifications = async (req, res) => {
   }
 };
 
+export const createTestNotification = async (req, res) => {
+  try {
+    const notification = await notificationService.createNotification(req.user.id, {
+      title: "Test Notification",
+      message: "AuraFarm notification system is working.",
+      type: "SYSTEM",
+    });
+    return res.status(201).json(notification);
+  } catch (error) {
+    return handleError(res, error);
+  }
+};
+
+// ── Templates ───────────────────────────────────────────────────────────
+
 export const createTemplate = async (req, res) => {
   try {
     const { name, title, message, type } = req.body;
-    if (type && !NOTIFICATION_TYPES.includes(type)) {
+    if (!NOTIFICATION_TYPES.includes(type)) {
       return res.status(400).json({ message: `Invalid type: ${type}` });
     }
-
-    const template = await notificationService.createTemplate(req.user.id, { name, title, message, type });
+    const template = await notificationService.createTemplate(req.user.id, {
+      name,
+      title,
+      message,
+      type,
+    });
     return res.status(201).json(template);
   } catch (error) {
     return handleError(res, error);
@@ -88,7 +110,9 @@ export const createTemplate = async (req, res) => {
 
 export const getTemplates = async (req, res) => {
   try {
-    const templates = await notificationService.getTemplates(req.user.id, { type: req.query.type });
+    const templates = await notificationService.getTemplates(req.user.id, {
+      type: req.query.type,
+    });
     return res.status(200).json(templates);
   } catch (error) {
     return handleError(res, error);
@@ -97,7 +121,11 @@ export const getTemplates = async (req, res) => {
 
 export const updateTemplate = async (req, res) => {
   try {
-    const template = await notificationService.updateTemplate(req.user.id, req.params.id, req.body);
+    const template = await notificationService.updateTemplate(
+      req.user.id,
+      req.params.id,
+      req.body
+    );
     return res.status(200).json(template);
   } catch (error) {
     return handleError(res, error);
@@ -113,10 +141,30 @@ export const deleteTemplate = async (req, res) => {
   }
 };
 
+// ── Preferences ────────────────────────────────────────────────────────
+
 export const getPreferences = async (req, res) => {
   try {
     const preferences = await notificationService.getUserPreferences(req.user.id);
-    return res.status(200).json(preferences || { ...DEFAULT_PREFERENCES, userId: req.user.id });
+    // Return defaults explicitly rather than null, so the frontend
+    // doesn't need to know the schema's default values itself.
+    return res.status(200).json(
+      preferences || {
+        userId: req.user.id,
+        appEnabled: true,
+        emailEnabled: true,
+        pushEnabled: false,
+        missionReminders: true,
+        achievementAlerts: true,
+        weeklyReport: true,
+        dailySummary: true,
+        streakWarnings: true,
+        reminderTime: null,
+        quietHoursStart: null,
+        quietHoursEnd: null,
+        timezone: "UTC",
+      }
+    );
   } catch (error) {
     return handleError(res, error);
   }
@@ -130,6 +178,8 @@ export const updatePreferences = async (req, res) => {
     return handleError(res, error);
   }
 };
+
+// ── Devices (push registration) ──────────────────────────────────────────
 
 export const registerDeviceHandler = async (req, res) => {
   try {
@@ -152,20 +202,6 @@ export const unregisterDeviceHandler = async (req, res) => {
     }
     await unregisterDevice({ deviceToken });
     return res.status(200).json({ message: "Device unregistered" });
-  } catch (error) {
-    return handleError(res, error);
-  }
-};
-
-export const createTestNotification = async (req, res) => {
-  try {
-    const notification = await notificationService.createNotification(req.user.id, {
-      title: "Test Notification",
-      message: "AuraFarm notification system is working.",
-      type: "SYSTEM",
-    });
-
-    return res.status(201).json(notification);
   } catch (error) {
     return handleError(res, error);
   }
